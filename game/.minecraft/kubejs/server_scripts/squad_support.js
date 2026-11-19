@@ -86,7 +86,7 @@
         fox.distanceToEntity(attacker) > 64
       )
         return
-      var lock = s.lookup(fox.level, fox.persistentData.getString('mkLock')) || j.nearest(fox, 36, true)
+      var lock = s.lookup(fox.level, fox.persistentData.getString('mkLock'))
       if (!lock || !j.hostile(fox, lock) || fox.distanceToEntity(lock) > 40) return
       j.fx(fox, 'ELECTRIC_SPARK', lock.x, lock.y + 1, lock.z, 6, 0.25)
       j.hit(fox, lock, amount * 0.1, 'echo')
