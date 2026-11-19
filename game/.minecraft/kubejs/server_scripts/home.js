@@ -16,11 +16,32 @@ function mkHomeMakeEnv(server, p) {
   var px = Math.floor(p.x)
   var py = Math.floor(p.y)
   var pz = Math.floor(p.z)
-  var run = (c) => server.runCommandSilent(c)
+  // Reusing the arrival tile should repair the same house.
+  var anchor = p.persistentData.getCompound('mkHomeAnchor')
+  if (String(anchor.getString('dim')) === String(p.level.dimension) &&
+      px === anchor.getInt('x') && py === anchor.getInt('y')+1 && pz === anchor.getInt('z')+4) {
+    py=anchor.getInt('y');pz=anchor.getInt('z')
+  }
+  var run = (c) => server.runCommandSilent('execute in ' + p.level.dimension + ' run ' + c)
+  var cap = p.level.gameRules.getInt(Java.loadClass('net.minecraft.world.level.GameRules').RULE_COMMAND_MODIFICATION_BLOCK_LIMIT)
+  function fill(x0,y0,z0,x1,y1,z1,block) {
+    // Split large solid fills for worlds with a reduced commandModificationBlockLimit.
+    var lo=[Math.min(x0,x1),Math.min(y0,y1),Math.min(z0,z1)]
+    var hi=[Math.max(x0,x1),Math.max(y0,y1),Math.max(z0,z1)]
+    var span=hi.map((v,i)=>v-lo[i]+1)
+    if (span[0]*span[1]*span[2]>cap) {
+      var axis=span.indexOf(Math.max.apply(null,span)), mid=Math.floor((hi[axis]+lo[axis])/2)
+      var left=hi.slice(),right=lo.slice()
+      left[axis]=mid;right[axis]=mid+1
+      fill(lo[0],lo[1],lo[2],left[0],left[1],left[2],block)
+      return fill(right[0],right[1],right[2],hi[0],hi[1],hi[2],block)
+    }
+    return run('fill '+lo.join(' ')+' '+hi.join(' ')+' '+block)
+  }
   return {
     px: px, py: py, pz: pz, server: server, player: p,
     run: run,
-    fill: (x0, y0, z0, x1, y1, z1, b) => run(`fill ${x0} ${y0} ${z0} ${x1} ${y1} ${z1} ${b}`),
+    fill: fill,
     set: (x, y, z, b) => run(`setblock ${x} ${y} ${z} ${b}`),
     // 地基平台
     gx0: px - 18, gx1: px + 18, gz0: pz - 16, gz1: pz + 16,
@@ -60,12 +81,12 @@ function mkHomeShell(env) {
   // 一层地板（桦木）
   f(x0, py, z0, x1, py, z1, 'minecraft:birch_planks')
   // 一层墙（白混凝土，空心）+ 室内空气
-  f(x0, py + 1, z0, x1, py + 3, z1, 'minecraft:white_concrete hollow')
+  f(x0, py + 1, z0, x1, py + 3, z1, 'minecraft:white_concrete')
   f(x0 + 1, py + 1, z0 + 1, x1 - 1, py + 3, z1 - 1, 'minecraft:air')
   // 一层天花板 = 二层地板
   f(x0, py + 4, z0, x1, py + 4, z1, 'minecraft:birch_planks')
   // 二层墙 + 室内空气
-  f(x0, py + 5, z0, x1, py + 7, z1, 'minecraft:white_concrete hollow')
+  f(x0, py + 5, z0, x1, py + 7, z1, 'minecraft:white_concrete')
   f(x0 + 1, py + 5, z0 + 1, x1 - 1, py + 7, z1 - 1, 'minecraft:air')
   // 屋顶（石英）+ 檐口
   f(x0, py + 8, z0, x1, py + 8, z1, 'minecraft:smooth_quartz')
@@ -212,42 +233,39 @@ function mkHomeRedstone(env) {
 function buildHome(server, p) {
   var env = mkHomeMakeEnv(server, p)
 
-  mkHomeBase(env)     // 1 地基
-  mkHomeShell(env)    // 2 外壳
-  mkHomeStairs(env)   // 3 楼梯
-  if (global.mkHomeArmory) global.mkHomeArmory(env)   // 4 地下武库
-  if (global.mkHomeFirst) global.mkHomeFirst(env)     // 5 一层室内
-  if (global.mkHomeSecond) global.mkHomeSecond(env)   // 6 二层室内
-  if (global.mkHomeCourt) global.mkHomeCourt(env)     // 7 庭院
-  mkHomeRoad(env)     // 8 门廊道路
-  mkHomeRedstone(env) // 9 红石
-
-  server.runCommandSilent(`setworldspawn ${env.px} ${env.f1} ${env.pz + 4}`)
-  server.runCommandSilent(`tp ${p.username} ${env.px} ${env.f1} ${env.pz + 4}`)
-  server.runCommandSilent(`effect give ${p.username} minecraft:instant_health 1 4 true`)
-  server.tell(`§b别墅重建完成：台阶楼梯 / 海晶灯武库 / 三层分间 / 自动夜灯红石，庭院带田地·草地·泳池·下山路。`)
-}
-
-PlayerEvents.loggedIn(event => {
-  var p = event.player
-  if (p.persistentData.contains('mk_home')) return
-  var s = event.server
-  var gt = 0
-  try { gt = s.runCommandSilent('time query gametime') } catch (e) { gt = 0 }
-  if (gt < 200) {
-    p.persistentData.putString('mk_home', 'on')
-    buildHome(s, p)
-  } else {
-    p.tell('§7这个存档已经有年头了。想要开局别墅：Esc → 对局域网开放 → 允许作弊，然后敲 /mkhome；或者干脆开个新世界。')
+  var level=p.level
+  if (level.gameRules.getInt(Java.loadClass('net.minecraft.world.level.GameRules').RULE_COMMAND_MODIFICATION_BLOCK_LIMIT)<1) {
+    p.tell('§c世界规则 commandModificationBlockLimit 为 0，无法放置别墅。');return false
   }
-})
-
-ServerEvents.commandRegistry(event => {
-  var Commands = event.commands
-  event.register(Commands.literal('mkhome').executes(ctx => {
-    var player = ctx.source.player
-    if (!player) return 0
-    buildHome(ctx.source.server, player)
-    return 1
-  }))
-})
+  if (env.py-10<level.getMinBuildHeight() || env.roof>=level.getMaxBuildHeight()) {
+    p.tell('§c此处高度不足以容纳地下室和屋顶，换一处平地。');return false
+  }
+  var corners=[[env.px-20,env.pz-18],[env.px+20,env.pz+31]]
+  if (!corners.every(v=>level.getWorldBorder().isWithinBounds(v[0]+0.5,v[1]+0.5))) {
+    p.tell('§c别墅会越过世界边界。');return false
+  }
+  // The fill command rejects unloaded corners. Obtain the footprint's chunks without permanent tickets.
+  for (var x=corners[0][0]>>4;x<=(corners[1][0]>>4);x++)
+    for (var z=corners[0][1]>>4;z<=(corners[1][1]>>4);z++) level.getChunk(x,z)
+  var modules=[global.mkHomeArmory,global.mkHomeFirst,global.mkHomeSecond,global.mkHomeCourt]
+  if (!modules.every(fn=>typeof fn==='function')) {p.tell('§c别墅模块加载不全，请检查 KubeJS 的 server.log。');return false}
+  mkHomeBase(env);mkHomeShell(env);mkHomeStairs(env)
+  modules.forEach(fn=>fn(env))
+  mkHomeRoad(env);mkHomeRedstone(env)
+  var checks=[[env.px,env.py,env.pz,'minecraft:birch_planks'],[env.px,env.ay0,env.pz,'minecraft:sea_lantern'],
+    [env.px-2,env.roof,env.pz,'minecraft:glass'],[env.px+8,env.py-7,env.pz,'minecraft:chest']]
+  if (!checks.every(a=>String(level.getBlock(a[0],a[1],a[2]).id)===a[3])) {
+    p.tell('§c别墅校验失败，请检查当前位置是否允许建造及 KubeJS 日志。');return false
+  }
+  if (level.isOverworld()) env.run('setworldspawn '+env.px+' '+env.f1+' '+(env.pz+4))
+  p.teleportTo(env.px+0.5,env.f1,env.pz+4.5)
+  var anchor=NBT.compoundTag()
+  anchor.putString('dim',String(level.dimension));anchor.putInt('x',env.px);anchor.putInt('y',env.py);anchor.putInt('z',env.pz)
+  p.persistentData.put('mkHomeAnchor',anchor)
+  p.persistentData.putBoolean('mk_home',true)
+  p.tell('§b别墅已建好。东侧楼梯上二楼，东墙活板门下武库。')
+  return true
+}
+global.mkBuildHome=buildHome
+ServerEvents.commandRegistry(e=>e.register(e.commands.literal('mkhome').executes(c=>
+  buildHome(c.source.server,c.source.playerOrException)?1:0)))

@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "mk:ranged",
+    "mk:cleave",
+    "mk:blade",
+    "mk:counter",
+    "mk:echo",
+    "mk:domain"
+  ]
+}

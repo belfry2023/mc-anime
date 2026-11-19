@@ -1,128 +1,274 @@
-// army.js v5 —— /mkarmy 四女仆（tag 认人）；/mkcheck 用可见输出自检
-ServerEvents.commandRegistry(event => {
-  const { commands: Commands } = event
-  const MAID = 'touhou_little_maid:maid'
-  const MODEL = 'touhou_little_maid_spell:stellar_witch'
-
-  const BAUBLE_IDS = [
-    'touhou_little_maid:explosion_protect_bauble',
-    'touhou_little_maid:fire_protect_bauble',
-    'touhou_little_maid:projectile_protect_bauble',
-    'touhou_little_maid:magic_protect_bauble',
-    'touhou_little_maid:fall_protect_bauble',
-    'touhou_little_maid:drown_protect_bauble',
-    'touhou_little_maid:item_magnet_bauble',
-    'touhou_little_maid:mute_bauble',
-    'touhou_little_maid_personality:budding_affection',
-    'touhou_little_maid_personality:freeze_this_moment',
-    'touhou_little_maid_personality:reserved_sweetness',
-    'touhou_little_maid_personality:name_knot',
-    'touhou_little_maid_personality:unfinished_dream',
-    'touhou_little_maid_personality:glory_of_courage',
-    'touhou_little_maid_personality:insatiable',
-    'touhou_little_maid_personality:vessel_of_sin',
-    'touhou_little_maid_personality:dead_shot',
-    'touhou_little_maid_personality:krabby_patty',
-    'touhou_little_maid_spell:arc_cross',
-    'touhou_little_maid_spell:bleeding_heart',
-    'touhou_little_maid_spell:flow_core',
-    'touhou_little_maid_spell:quick_chant_ring',
-    'touhou_little_maid_spell:spring_ring',
-    'touhou_little_maid_spell:double_heart_chain',
-    'touhou_little_maid_spell:dream_cat_crystal',
-    'touhou_little_maid_spell:anchor_core',
-    'touhou_little_maid_spell:ender_pocket',
-    'touhou_little_maid_spell:returning_star',
-    'maid_weapon:heartbound_knot',
-    'maid_weapon:oath_ring'
-  ]
-
-  const BAUBLES = 'MaidBaubleInventory:{Size:30,Items:[' +
-    BAUBLE_IDS.map((id, i) => `{Slot:${i}b,id:"${id}",Count:1b}`).join(',') + ']}'
-
-  const EFFECTS = [
-    'minecraft:speed', 'minecraft:haste', 'minecraft:strength', 'minecraft:jump_boost',
-    'minecraft:regeneration', 'minecraft:resistance', 'minecraft:fire_resistance',
-    'minecraft:water_breathing', 'minecraft:night_vision', 'minecraft:health_boost',
-    'minecraft:absorption', 'minecraft:saturation', 'minecraft:luck', 'minecraft:slow_falling',
-    'minecraft:dolphins_grace', 'minecraft:conduit_power', 'minecraft:hero_of_the_village',
-    'irons_spellbooks:angel_wings', 'irons_spellbooks:fortify', 'irons_spellbooks:enchanted_ward',
-    'irons_spellbooks:evasion', 'irons_spellbooks:charged', 'irons_spellbooks:vigor',
-    'irons_spellbooks:oakskin', 'irons_spellbooks:planar_sight', 'irons_spellbooks:guided',
-    'irons_spellbooks:echoing_strikes', 'irons_spellbooks:hastened',
-    'irons_spellbooks:fall_damage_immunity'
-  ]
-
-  const ROLES = [
-    { name: '圣女', tag: 'mk_saint', roleTag: 'mk_role_saint', dx: 2, dz: 2, main: 'minecraft:netherite_sword', off: 'irons_spellbooks:netherite_spell_book' },
-    { name: '斯塔·柏', tag: 'mk_star', roleTag: 'mk_role_star', dx: -2, dz: 2, main: 'tacz:modern_kinetic_gun{GunId:"lradd:qbz191_em",GunCurrentAmmoCount:30,HasBulletInBarrel:1b}', off: 'irons_spellbooks:netherite_spell_book' },
-    { name: '新春纸板狐', tag: 'mk_fox', roleTag: 'mk_role_fox', dx: 2, dz: -2, main: 'tacz:modern_kinetic_gun{GunId:"lradd:qbz191_em",GunCurrentAmmoCount:30,HasBulletInBarrel:1b}', off: '' },
-    { name: '魔法女仆', tag: 'mk_magic', roleTag: 'mk_role_magic', dx: -2, dz: -2, main: 'minecraft:netherite_sword', off: '' }
-  ]
-
-  function run(s, cmd) { return s.runCommandSilent(cmd) }
-
-  function nameSel(r, dist) {
-    return '@e[type=' + MAID + ',name="' + r.name + '",distance=..' + dist + ']'
+// priority: 80
+// The roster belongs to the world and the owner's UUID. An unloaded slot stays occupied.
+;(function () {
+  var Slots = Java.loadClass('net.minecraft.world.entity.EquipmentSlot')
+  var A = Java.loadClass('net.minecraft.world.entity.ai.attributes.Attributes')
+  var Pos = Java.loadClass('net.minecraft.core.BlockPos')
+  var Dir = Java.loadClass('net.minecraft.core.Direction')
+  var UUID = Java.loadClass('java.util.UUID')
+  var Tasks = Java.loadClass('com.github.tartaricacid.touhoulittlemaid.entity.task.TaskManager')
+  var Stats = Java.loadClass('cn.blockforge.touhou_little_maid_personality.emotion.MaidStatsStore')
+  var roles = {
+    saint: { name: '圣女', model: 'geckolib:winefox_saint', hp: 840, atk: 42, speed: 0.32, task: 'idle' },
+    star: { name: '斯塔·柏', model: 'geckolib:sta', hp: 720, atk: 36, speed: 0.36, task: 'gun_attack' },
+    fox: {
+      name: '新春纸板狐',
+      model: 'geckolib:zhiban_new_year',
+      hp: 640,
+      atk: 32,
+      speed: 0.38,
+      task: 'gun_attack'
+    },
+    magic: {
+      name: '魔法女仆',
+      model: 'geckolib:winefox_magical',
+      hp: 1024,
+      atk: 160,
+      speed: 0.56,
+      task: 'attack'
+    }
   }
-
-  function spawnOne(s, p, role) {
-    const u = p.username
-    const at = 'execute at ' + u + ' positioned ~' + role.dx + ' ~ ~' + role.dz + ' run '
-    run(s, at + 'summon ' + MAID + ' ~ ~ ~ {CustomName:\'{"text":"' + role.name + '","color":"light_purple"}\',' +
-      'PersistenceRequired:1b,NoAI:0b,Invulnerable:0b,Silent:0b,Health:1000.0f,' +
-      'MaidFavorability:1000,Favorability:1000,ModelId:"' + MODEL + '",Tags:["' + role.tag + '","' + role.roleTag + '"]}')
-
-    const sel = '@e[type=' + MAID + ',tag=' + role.tag + ',sort=nearest,limit=1,distance=..4]'
-    run(s, at + 'data modify entity ' + sel + ' Owner set from entity ' + u + ' UUID')
-    run(s, at + 'data merge entity ' + sel + ' {MaidFavorability:1000,Favorability:1000,Health:1000.0f,' +
-      'NoAI:0b,Invulnerable:0b,Silent:0b,' + BAUBLES + '}')
-
-    run(s, at + 'attribute ' + sel + ' minecraft:generic.max_health base set 1000')
-    run(s, at + 'attribute ' + sel + ' minecraft:generic.armor base set 30')
-    run(s, at + 'attribute ' + sel + ' minecraft:generic.armor_toughness base set 20')
-    run(s, at + 'attribute ' + sel + ' minecraft:generic.knockback_resistance base set 1')
-    run(s, at + 'attribute ' + sel + ' minecraft:generic.attack_damage base set 80')
-    run(s, at + 'attribute ' + sel + ' minecraft:generic.movement_speed base set 0.45')
-
-    EFFECTS.forEach(id => run(s, at + 'effect give ' + sel + ' ' + id + ' infinite 5 true'))
-
-    run(s, 'execute at ' + u + ' run item replace entity ' + sel + ' weapon.mainhand with ' + role.main)
-    if (role.off) run(s, 'execute at ' + u + ' run item replace entity ' + sel + ' weapon.offhand with ' + role.off)
-    ;['head:helmet', 'chest:chestplate', 'legs:leggings', 'feet:boots'].forEach(pair => {
-      const [slot, piece] = pair.split(':')
-      run(s, 'execute at ' + u + ' run item replace entity ' + sel + ' armor.' + slot +
-        ' with minecraft:netherite_' + piece + '{Enchantments:[{id:"minecraft:protection",lvl:4},{id:"minecraft:unbreaking",lvl:3}]}')
+  var maidId = 'touhou_little_maid:maid'
+  function roster(p) {
+    var data = p.server.persistentData
+    var key = 'mkRoster_' + p.uuid
+    if (!data.contains(key)) data.put(key, NBT.compoundTag())
+    return data.getCompound(key)
+  }
+  function roleOf(e) {
+    return e ? String(e.persistentData.getString('mkRole')) : ''
+  }
+  function ownerOf(e) {
+    return e && String(e.type) === maidId ? String(e.getOwnerUUID()) : ''
+  }
+  function lookup(level, id) {
+    return id ? level.getEntity(UUID.fromString(String(id))) : null
+  }
+  function get(p, role) {
+    var e = lookup(p.level, roster(p).getString(role))
+    return e && e.isAlive() && ownerOf(e) === String(p.uuid) && roleOf(e) === role ? e : null
+  }
+  function maxBond(m) {
+    m.setFavorability(384)
+    var stats = Stats.get(m)
+    stats.applyPreset(100, 100, 0, 100, 100, 0)
+    stats.favorability = m.getFavorability()
+    Stats.save(m, stats)
+  }
+  function attachment(id) {
+    var item = NBT.compoundTag()
+    item.putString('id', 'tacz:attachment')
+    item.putByte('Count', 1)
+    var tag = NBT.compoundTag()
+    tag.putString('AttachmentId', 'lradd:' + id)
+    item.put('tag', tag)
+    return item
+  }
+  function rifle() {
+    var tag = NBT.compoundTag()
+    tag.putString('GunId', 'lradd:qbz191_em')
+    tag.putString('GunFireMode', 'AUTO')
+    tag.putInt('GunCurrentAmmoCount', 30)
+    tag.putBoolean('HasBulletInBarrel', true)
+    tag.put('AttachmentMUZZLE', attachment('muzzle_s_c784'))
+    tag.put('AttachmentSCOPE', attachment('scope_re'))
+    tag.put('AttachmentGRIP', attachment('grip_cqr_g2'))
+    return Item.of('tacz:modern_kinetic_gun', tag)
+  }
+  function equip(m, key) {
+    if (key === 'star' || key === 'fox') {
+      m.setItemSlot(Slots.MAINHAND, rifle())
+      m.getAvailableInv(false).insertItem(0, Item.of('tacz:ammo', 64, { AmmoId: 'tacz:58x42' }), false)
+    } else if (key === 'saint') {
+      m.setItemSlot(Slots.MAINHAND, Item.of('touhou_little_maid_spell:star_shadow_staff'))
+    } else {
+      m.setItemSlot(
+        Slots.MAINHAND,
+        Item.of('epicfight:netherite_tachi', {
+          Unbreakable: true,
+          display: { Name: '{"text":"神器太刀·断潮","color":"gold","italic":false}' },
+          Enchantments: [{ id: 'minecraft:sharpness', lvl: 5 }]
+        })
+      )
+    }
+  }
+  function safeSpot(e, near, radius, offset) {
+    var level = near.level
+    var dxz = [
+      [1, 1],
+      [-1, 1],
+      [1, -1],
+      [-1, -1],
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+      [0, 0]
+    ]
+    for (var r = radius; r >= 1; r--) {
+      for (var j = 0; j < dxz.length; j++) {
+        var dir = dxz[(j + (offset || 0)) % dxz.length]
+        var x = Math.floor(near.x) + dir[0] * r + 0.5,
+          z = Math.floor(near.z) + dir[1] * r + 0.5
+        for (var h = 0; h < 5; h++) {
+          var y = Math.floor(near.y) + [0, 1, -1, 2, -2][h],
+            block = Pos.containing(x, y - 1, z)
+          var box = e.boundingBox.move(x - e.x, y - e.y, z - e.z)
+          if (
+            level.getBlockState(block).isFaceSturdy(level, block, Dir.UP) &&
+            level.noCollision(e, box) &&
+            !level.containsAnyLiquid(box) &&
+            level.getWorldBorder().isWithinBounds(x, z)
+          )
+            return [x, y, z]
+        }
+      }
+    }
+    return null
+  }
+  function setup(m, key, fresh) {
+    var r = roles[key],
+      d = m.persistentData
+    m.setCustomName(Text.of(r.name))
+    m.setModelId(r.model)
+    m.setPersistenceRequired()
+    m.addTag('mk_' + key)
+    m.addTag('mk_role_' + key)
+    d.putString('mkRole', key)
+    m.getAttribute(A.MAX_HEALTH).setBaseValue(r.hp)
+    m.getAttribute(A.ATTACK_DAMAGE).setBaseValue(r.atk)
+    m.getAttribute(A.MOVEMENT_SPEED).setBaseValue(r.speed)
+    m.getAttribute(A.ARMOR).setBaseValue(24)
+    m.getAttribute(A.ARMOR_TOUGHNESS).setBaseValue(12)
+    m.getAttribute(A.KNOCKBACK_RESISTANCE).setBaseValue(0.85)
+    m.setTask(Tasks.findTask('touhou_little_maid:' + r.task).orElseThrow())
+    d.putInt('mkEnergy', key === 'saint' ? 120 : key === 'star' ? 240 : 0)
+    if (fresh) {
+      equip(m, key)
+      ;['HEAD', 'CHEST', 'LEGS', 'FEET'].forEach((slot, i) =>
+        m.setItemSlot(
+          Slots[slot],
+          Item.of('minecraft:netherite_' + ['helmet', 'chestplate', 'leggings', 'boots'][i])
+        )
+      )
+    } else {
+      // Preserve player loadouts. Apply the new preset only to unmodified starter items.
+      var hand = m.getMainHandItem(),
+        nbt = hand.nbt
+      var basicSword =
+        String(hand.id) === 'minecraft:netherite_sword' &&
+        (!nbt || (nbt.size() === 1 && nbt.contains('Damage') && hand.damageValue === 0))
+      var gun =
+        String(hand.id) === 'tacz:modern_kinetic_gun' &&
+        nbt &&
+        String(nbt.getString('GunId')) === 'lradd:qbz191_em'
+      var stockGun = false
+      if (gun) {
+        var extras = nbt.copy()
+        ;['GunId', 'GunCurrentAmmoCount', 'HasBulletInBarrel', 'GunFireMode'].forEach(k => extras.remove(k))
+        stockGun = extras.isEmpty()
+      }
+      if (
+        hand.isEmpty() ||
+        ((key === 'saint' || key === 'magic') && basicSword) ||
+        ((key === 'star' || key === 'fox') && stockGun)
+      )
+        equip(m, key)
+        // Only strip the permanent blanket effects granted by the old /mkarmy.
+      ;['regeneration', 'resistance', 'absorption', 'health_boost', 'strength', 'speed'].forEach(id => {
+        var effect = m.getEffect('minecraft:' + id)
+        if (effect && effect.isInfiniteDuration() && effect.getAmplifier() === 5)
+          m.removeEffect('minecraft:' + id)
+      })
+    }
+    maxBond(m)
+    m.setHealth(m.getMaxHealth())
+  }
+  function ensure(p) {
+    var record = roster(p)
+    var made = 0
+    Object.keys(roles).forEach(key => {
+      if (record.contains(key)) return
+      // Adopt the previous script's owned and tagged maid, including other loaded dimensions.
+      var old = null
+      p.server.getAllLevels().forEach(level => {
+        if (old) return
+        for (var e of level.getAllEntities()) {
+          if (
+            String(e.type) === maidId &&
+            e.tags.contains('mk_role_' + key) &&
+            ownerOf(e) === String(p.uuid) &&
+            e.isAlive()
+          ) {
+            old = e
+            break
+          }
+        }
+      })
+      var m = old || p.level.createEntity(maidId)
+      if (!old) {
+        var spot = safeSpot(m, p, 2, Object.keys(roles).indexOf(key))
+        if (!spot) {
+          p.tell('§e周围没有可站立的空地。到平地使用 /mkarmy 补齐空位。')
+          return
+        }
+        m.setPos(spot[0], spot[1], spot[2])
+        m.tame(p)
+      }
+      setup(m, key, !old)
+      if (!old && !p.level.addFreshEntity(m)) return
+      // Spawn listeners can apply native personality defaults. Set bond after insertion as well.
+      maxBond(m)
+      record.putString(key, String(m.uuid))
+      made++
+    })
+    if (made) p.tell('§b已签约 ' + made + ' 名队员。用 /mkcheck 检查装备与羁绊，/mkstatus 查看任务。')
+    return Object.keys(roles).every(key => record.contains(key))
+  }
+  function inspect(p) {
+    if (Object.keys(roles).every(key => get(p, key))) global.mkQuestMark(p, 'rollcall')
+    Object.keys(roles).forEach(key => {
+      var m = get(p, key)
+      if (!m) {
+        p.tell(roles[key].name + ' · ' + (roster(p).contains(key) ? '离队、倒下或区块未加载' : '尚未签约'))
+        return
+      }
+      var s = Stats.get(m)
+      p.tell(
+        roles[key].name +
+          ' · ' +
+          Math.ceil(m.health) +
+          '/' +
+          Math.ceil(m.maxHealth) +
+          ' HP · ' +
+          m.getMainHandItem().getHoverName().getString() +
+          ' · 好感 ' +
+          m.getFavorability() +
+          ' · 忠诚/情绪/亲近/执念 ' +
+          [s.loyalty, s.mood, s.closeness, s.obsession].join('/')
+      )
     })
   }
-
-  event.register(Commands.literal('mkarmy').executes(ctx => {
-    const p = ctx.source.playerOrException
-    const s = p.level.server
-    ROLES.forEach(r => {
-      run(s, 'execute at ' + p.username + ' run kill @e[type=' + MAID + ',tag=' + r.tag + ',distance=..24]')
-      run(s, 'execute at ' + p.username + ' run kill ' + nameSel(r, 24))
-    })
-    ROLES.forEach(r => spawnOne(s, p, r))
-    run(s, 'give ' + p.username + ' tacz:ammo{AmmoId:"tacz:58x42"} 128')
-    p.tell(Text.gold('四只女仆已就位：圣女 / 斯塔·柏 / 新春纸板狐 / 魔法女仆'))
-    p.tell(Text.gray('饰品 30 格、效果 29 个、下界合金甲、主副手武器都穿好了。子弹在包里。'))
-    p.tell(Text.gray('再敲 /mkcheck，会把每只女仆的饰品/武器数据直接打在聊天栏。'))
-    return 1
-  }))
-
-  // /mkcheck：先按名字补标签，再用可见命令把数据打到玩家聊天栏
-  event.register(Commands.literal('mkcheck').executes(ctx => {
-    const p = ctx.source.playerOrException
-    const s = p.level.server
-    const u = p.username
-    ROLES.forEach(r => {
-      run(s, 'execute as ' + u + ' run tag ' + nameSel(r, 64) + ' add ' + r.tag)
-      run(s, 'execute as ' + u + ' run data get entity @e[type=' + MAID + ',tag=' + r.tag + ',limit=1,distance=..64] MaidBaubleInventory.Items')
-      run(s, 'execute as ' + u + ' run data get entity @e[type=' + MAID + ',tag=' + r.tag + ',limit=1,distance=..64] HandItems')
-      run(s, 'execute as ' + u + ' run data get entity @e[type=' + MAID + ',tag=' + r.tag + ',limit=1,distance=..64] Attributes')
-      run(s, 'execute as ' + u + ' run data get entity @e[type=' + MAID + ',tag=' + r.tag + ',limit=1,distance=..64] Owner')
-    })
-    return 1
-  }))
-})
+  global.mkSquad = {
+    roles: roles,
+    roster: roster,
+    roleOf: roleOf,
+    ownerOf: ownerOf,
+    get: get,
+    lookup: lookup,
+    safeSpot: safeSpot,
+    ensure: ensure,
+    maxBond: maxBond,
+    rifle: rifle,
+    inspect: inspect
+  }
+  ServerEvents.commandRegistry(e => {
+    e.register(e.commands.literal('mkarmy').executes(c => (ensure(c.source.playerOrException) ? 1 : 0)))
+    e.register(
+      e.commands.literal('mkcheck').executes(c => {
+        inspect(c.source.playerOrException)
+        return 1
+      })
+    )
+  })
+})()

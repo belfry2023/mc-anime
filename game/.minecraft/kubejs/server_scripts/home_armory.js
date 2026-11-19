@@ -60,8 +60,8 @@ global.mkHomeArmory = function (env) {
   }
 
   // 展台之间的两尊盔甲架（剑 / 斧）
-  env.run('summon minecraft:armor_stand ' + (px) + ' ' + (py - 7) + ' ' + (pz - 2) + ' {NoGravity:1b,ShowArms:1b,Invulnerable:1b,NoBasePlate:1b,HandItems:[{id:"minecraft:netherite_sword",Count:1b},{}]}')
-  env.run('summon minecraft:armor_stand ' + (px) + ' ' + (py - 7) + ' ' + (pz + 2) + ' {NoGravity:1b,ShowArms:1b,Invulnerable:1b,NoBasePlate:1b,HandItems:[{id:"minecraft:netherite_axe",Count:1b},{}]}')
+  env.run('execute unless entity @e[type=minecraft:armor_stand,tag=mk_home_display,x=' + px + ',y=' + floorY + ',z=' + (pz - 2) + ',distance=..0.9] run summon minecraft:armor_stand ' + (px) + ' ' + (py - 7) + ' ' + (pz - 2) + ' {Tags:["mk_home_display"],NoGravity:1b,ShowArms:1b,Invulnerable:1b,NoBasePlate:1b,HandItems:[{id:"minecraft:netherite_sword",Count:1b},{}]}')
+  env.run('execute unless entity @e[type=minecraft:armor_stand,tag=mk_home_display,x=' + px + ',y=' + floorY + ',z=' + (pz + 2) + ',distance=..0.9] run summon minecraft:armor_stand ' + (px) + ' ' + (py - 7) + ' ' + (pz + 2) + ' {Tags:["mk_home_display"],NoGravity:1b,ShowArms:1b,Invulnerable:1b,NoBasePlate:1b,HandItems:[{id:"minecraft:netherite_axe",Count:1b},{}]}')
 
   // ---------- 六、仓管室（东间 x=px+4..px+9） ----------
   // 东墙 x=px+9 一排桶（避让 z=pz+4 的梯子井）
