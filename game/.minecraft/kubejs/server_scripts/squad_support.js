@@ -1,7 +1,10 @@
 // priority: 35
 ;(function () {
   var s = global.mkSquad,
-    j = global.mkJutsu
+    j = global.mkJutsu,
+    fx = global.mkFX,
+    blade = global.mkBlade
+  var Component = Java.loadClass('net.minecraft.network.chat.Component')
   var A = Java.loadClass('net.minecraft.world.entity.ai.attributes.Attributes'),
     T = j.damageTags
   var Types = Java.loadClass('net.minecraft.world.damagesource.DamageTypes')
@@ -11,7 +14,7 @@
   var Serial = Java.loadClass('net.minecraft.network.syncher.EntityDataSerializers')
   var flags = Serial.BYTE.createAccessor(0)
   var Tame = Java.loadClass('net.minecraft.world.entity.TamableAnimal')
-  var clock = e => j.time(e)
+  var clock = (e) => j.time(e)
   function ally(p, e) {
     if (!e) return false
     if (e.is(p) || p.isOnSameTeam(e)) return true
@@ -33,40 +36,42 @@
   global.mkSeenByPlayer = previous
   function survey(server) {
     var seen = {}
-    server.players.forEach(owner => {
+    server.players.forEach((owner) => {
       var fox = s.get(owner, 'fox')
       if (!j.active(fox)) return
       var look = fox.getLookAngle()
       var contacts = j
         .area(fox, fox.x, fox.y, fox.z, 36)
-        .filter(e => fox.hasLineOfSight(e) && (e.x - fox.x) * look.x() + (e.z - fox.z) * look.z() >= -0.1)
+        .filter((e) => fox.hasLineOfSight(e) && (e.x - fox.x) * look.x() + (e.z - fox.z) * look.z() >= -0.1)
       if (!contacts.length) return
       global.mkQuestMark(owner, 'sight')
       var targets = contacts.slice().sort((a, b) => fox.distanceToEntitySqr(a) - fox.distanceToEntitySqr(b))
       var locked = s.lookup(fox.level, fox.persistentData.getString('mkLock'))
-      if (!locked || !j.hostile(fox, locked) || fox.distanceToEntity(locked) > 40)
+      if (!locked || !j.hostile(fox, locked) || fox.distanceToEntity(locked) > 40) {
         fox.persistentData.putString('mkLock', String(targets[0].uuid))
-      server.players.forEach(p => {
+        fx.play(fox, 'sight', fx.center(targets[0]), owner, 40)
+      }
+      server.players.forEach((p) => {
         if (!p.level.equals(fox.level) || !ally(owner, p)) return
         var key = String(p.uuid)
         if (!seen[key]) seen[key] = {}
-        contacts.forEach(e => {
+        contacts.forEach((e) => {
           seen[key][String(e.uuid)] = true
           outline(p, e, true)
         })
       })
       // Owned companions and scoreboard allies can acquire a contact from the fox.
-      fox.level.getEntitiesWithin(fox.boundingBox.inflate(64)).forEach(m => {
+      fox.level.getEntitiesWithin(fox.boundingBox.inflate(64)).forEach((m) => {
         if (!(m instanceof j.mob) || !ally(owner, m) || m.getTarget() || !m.isAlive()) return
         if (m instanceof Tame && m.isOrderedToSit()) return
         m.setTarget(targets[0])
       })
     })
-    server.players.forEach(p => {
+    server.players.forEach((p) => {
       var k = String(p.uuid),
         old = previous[k] || {},
         next = seen[k] || {}
-      Object.keys(old).forEach(id => {
+      Object.keys(old).forEach((id) => {
         if (!next[id]) {
           var e = s.lookup(p.level, id)
           if (e) outline(p, e, false)
@@ -76,7 +81,7 @@
     })
   }
   function echo(e, attacker, amount) {
-    attacker.server.players.forEach(owner => {
+    attacker.server.players.forEach((owner) => {
       var fox = s.get(owner, 'fox')
       if (
         !j.active(fox) ||
@@ -88,7 +93,7 @@
         return
       var lock = s.lookup(fox.level, fox.persistentData.getString('mkLock'))
       if (!lock || !j.hostile(fox, lock) || fox.distanceToEntity(lock) > 40) return
-      j.fx(fox, 'ELECTRIC_SPARK', lock.x, lock.y + 1, lock.z, 6, 0.25)
+      fx.play(fox, 'echo', fx.center(lock), null, 6)
       j.hit(fox, lock, amount * 0.1, 'echo')
     })
   }
@@ -148,7 +153,8 @@
     e.setPos(spot[0], spot[1], spot[2])
     e.setPlayerCreated(true)
     e.setPersistenceRequired()
-    e.setCustomName(Text.of(kind === 'wheel' ? '魔虚罗' : '融合怪·颚吐'))
+    e.setCustomName(Component.translatable('mk.spirit.' + kind))
+    e.persistentData.putBoolean('mkSpiritSkin', true)
     e.setCustomNameVisible(true)
     e.addTag('mk_shikigami')
     e.persistentData.putString('mkSpirit', kind)
@@ -157,7 +163,10 @@
     e.getAttribute(A.MAX_HEALTH).setBaseValue(kind === 'wheel' ? 720 : 480)
     e.getAttribute(A.ATTACK_DAMAGE).setBaseValue(kind === 'wheel' ? 86 : 36)
     e.setHealth(e.maxHealth)
-    if (saint.level.addFreshEntity(e)) d.putString(key, String(e.uuid))
+    if (saint.level.addFreshEntity(e)) {
+      d.putString(key, String(e.uuid))
+      fx.play(saint, kind, fx.center(e), saint.getOwner())
+    }
   }
   // A summoned golem has its own chunk and dimension. Recover that same UUID after the party moves.
   function findSpirit(saint, kind) {
@@ -204,18 +213,27 @@
   function spirits(saint, target) {
     var d = saint.persistentData,
       now = clock(saint)
-    ;['wheel', 'fusion'].forEach(kind => {
+    ;['wheel', 'fusion'].forEach((kind) => {
       if (target && !j.locked(saint)) summon(saint, kind)
       var spirit = findSpirit(saint, kind)
       if (!spirit || !spirit.isAlive()) return
+      if (!spirit.persistentData.getBoolean('mkSpiritSkin')) {
+        spirit.setCustomName(Component.translatable('mk.spirit.' + kind))
+        spirit.persistentData.putBoolean('mkSpiritSkin', true)
+      }
       if (spirit.distanceToEntity(saint) > 18) {
         var spot = s.safeSpot(spirit, saint, 3)
         if (spot) spirit.teleportTo(spot[0], spot[1], spot[2])
       }
       if (target) spirit.setTarget(target)
-      if (kind === 'wheel') spirit.heal(120)
-      else {
-        j.area(saint, spirit.x, spirit.y, spirit.z, 14).forEach(e => {
+      if (kind === 'wheel') {
+        if (spirit.health < spirit.maxHealth) fx.play(spirit, 'adapt', null, null, 40)
+        spirit.heal(120)
+      } else {
+        var enemies = j.area(saint, spirit.x, spirit.y, spirit.z, 14)
+        if (enemies.length || saint.health < saint.maxHealth || d.getInt('mkEnergy') < j.capacity(saint))
+          fx.play(spirit, 'support', fx.center(saint), null, 40)
+        enemies.forEach((e) => {
           if (e instanceof j.mob) e.setTarget(spirit)
         })
         saint.heal(36)
@@ -229,7 +247,9 @@
     var e = ev.entity
     if (e.persistentData.contains('mkStillEnd')) j.stasis(ev)
     var role = s.roleOf(e)
-    if (!role || !s.roles[role] || !j.active(e)) return
+    if (!role || !s.roles[role] || !e.isAlive()) return
+    if (role === 'magic') blade.train(e, clock(e))
+    if (!j.active(e)) return
     var now = clock(e),
       d = e.persistentData
     if (role === 'star' || role === 'saint') j.advance(e)
@@ -249,7 +269,9 @@
         return
       }
       if (d.getLong('mkSwing') <= now) {
-        d.putLong('mkSwing', now + (d.getLong('mkHaste') > now ? 4 : 8))
+        d.putLong('mkSwing', now + (d.getLong('mkHaste') > now ? 2 : 4))
+        d.putLong('mkSupplementAt', now)
+        d.putString('mkSupplementTarget', String(target.uuid))
         e.swing('main_hand')
         j.hit(e, target, e.getAttributeValue(A.ATTACK_DAMAGE), 'blade')
       }
@@ -285,31 +307,46 @@
       ev.setCanceled(true)
       return
     }
-    if (from && s.roleOf(from) === 'magic' && (src.is(Types.MOB_ATTACK) || isRanged(src, id, e))) {
-      ev.setCanceled(true)
-      return
+    if (from && s.roleOf(from) === 'magic') {
+      var scripted = id === 'mk:blade' || id === 'mk:counter',
+        actor = from.persistentData
+      var duplicate =
+        !scripted &&
+        actor.getLong('mkSupplementAt') === clock(from) &&
+        String(actor.getString('mkSupplementTarget')) === String(e.uuid)
+      if (duplicate || !j.hostile(from, e) || from.distanceToEntity(e) > 4 || isRanged(src, id, e)) {
+        ev.setCanceled(true)
+        return
+      }
     }
     if (src.is(Types.GENERIC_KILL) || src.is(Types.FELL_OUT_OF_WORLD)) return
     if (role === 'star' && !j.burnedOut(e) && physical(src, id)) {
+      fx.play(e, 'infinity', null, e.getOwner(), 20)
       ev.setCanceled(true)
       return
     }
     if (role !== 'magic') return
     if (magic(src, id) || isRanged(src, id, e)) {
+      fx.play(e, 'ward', null, e.getOwner(), 20)
       ev.setCanceled(true)
       return
     }
     if (!from || !j.hostile(e, from) || id === 'mk:counter') return
-    var dodge = Math.random() < 0.9,
+    var dodge = Math.random() < 0.99,
       block = Math.random() < 0.9
-    if (dodge) e.persistentData.putLong('mkHaste', clock(e) + 60)
     if (dodge || block) ev.setCanceled(true)
-    if (block && e.distanceToEntity(from) <= 4)
+    if (dodge) blade.window(e, 'dodge')
+    if (block && e.distanceToEntity(from) <= 4) {
+      blade.window(e, 'counter')
       j.hit(e, from, 1.5 * e.getAttributeValue(A.ATTACK_DAMAGE), 'counter')
+    }
   }
   function hurt(ev) {
     var e = ev.entity,
       d = e.persistentData
+    var src = ev.source,
+      attacker = src.getActual()
+    if (attacker && s.roleOf(attacker) === 'magic') blade.damage(ev, attacker, damageId(src))
     if (String(d.getString('mkSpirit')) === 'wheel' && ev.amount >= 320) {
       d.putLong('mkBroken', clock(e) + 20)
       ev.setAmount(Math.max(ev.amount, e.maxHealth * 4))
@@ -350,6 +387,7 @@
         d.putLong('mkBurnEnd', boundary + Math.ceil((d.getLong('mkBurnEnd') - boundary) / 2))
       var base = e.getAttribute(A.ATTACK_DAMAGE)
       base.setBaseValue(s.roles.saint.atk * 2)
+      fx.play(e, 'phase', null, e.getOwner())
       if (e.getOwner()) e.getOwner().tell('§c圣女折断了第二枚封印。二阶段已开启。')
       return
     }
@@ -383,10 +421,10 @@
     death: death,
     target: change
   }
-  ServerEvents.tick(ev => {
+  ServerEvents.tick((ev) => {
     if (ev.server.tickCount % 10 === 0) survey(ev.server)
   })
-  PlayerEvents.loggedOut(ev => {
+  PlayerEvents.loggedOut((ev) => {
     delete previous[String(ev.player.uuid)]
   })
 })()

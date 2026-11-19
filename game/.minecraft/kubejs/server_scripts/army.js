@@ -23,8 +23,8 @@
       name: '魔法女仆',
       model: 'geckolib:winefox_magical',
       hp: 1024,
-      atk: 160,
-      speed: 0.56,
+      atk: 320,
+      speed: 0.68,
       task: 'attack'
     }
   }

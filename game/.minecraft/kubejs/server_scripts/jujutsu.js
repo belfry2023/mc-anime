@@ -15,11 +15,12 @@
   var Box = Java.loadClass('net.minecraft.world.phys.AABB')
   var BOSS = Tag.create(Reg.ENTITY_TYPE, 'mk:bosses')
   var keys = {}
-  ;['ranged', 'cleave', 'blade', 'counter', 'echo', 'domain'].forEach(id => {
+  ;['ranged', 'cleave', 'blade', 'counter', 'echo', 'domain'].forEach((id) => {
     keys[id] = Key.create(Reg.DAMAGE_TYPE, 'mk:' + id)
   })
+  var effects = global.mkFX
   var costs = { dismantle: 6, cleave: 14, blue: 35, red: 45, purple: 80, blink: 12 }
-  var capacity = m => (team.roleOf(m) === 'star' ? 240 : phase(m) ? 240 : 120)
+  var capacity = (m) => (team.roleOf(m) === 'star' ? 240 : phase(m) ? 240 : 120)
   function phase(m) {
     return m.persistentData.getBoolean('mkPhase2')
   }
@@ -52,12 +53,14 @@
       e.tags.contains('mk_boss') ||
       e.tags.contains('mk_lair') ||
       e.tags.contains('mk_raid') ||
-      (e instanceof Mob && e.getTarget() != null && (e.getTarget().is(m) || (owner && e.getTarget().is(owner))))
+      (e instanceof Mob &&
+        e.getTarget() != null &&
+        (e.getTarget().is(m) || (owner && e.getTarget().is(owner))))
     )
   }
   function area(m, x, y, z, r) {
     var found = []
-    m.level.getEntitiesWithin(new Box(x - r, y - r, z - r, x + r, y + r, z + r)).forEach(e => {
+    m.level.getEntitiesWithin(new Box(x - r, y - r, z - r, x + r, y + r, z + r)).forEach((e) => {
       if (hostile(m, e) && e.getDistanceSq(x, y, z) <= r * r) found.push(e)
     })
     return found
@@ -65,7 +68,7 @@
   function nearest(m, r, see) {
     var target = null,
       best = r * r + 1
-    area(m, m.x, m.y, m.z, r).forEach(e => {
+    area(m, m.x, m.y, m.z, r).forEach((e) => {
       var d = m.distanceToEntitySqr(e)
       if (d < best && (!see || m.hasLineOfSight(e))) {
         target = e
@@ -79,7 +82,7 @@
       start = p.getEyePosition()
     var picked = null,
       first = 65
-    area(m, m.x, m.y, m.z, 48).forEach(e => {
+    area(m, m.x, m.y, m.z, 48).forEach((e) => {
       var end = start.add(view.scale(64)),
         hit = e.boundingBox.inflate(0.65).clip(start, end)
       if (hit.isPresent()) {
@@ -184,6 +187,7 @@
       )
         m.level.destroyBlock(pos, false, m)
     }
+    effects.play(m, 'dismantle', b, m.getOwner())
     if (target) hit(m, target, scaled(m, 52), 'ranged')
   }
   function startOrb(m, kind, target) {
@@ -191,9 +195,10 @@
       t = point(target),
       a = [m.x, m.eyeY, m.z],
       u = direction(a, t)
+    effects.play(m, kind, kind === 'purple' ? a : t, m.getOwner())
     if (kind === 'red') {
       fx(m, 'FLAME', t[0], t[1], t[2], 32, 1.5)
-      area(m, t[0], t[1], t[2], 9).forEach(e => {
+      area(m, t[0], t[1], t[2], 9).forEach((e) => {
         var v = e.is(target) ? u : direction(t, point(e))
         e.addMotion(v[0] * 2.2, 0.7 + Math.max(0, v[1]), v[2] * 2.2)
         hit(m, e, 120, 'ranged')
@@ -211,7 +216,7 @@
   }
   function updateOrbs(m) {
     var d = m.persistentData
-    ;['blue', 'purple'].forEach(kind => {
+    ;['blue', 'purple'].forEach((kind) => {
       var name = 'mkOrb_' + kind
       if (!d.contains(name)) return
       var job = d.getCompound(name),
@@ -221,8 +226,9 @@
         z = job.getDouble('Z')
       if (kind === 'blue') {
         if (age % 4 === 0) {
+          effects.ring(m.level, 'SOUL_FIRE_FLAME', [x, y, z], 2.4 - age / 15, 9, age / 3)
           fx(m, 'SOUL_FIRE_FLAME', x, y, z, 18, 0.6)
-          area(m, x, y, z, 9).forEach(e => {
+          area(m, x, y, z, 9).forEach((e) => {
             var v = direction(point(e), [x, y, z])
             e.setMotion(v[0] * 0.8, v[1] * 0.8, v[2] * 0.8)
             hit(m, e, 16, 'ranged')
@@ -239,9 +245,10 @@
           fx(m, 'DRAGON_BREATH', x, y, z, 4, 0.4)
           m.level
             .getEntitiesWithin(new Box(x - 1.3, y - 1.3, z - 1.3, x + 1.3, y + 1.3, z + 1.3))
-            .forEach(e => {
+            .forEach((e) => {
               if (!hostile(m, e) || job.contains(String(e.uuid))) return
               job.putBoolean(String(e.uuid), true)
+              effects.dot(m.level, 'FLASH', point(e), 1, 0)
               hit(m, e, 260, 'ranged')
               if (e.isAlive()) freeze(e, 1200)
             })
@@ -258,6 +265,8 @@
     var d = m.persistentData,
       saint = team.roleOf(m) === 'saint',
       radius = saint ? 18 : 24
+    if (d.contains('mkLastDomainPulse') && d.getLong('mkLastDomainPulse') === time(m)) return
+    d.putLong('mkLastDomainPulse', time(m))
     var x = d.getDouble('mkDomainX'),
       y = d.getDouble('mkDomainY'),
       z = d.getDouble('mkDomainZ')
@@ -277,7 +286,7 @@
         )
       }
     }
-    area(m, x, y, z, radius).forEach(e => {
+    area(m, x, y, z, radius).forEach((e) => {
       if (!boss(e)) {
         e.kill()
         return
@@ -285,13 +294,21 @@
       if (saint) {
         if (elapsed % 20 === 0) hit(m, e, scaled(m, 88), 'cleave')
       } else {
-        var key = 'mkVoid_' + m.uuid
-        if (e.persistentData.getLong(key) === stamp && e.persistentData.contains(key)) return
-        e.persistentData.putLong(key, stamp)
-        freeze(e, 3600)
-        hit(m, e, Math.min(480, 0.65 * e.maxHealth), 'domain')
+        voidHit(m, e, d.getLong('mkDomainEnd'))
       }
     })
+  }
+  function voidHit(m, e, stamp) {
+    if (!e.isAlive()) return
+    if (!boss(e)) {
+      e.kill()
+      return
+    }
+    var key = 'mkVoid_' + m.uuid
+    if (e.persistentData.contains(key) && e.persistentData.getLong(key) === stamp) return
+    e.persistentData.putLong(key, stamp)
+    freeze(e, 3600)
+    hit(m, e, Math.min(480, 0.65 * e.maxHealth), 'domain')
   }
   function domain(m) {
     var role = team.roleOf(m),
@@ -299,7 +316,12 @@
       now = time(m)
     if (!active(m) || (role !== 'saint' && role !== 'star') || locked(m)) return false
     var saint = role === 'saint',
-      duration = saint ? 100 : 40
+      duration = saint ? 160 : 240
+    if (
+      String(m.level.dimension) === global.mkScenes.realm ||
+      (!saint && !m.server.getLevel(global.mkScenes.realm))
+    )
+      return false
     if (!spend(m, saint ? 55 : 180)) return false
     d.putLong('mkDomainStart', now)
     d.putLong('mkDomainEnd', now + duration)
@@ -307,13 +329,22 @@
     d.putDouble('mkDomainX', m.x)
     d.putDouble('mkDomainY', m.y)
     d.putDouble('mkDomainZ', m.z)
-    ;['mkPending', 'mkCleave', 'mkOrb_blue', 'mkOrb_purple'].forEach(k => d.remove(k))
-    var p = m.getOwner()
+    ;['mkPending', 'mkCleave', 'mkOrb_blue', 'mkOrb_purple'].forEach((k) => d.remove(k))
+    var p = m.getOwner(),
+      spell = saint ? 'shrine' : 'void'
+    effects.play(m, spell, null, p)
+    if (!global.mkScenes.begin(m, saint, now + duration)) {
+      d.putLong('mkDomainEnd', now)
+      d.putLong('mkBurnEnd', now)
+      d.putInt('mkEnergy', Math.min(capacity(m), d.getInt('mkEnergy') + (saint ? 55 : 180)))
+      if (p) p.tell('§e领域场地未能展开，咒力已退还。')
+      return false
+    }
+    if (saint) domainPulse(m)
     if (p) {
-      p.tell(saint ? '§c圣女「领域展开，伏魔御厨子。」' : '§b斯塔·柏「领域展开，无量空处。」')
+      p.tell(saint ? '§c伏魔御厨子 · 开放领域 8 秒，神龛已显现。' : '§b无量空处 · 封闭领域 12 秒。')
       global.mkQuestMark(p, 'domain')
     }
-    domainPulse(m)
     return true
   }
   function unbind(m) {
@@ -328,6 +359,7 @@
     if (d.getInt('mkResets') >= 3) return false
     d.putInt('mkResets', d.getInt('mkResets') + 1)
     d.putLong('mkBurnEnd', time(m))
+    effects.play(m, 'unbind', null, m.getOwner())
     return true
   }
   function cast(m, action, target, end) {
@@ -351,7 +383,11 @@
     if (d.contains('mkPending')) {
       if (now > d.getLong('mkRelease')) return false
       var pre = String(d.getString('mkPending'))
-      if ((pre === 'blue' && action === 'red') || (pre === 'red' && action === 'blue') || action === 'purple') {
+      if (
+        (pre === 'blue' && action === 'red') ||
+        (pre === 'red' && action === 'blue') ||
+        action === 'purple'
+      ) {
         if (!spend(m, costs.purple)) return false
         d.remove('mkPending')
         startOrb(m, 'purple', target)
@@ -362,6 +398,8 @@
     }
     if (now < d.getLong('mkNext') || d.getInt('mkEnergy') < costs[action]) return false
     if (action === 'blue' || action === 'red') {
+      effects.notice(m.getOwner(), '§b蓄势 · ' + effects.label(action))
+      effects.dot(m.level, action === 'blue' ? 'SOUL_FIRE_FLAME' : 'FLAME', point(m), 12, 0.4)
       d.putString('mkPending', action)
       d.putString('mkOrbTarget', String(target.uuid))
       d.putLong('mkRelease', now + 4)
@@ -370,12 +408,14 @@
     if (action === 'blink') {
       var spot = team.safeSpot(m, target, 4)
       if (!spot) return false
+      effects.play(m, 'blink', null, m.getOwner())
       m.teleportTo(spot[0], spot[1], spot[2])
       fx(m, 'PORTAL', m.x, m.y + 1, m.z, 30, 0.5)
     }
     spend(m, costs[action])
     if (action === 'dismantle') dismantle(m, target, end)
     if (action === 'cleave') {
+      effects.play(m, 'cleave', point(target), m.getOwner())
       d.putString('mkCleave', String(target.uuid))
       d.putInt('mkCuts', 5)
       d.putLong('mkCutAt', now)
@@ -387,12 +427,6 @@
   function advance(m) {
     var d = m.persistentData,
       now = time(m)
-    if (
-      d.getLong('mkDomainEnd') > now &&
-      d.getLong('mkDomainStart') !== now &&
-      (now - d.getLong('mkDomainStart')) % 5 === 0
-    )
-      domainPulse(m)
     if (locked(m)) return
     if (d.contains('mkPending') && now >= d.getLong('mkRelease')) {
       var action = String(d.getString('mkPending')),
@@ -401,12 +435,13 @@
       if (target && hostile(m, target) && spend(m, costs[action])) {
         startOrb(m, action, target)
         d.putLong('mkNext', now + 24)
-      }
+      } else effects.notice(m.getOwner(), '§7蓄势中断 · 目标已消失或咒力不足')
     }
     if (d.contains('mkCleave') && now >= d.getLong('mkCutAt')) {
       var e = team.lookup(m.level, d.getString('mkCleave')),
         cuts = d.getInt('mkCuts')
       if (e && hostile(m, e) && cuts > 0) {
+        fx(m, 'SWEEP_ATTACK', e.x, e.y + 1, e.z, 2, 0.32)
         fx(m, 'DAMAGE_INDICATOR', e.x, e.y + 1, e.z, 4, 0.2)
         hit(m, e, scaled(m, 28), 'cleave')
         d.putInt('mkCuts', cuts - 1)
@@ -429,6 +464,9 @@
     capacity: capacity,
     locked: locked,
     burnedOut: burnedOut,
+    costs: costs,
+    domainPulse: domainPulse,
+    voidHit: voidHit,
     domain: domain,
     unbind: unbind,
     cast: cast,

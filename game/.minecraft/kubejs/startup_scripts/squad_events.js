@@ -9,9 +9,9 @@
     LivingChangeTargetEvent: 'target'
   }
   var reported = {}
-  Object.keys(events).forEach(name => {
+  Object.keys(events).forEach((name) => {
     var type = name === 'LivingTickEvent' ? 'LivingEvent$LivingTickEvent' : name
-    ForgeEvents.onEvent('net.minecraftforge.event.entity.living.' + type, e => {
+    ForgeEvents.onEvent('net.minecraftforge.event.entity.living.' + type, (e) => {
       if (e.entity.level.isClientSide()) return
       var h = global.mkCombatHooks
       if (!h) return
@@ -32,18 +32,18 @@
 // Carry the squad identity through that path, including persistent ability timers.
 ;(function () {
   var eventType = 'com.github.tartaricacid.touhoulittlemaid.api.event.MaidAndItemTransformEvent$'
-  ForgeEvents.onEvent(eventType + 'ToItem', e => {
+  ForgeEvents.onEvent(eventType + 'ToItem', (e) => {
     var m = e.maid,
       d = m.persistentData
     if (m.level.isClientSide() || (!d.contains('mkRole') && !d.contains('mkJennyOwner'))) return
     var saved = NBT.compoundTag()
-    d.getAllKeys().forEach(k => {
+    d.getAllKeys().forEach((k) => {
       if (String(k).startsWith('mk')) saved.put(k, d.get(k).copy())
     })
     e.data.put('mkSquadState', saved)
     e.data.putUUID('mkSquadUUID', m.uuid)
   })
-  ForgeEvents.onEvent(eventType + 'ToMaid', e => {
+  ForgeEvents.onEvent(eventType + 'ToMaid', (e) => {
     var m = e.maid,
       data = e.data
     if (m.level.isClientSide() || !data.hasUUID('mkSquadUUID') || !data.contains('mkSquadState')) return
@@ -56,4 +56,26 @@
       m.addTag('mk_role_' + role)
     }
   })
+})()
+
+// The addon publishes the server-side maid patch after each join, including dimension changes and old saves.
+;(function () {
+  if (!Platform.isLoaded('ef_tlm')) return
+  var patches = new Map()
+  ForgeEvents.onEvent('net.EFTLM.EF.API.Event.MaidSkillInitEvent', (ev) => {
+    var patch = ev.getMaidPatch(),
+      maid = patch.getOriginal()
+    if (maid && !maid.level.isClientSide()) patches.set(String(maid.uuid), patch)
+  })
+  ForgeEvents.onEvent('net.minecraftforge.event.entity.EntityLeaveLevelEvent', (ev) => {
+    var maid = ev.entity
+    if (!maid.level.isClientSide() && String(maid.type) === 'touhou_little_maid:maid') {
+      var key = String(maid.uuid),
+        patch = patches.get(key)
+      // The destination copy may already have published its patch under the same UUID.
+      if (patch && patch.getOriginal().id === maid.id) patches.delete(key)
+    }
+  })
+  ForgeEvents.onEvent('net.minecraftforge.event.server.ServerStoppedEvent', () => patches.clear())
+  global.mkFightPatch = (maid) => patches.get(String(maid.uuid))
 })()
