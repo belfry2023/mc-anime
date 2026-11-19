@@ -45,3 +45,5 @@
 | 37 | `ysm-2.6.5-forge+mc1.20.1-release.jar` |
 
 > 说明：核心自制内容位于 game/.minecraft/kubejs/server_scripts/（/mkhome 建房、/mknew 等指令），配置文件位于 game/.minecraft/config/。
+
+可选兼容模组 [JennySP 2.7.4（Forge 1.20.1）](https://jennysp.biz/download?lang=en) 提供珍妮原生角色形态。咒术小队的安装、招募与五章任务见[操作指南](squad-guide.md)。

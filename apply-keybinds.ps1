@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$root = 'C:\Users\belfry\workspaceRE\mc-anime\game\.minecraft'
+$root = Join-Path $PSScriptRoot 'game\.minecraft'
 $opt  = Join-Path $root 'options.txt'
 
 if (Get-Process javaw -ErrorAction SilentlyContinue) {
@@ -11,8 +11,21 @@ if (-not (Test-Path $opt)) { Write-Host 'options.txt not found.'; exit 1 }
 Copy-Item $opt "$opt.bak" -Force
 
 $map = [ordered]@{
+  # ---- Maid squad ----
+  'key.mc_anime.status' = 'key.keyboard.keypad.0'
+  'key.mc_anime.saint' = 'key.keyboard.keypad.1'
+  'key.mc_anime.star' = 'key.keyboard.keypad.2'
+  'key.mc_anime.lock' = 'key.keyboard.keypad.3'
+  'key.mc_anime.primary' = 'key.keyboard.keypad.4'
+  'key.mc_anime.secondary' = 'key.keyboard.keypad.5'
+  'key.mc_anime.purple' = 'key.keyboard.keypad.6'
+  'key.mc_anime.blink' = 'key.keyboard.keypad.7'
+  'key.mc_anime.cast' = 'key.keyboard.keypad.8'
+  'key.mc_anime.unbind' = 'key.keyboard.keypad.9'
+  'key.mc_anime.quest' = 'key.keyboard.keypad.decimal'
+
   # ---- vanilla ----
-  'key.swapOffhand'                        = 'key.keyboard.q:CONTROL'
+  'key.swapOffhand'                        = 'key.keyboard.f:ALT'
   'key.advancements'                       = 'key.keyboard.l:ALT'
 
   # ---- Epic Fight ----
@@ -53,14 +66,14 @@ $map = [ordered]@{
 
   # ---- maidmarriage ----
   'key.maidmarriage.interaction'           = 'key.keyboard.j'
-  'key.maidmarriage.pet_head'              = 'key.keyboard.k:ALT'
+  'key.maidmarriage.pet_head'              = 'key.keyboard.m:ALT'
   'key.maidmarriage.rhythm_hit'            = 'key.keyboard.j:ALT'
   'key.maidmarriage.carry_pose_debug'      = 'key.keyboard.unknown'
   'key.maidmarriage.maid_debug_panel'      = 'key.keyboard.unknown'
 
   # ---- Affection ----
-  'key.touhou_maid_affection.kiss_carried_maid'   = 'key.keyboard.v:CONTROL'
-  'key.touhou_maid_affection.kiss_targeted_maid'  = 'key.keyboard.v:CONTROL'
+  'key.touhou_maid_affection.kiss_carried_maid'   = 'key.keyboard.p:CONTROL'
+  'key.touhou_maid_affection.kiss_targeted_maid'  = 'key.keyboard.p:ALT'
   'key.touhou_maid_affection.lap_pillow'          = 'key.keyboard.equal'
   'key.touhou_maid_affection.lap_pillow_angle_lock'= 'key.keyboard.equal:CONTROL'
   'key.touhou_maid_affection.voice_preview'       = 'key.mouse.right:CONTROL'
