@@ -1,0 +1,67 @@
+# The Shooting Star demo server settings
+# Change this file then run /tss reload to apply it (needs tss.admin)
+# Or change it in game: H, the Stellar Remote, then Configuration
+#
+# enabled     false turns the weapon off for everyone and shows it locked in the H menu
+# permission  the node a player needs to cast the weapon
+#             tss.* grants every weapon and /tss reload
+#             leave it empty ("") so anyone can cast it
+#
+# default-access is who may cast when no permission mod sets the node
+#   everyone  every player
+#   op        operators only
+#
+# The slider ends players can pick in the H menu, low and high
+#   radius / power  the beam radius in blocks or the size of the strike
+#   speed           how fast the whole attack plays (1 is normal)
+#   damage          what each hit takes in health
+#   true-erasure    false takes away the last notch past damage-max (True Erasure erases whatever it hits)
+#                   it does nothing in builds without True Erasure
+# Going past a weapon's own ends works but very large attacks can lag the server
+
+default-access: everyone
+
+weapons:
+  the_shooting_star:  # SS-01 · Railgun
+    enabled: true
+    permission: tss.the_shooting_star
+    radius-min: 10
+    radius-max: 1500
+    speed-min: 0.3
+    speed-max: 3
+    damage-min: 2
+    damage-max: 1000
+    true-erasure: true
+  gungnir:  # SS-03 · Gungnir
+    enabled: true
+    permission: tss.gungnir
+    power-min: 0.1
+    power-max: 20
+    speed-min: 0.3
+    speed-max: 3
+    damage-min: 2
+    damage-max: 1000
+    true-erasure: true
+  seven_stars:  # SS-04 · Seven Stars
+    enabled: true
+    permission: tss.seven_stars
+    power-min: 0.1
+    power-max: 10
+    speed-min: 0.3
+    speed-max: 3
+    damage-min: 2
+    damage-max: 1000
+    true-erasure: true
+  tesseract:  # SS-05 · Tesseract
+    enabled: true
+    permission: tss.tesseract
+    power-min: 0.05
+    power-max: 10
+    speed-min: 0.3
+    speed-max: 3
+    damage-min: 2
+    damage-max: 1000
+    true-erasure: true
+  gravitia:  # SS-06 · Gravitia
+    enabled: true
+    permission: tss.gravitia

@@ -1,0 +1,10 @@
+# One bone name per line: a bone this mod should put away while Epic Fight
+# is posing the model, together with everything hanging off it.
+#
+# Swords, bows, guns and sheaths are already known by name - this file is
+# for the ones named something else. The files in config/epicysm/bones/ list
+# every bone of each model you have worn, so names can be copied from there.
+#
+# Lines starting with # are ignored. `/epicysm reload` re-reads this
+# file without restarting, and the settings screen switches the whole
+# thing off.

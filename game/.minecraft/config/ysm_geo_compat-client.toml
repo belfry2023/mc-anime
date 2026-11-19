@@ -1,0 +1,20 @@
+
+#YSM GEO Compat - Client Configuration
+[client]
+	#Render TLM meshes with the GPU skinning path (bone SSBO + skinning shader, ported from ModernYSM/OpenYSM).
+	#Like ModernYSM's UseGpuRenderer toggle, this option is auto-disabled when the GPU path is
+	#unavailable at runtime (OpenGL below 4.3 / OpenGL ES below 3.1, shader compile failure, ...).
+	#The Epic Fight compute-shader path is used as the fallback automatically.
+	enableGpuRender = true
+	#Evaluate molang scripts of entities other than the local player on a background thread (double-buffered), keeping the render thread free
+	scriptAsyncEval = true
+	#Maximum number of converted maid models kept loaded in memory (LRU cache).
+	#Models beyond this limit are evicted least recently used first: their mesh buffers and
+	#textures are released, and Epic Fight re-loads the model from the generated mesh JSON the
+	#next time it is drawn (no re-conversion, nothing is permanently lost).
+	#Lower values save VRAM/RAM at the cost of a short re-load when a model becomes visible again.
+	#A converted model costs roughly 0.1-1 MB of vertex data, so the default covers every model
+	#a normal session can meet at once; raise it to keep whole large packs resident.
+	#Range: 8 ~ 512
+	lazyModelCacheSize = 64
+

@@ -1,0 +1,217 @@
+
+[personality]
+	#是否允许自然生成病娇女仆
+	naturalYandere = false
+	#开局魂符女仆固定无性格：开启后，玩家第一个被驯服的女仆固定为「无性格」（魂符在正常流程中唯一会给玩家一个已经驯服的女仆，故首个被驯服女仆默认无性格即可达成）
+	startSoulMaidNoPersonality = true
+
+	[personality.weights]
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		loyal = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		glutton = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		mischievous = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		lazy = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		lovestruck = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		battleFanatic = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		masochist = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		luckyStar = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		lonely = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		carnivore = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		vegetarian = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		tsundere = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		afraidOfDark = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		afraidOfBugs = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		pickyEater = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		greedy = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		inferior = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		coward = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		vigilant = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		caring = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		cruel = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		focused = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		discriminating = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		clumsy = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		arrogant = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		solitary = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		social = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		noble = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		calm = 1
+		#性格池权重，0表示不生成
+		#Range: 0 ~ 20
+		kuudere = 1
+
+[ai]
+	#是否把性格与情绪组成的AI前置词自动写入女仆聊天设置的隐藏段
+	promptInject = true
+
+[maid]
+	#女仆「跟随/回家」判定距离：在非家（跟随）模式下，女仆与主人距离超过该值才判定为需要回到玩家身边。本体默认约为 7 格，此处覆盖为更大的值以改善体验。
+	#Range: 3 ~ 128
+	maidReturnDistance = 14
+	#Enable maid follow/combat movement optimization (default on).Caps idle follow speed, keeps a small stand-off distance in melee, and makes the maid kite/strafe around strong or multiple monsters.Turn off to restore the base mod's movement and combat approach.
+	followOptimization = true
+
+[vow]
+	#缔结永恒誓约后，主人是否无法再驯服新的女仆：开启后，已拥有誓约女仆的玩家右键无主女仆将被拦截（原机制）；关闭后不再拦截，仍可正常驯服新女仆。
+	blockNewMaidTame = true
+	#誓约锁定 UUID：开启后，誓约女仆的实体在重建（跨维度传送/魂符收放/复活）时会被回填为档案登记表记录的 UUID，使其实体 UUID 终身不变；默认关闭（保持原版随机行为）。关闭时零行为变化，誓约档案 ID 照常创建与登记。
+	lockMaidUuid = false
+
+[emotion]
+	#监禁总开关：触发 100 执念禁闭事件时，是否给玩家施加「监禁」效果（强制生存 + 禁用指令，半小时）。关闭时禁闭事件不再施加监禁，并清空一次玩家身上已有的监禁；房间结构、传送、执念 -30、难度还原、送回家等一概照旧。默认 false（1.4.4 之前默认为 true）。
+	imprison = false
+	#监禁和平：玩家触发 100 执念的监禁事件时，是否临时把游戏难度切换为和平（事件结束自动还原原难度）；关闭后监禁期间不再改动全局难度。
+	imprisonPeace = true
+	#性格事件系统总开关（服务端）：每个性格对应的好/坏/特好/特坏事件，默认开启。
+	#关闭后只保留病娇自己的事件；联动性格 50~54 本来就没有这套事件。
+	personalityEvents = true
+
+[dialogue]
+	#自动台词调节：女仆每隔一段时间自动说一句环境台词（聊天气泡）。OFF＝关闭，完全不自动说；NORMAL＝5~10 分钟一次（原频率）；FREQUENT＝3~6 分钟一次。测试指令 /tlmp talk 不受此开关影响，始终可以手动触发。
+	#Allowed Values: OFF, NORMAL, FREQUENT
+	autoDialogue = "NORMAL"
+
+[identity]
+	#Identity verification policy (server-side).
+	#OFF (default): ownership is judged purely by the vanilla UUID match — identical to the behavior before this feature existed.
+	#STRICT: a player counts as the maid's owner only when the vanilla UUID matches AND he passed the Ed25519 challenge-response handshake this session. This closes the offline-mode hole where anyone can log in with your name and therefore your exact UUID, and recall your vow maid.
+	#Unverified players are NEVER kicked or blocked from joining — they simply are not treated as owners.
+	#Allowed Values: OFF, STRICT
+	identityPolicy = "OFF"
+	#Trust-on-first-use: register a public key on the first successful signature.
+	#true (default): the first handshake that verifies for a given player UUID registers that key and marks him verified this session.
+	#false: only public keys explicitly registered by an operator can ever verify a player.
+	identityTofu = true
+
+[carry]
+	#Replace the starter soul-slab maid with the vow maid selected in your local dossier
+	#Read on the CLIENT ONLY (every player decides for themselves). When enabled, the maid
+	#released from your first soul slab in a new world is replaced by the vow maid you
+	#selected in the dossier list (her name, personality and model come along; inventory,
+	#equipment and items do not). Default false — nothing changes without it.
+	replaceStarterMaid = false
+	#Where this mod stores its local data files (client side): the vow companion dossier
+	#(vow_companion.json / vow_selected.json) and the local identity key pair (identity.json).
+	#GAME_DIR (default): the game version root, directly (no sub-directory) — so nothing is
+	#written under the user's C: home folder, which CurseForge reviewers flagged as malware-like.
+	#USER_HOME: the legacy %USERPROFILE%\.tlmp\ locations.
+	#Switching the location does NOT migrate, copy, or delete any existing files.
+	#The identity key pair ALWAYS falls back to the legacy location, so changing this never
+	#regenerates your key (losing verification); the dossier list falls back only when
+	#extendedSearch is enabled (below).
+	#Allowed Values: GAME_DIR, USER_HOME
+	fileLocation = "GAME_DIR"
+	#Extended search (client side, default false): when reading the vow companion dossier,
+	#additionally look at the legacy %USERPROFILE%\.tlmp\ file too (config location wins on
+	#duplicate dossier ids). false = read ONLY the configured location.
+	#Writes always go to the configured location only — the legacy entries are never copied over.
+	#The identity key pair is NOT governed by this toggle (it always falls back to legacy).
+	extendedSearch = false
+	#Server-side admission switch: accept vow maids carried in from local dossiers.
+	#Default true: the client-side toggle (replaceStarterMaid) is itself opt-in, so leaving
+	#this on changes nothing by default. Turn it off to stop this server importing carried
+	#vow maids entirely.
+	acceptCarriedVowMaid = true
+
+[reputation]
+	#女仆声望系统总开关（服务端），默认关闭。
+	#关闭时不记录声望、不影响女仆伤害/减伤/无敌帧、不改变宝箱掉落。
+	#已有声望数值保留不变，重新开启后继续生效。
+	enabled = false
+
+[safety]
+	#Maid entity protection (beta, server side, ordinary maids only).
+	#When another mod discards/removes a tamed ordinary maid, keep her in a server-side simulated soul charm and restore her shortly after; no item is generated.
+	#Living conversion attempts on ordinary maids are cancelled.
+	#Normal death, chunk unload and the maid being stored in a soul charm by TLM itself are ignored.
+	#Vow maids are handled by the vow presence guard and are never touched by this switch.
+	maidEntityProtection = false
+
+[chatbubble]
+	#Client-side manual chat bubble height offset, in blocks. Positive moves the bubble up; 0 keeps TLM's original position.
+	#Applied on top of TLM's own anchor (hitbox height + 0.5); works for every model type, no model reading.
+	#Range: -2.0 ~ 4.0
+	heightOffset = 0.0
+
+[hoyi]
+	#Whether Hoyi (the calamity merchant) may spawn naturally (server side).
+	#Existing Hoyi are unaffected; turning this off only stops new natural spawns.
+	#Default true = original behaviour.
+	naturalSpawn = true
+	#How many trades a Hoyi (the calamity merchant) offers when her offer list is first rolled (server side).
+	#The trade table has at most 26 rows; a partial Fisher-Yates shuffle picks this many distinct rows,
+	#and the rolled offers are then stored in the entity NBT as they are (Hoyi that already exist keep their list).
+	#0 means she offers nothing at all: right-clicking such a Hoyi does not open the trading screen
+	#(HoyiEntity refuses to open it when the offer list is empty), so she simply cannot be traded with.
+	#Default 6, which is the original hard-coded behaviour.
+	#Range: 0 ~ 26
+	offerCount = 6
+
+[altar]
+	#Maids summoned via the altar always enter the world WITHOUT any personality.
+	#Default false — nothing changes without it.
+	altarSummonNoPersonality = false
+
+[integration]
+	#Sin Vessel copies mob trait/affix entries on hit (hidden entertainment feature, server side).
+	#Default false. When disabled, the Sin Vessel keeps its original beneficial-effect steal only.
+	#Dedup key is modid:entry; death clears all copied entries.
+	sinVesselCopyTraits = false
+

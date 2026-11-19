@@ -1,0 +1,129 @@
+
+[ShinkitsuShrine]
+	#Total kill count on carried SlashBlades required before offering one cake to White Fox
+	#Range: > 0
+	whiteFoxRequiredKills = 520
+
+[ContractResonance]
+	#Range: 0.0 ~ 200.0
+	storedRecoveryPerSecondV2 = 0.5
+	#Range: 0.0 ~ 200.0
+	combatRecoveryPerSecondV2 = 0.0
+	#Range: 0.0 ~ 200.0
+	abilityIdleRecoveryPerSecondV2 = 0.5
+	#Manifested combat recovery in legacy units/second; replaces stored combat recovery while live
+	#Range: 0.0 ~ 200.0
+	manifestedCombatRecoveryPerSecond = 2.0
+	#Ordered global spirit-vein multipliers, including unupgraded stage 0
+	spiritVeinMultipliers = [1.0, 1.25, 1.6, 2.0]
+	#Deprecated compatibility key; manifestation no longer drains resonance
+	#Range: 20 ~ 1200
+	combatDrainInterval = 80
+	#Combat activity timeout in ticks; recovery continues at the combat rate
+	#Range: 0 ~ 2400
+	recoveryDelay = 100
+	#Manifested idle recovery in legacy units/second; replaces stored recovery
+	#Range: 0 ~ 200
+	manifestedIdleRecoveryV2 = 4
+	#主人与女仆协同命中同一目标时恢复的共鸣，每秒至多一次
+	#Range: 0 ~ 200
+	cooperationReward = 3
+	#主人在成长挑战中死亡时损失的共鸣
+	#Range: 0 ~ 200
+	challengeDeathPenalty = 30
+	#Deprecated compatibility key; protective recall no longer spends resonance
+	#Range: 0 ~ 200
+	maidEmergencyCost = 20
+	#主人进食时，共鸣恢复 = 饱食度增量 × 此倍率
+	#Range: 0.0 ~ 100.0
+	foodRecoveryMultiplier = 1.0
+	#主人回血时，共鸣恢复 = 血量增量 × 此倍率
+	#Range: 0.0 ~ 100.0
+	healRecoveryMultiplier = 1.0
+	#主人受伤时，共鸣恢复 = 失去血量 × 此倍率
+	#Range: 0.0 ~ 10.0
+	ownerHurtRecoveryMultiplier = 0.0
+
+[ContractManifestation]
+	#切到自动契约武器后延迟显现的 tick；用于过滤滚轮快速划过
+	#Range: 0 ~ 200
+	deployDelayTicks = 8
+	#离开自动契约武器后延迟收回的 tick；期间切回可取消收回
+	#Range: 0 ~ 400
+	recallDelayTicks = 30
+	#从一名契约女仆切换到另一名契约女仆时的交接 tick
+	#Range: 0 ~ 200
+	handoverDelayTicks = 12
+
+[ContractNbtSafety]
+	#Warn when the complete contract item NBT reaches this uncompressed size
+	#Range: 65536 ~ 8388608
+	warningBytes = 262144
+	#Second-level warning for complete contract item NBT
+	#Range: 131072 ~ 8388608
+	highWarningBytes = 524288
+	#Critical warning for complete contract item NBT; recall is still attempted
+	#Range: 262144 ~ 16777216
+	criticalWarningBytes = 1048576
+	#Absolute decompressed MaidEntityData safety limit used against compression bombs
+	#Range: 1048576 ~ 67108864
+	maxDecompressedMaidBytes = 16777216
+	#Maximum complete stored contract tag size; rejected writes preserve the existing contract.
+	#Range: 262144 ~ 16777216
+	maxStoredContractBytes = 2097152
+	#Maximum permitted nesting depth inside compressed maid entity data
+	#Range: 16 ~ 512
+	maxDepth = 128
+	#Maximum number of complete intrinsic spirit contracts on one weapon
+	#Range: 1 ~ 64
+	maxIntrinsicSpirits = 8
+
+[SafeFeeding]
+	#安全且主人饥饿时，显现女仆是否临时切换为喂食工作模式
+	enabled = true
+	#玩家饥饿值不高于此值时，安全状态下触发喂食任务
+	#Range: 0 ~ 19
+	hungerThreshold = 14
+	#最后一次发现危险后，等待多少 tick 才允许进入喂食模式
+	#Range: 0 ~ 1200
+	safeDelayTicks = 120
+	#检查敌对生物的安全半径
+	#Range: 2.0 ~ 64.0
+	dangerRadius = 12.0
+
+[ContractAttention]
+	#女仆长时间未显现时，是否通过契约提醒主人
+	enabled = true
+	#女仆在主人背包中累计多少 tick 未显现后想要得到关注；48000 为两个游戏日
+	#Range: 1200 ~ 7200000
+	attentionDelayTicks = 48000
+	#首次契约回响是否伴随轻微的紫水晶提示音
+	playChime = true
+	#回应提醒后成功显现时，是否播放 TLM 原生待机语音
+	voiceAfterManifest = true
+
+[Level]
+	#每级攻击力加成
+	#默认 1.0
+	#Range: 0.0 ~ 100.0
+	levelDamagePerLevel = 1.0
+	#满级额外攻击力
+	#默认 3.0
+	#Range: 0.0 ~ 100.0
+	levelMaxBonus = 3.0
+
+[FavorabilityMultiplier]
+	#好感度只提供额外伤害；0 好感不削弱原始伤害
+	#Range: 0.0 ~ 10.0
+	favorabilityBaseMultiplierV2 = 1.0
+	#满好感时的额外契约伤害倍率，默认 +25%
+	#Range: 0.0 ~ 10.0
+	favorabilityMaxBonusV2 = 0.25
+
+[Hud]
+	#是否显示契约共鸣条
+	showContractResonanceHud = true
+	#契约共鸣条向上偏移的像素数；与其他 Mod HUD 冲突时可调大
+	#Range: -100 ~ 200
+	contractResonanceHudOffsetY = 0
+

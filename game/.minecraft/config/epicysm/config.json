@@ -1,0 +1,13 @@
+{
+  "unreadable_models": "keep_model",
+  "skeleton_overlay": true,
+  "epic_fight_items": true,
+  "hide_model_weapons_open": true,
+  "hide_model_weapons_encrypted": true,
+  "hold": "all",
+  "bow_by_ysm": true,
+  "armor_on_models": true,
+  "physics": true,
+  "own_animations": true,
+  "diagnostics": false
+}

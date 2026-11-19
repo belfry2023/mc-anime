@@ -1,0 +1,8 @@
+#0 minimal, 1 balanced, 2 full. Server combat is unchanged.
+#Range: 0 ~ 2
+quality = 1
+#Range: 0.1 ~ 1.0
+visualDensity = 1.0
+#Uses BladeTetra tint only; disable for shader packs or minimal visuals.
+rampageTint = true
+

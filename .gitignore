@@ -1,0 +1,72 @@
+# ============================================================
+# Minecraft 整合包 .gitignore
+# 本仓库只保留「核心配置 / 脚本 / 文档」，不传运行时与大体积文件。
+# ============================================================
+
+# ---------- .minecraft 运行时与大体积目录 ----------
+game/.minecraft/mods/
+game/.minecraft/mods-disabled/
+game/.minecraft/saves/
+game/.minecraft/libraries/
+game/.minecraft/assets/
+game/.minecraft/natives/
+game/.minecraft/versions/
+game/.minecraft/.lwjgl/
+game/.minecraft/logs/
+game/.minecraft/crash-reports/
+game/.minecraft/backups/
+game/.minecraft/local/
+game/.minecraft/tacz/
+game/.minecraft/tlm_custom_pack/
+game/.minecraft/defaultconfigs/
+game/.minecraft/resourcepacks/
+game/.minecraft/patchouli_books/
+
+# ---------- config 内的缓存 / 内置模型 / 资源包 ----------
+game/.minecraft/config/yes_steve_model/builtin/
+game/.minecraft/config/yes_steve_model/cache/
+game/.minecraft/config/ysm_geo_compat/resourcepack/
+
+# ---------- PCL2 启动器与 native 二进制（不传） ----------
+/game/JavaWrapper.jar
+/game/PCL2启动器.exe
+/game/Setup.ini
+/game/libjlw-x86_64-1.4.4.dll
+/game/libwebp.dll
+game/.minecraft/config/epicfight/native/
+
+# ---------- 敏感身份文件（不传） ----------
+game/.minecraft/identity.json
+game/.minecraft/usernamecache.json
+game/.minecraft/usercache.json
+game/.minecraft/launcher_profiles.json
+game/.minecraft/options.txt
+game/.minecraft/options.txt.bak
+game/.minecraft/launch-args.txt
+game/.minecraft/launch-err.log
+game/.minecraft/launch-out.log
+game/.minecraft/rhino.local.properties
+game/.minecraft/patchouli_data.json
+game/.minecraft/forge-1.20.1-47.4.29-installer.jar.log
+game/.minecraft/rimulib.log
+game/.minecraft/shooting_star.log
+
+# ---------- 测试服务器 / JDK / 临时目录 ----------
+jdk/
+server-test2/
+server-test3/
+server-test6/
+tmp/
+tmp_is/
+tmp_maidspell/
+
+# ---------- 根目录截图 / 安装包 / 日志 / 临时调试脚本 ----------
+/screenshot*.png
+/shot-*.png
+/forge-1.20.1-47.4.29-installer.jar
+/server-run*.log
+/server-run*.err
+/tmp_*.py
+/tmp_*.json
+/tmp_*.dat
+/scan_blocks.py

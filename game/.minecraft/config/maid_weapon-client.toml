@@ -1,0 +1,8 @@
+
+[combatFeedback]
+	#Parry camera shake strength. Set 0 to disable; does not change aiming or combat.
+	#Range: 0.0 ~ 1.0
+	parryShakeStrength = 0.65
+	#Also shake briefly for nearby heavy Boss cuts. Parry shake strength controls both.
+	bossImpactShake = true
+

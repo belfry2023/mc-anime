@@ -1,0 +1,99 @@
+﻿1.20.1-maid_useful_task-1.4.2.jar	key.maid_useful_tasks.categories.main	女仆实用任务
+1.20.1-maid_useful_task-1.4.2.jar	key.maid_useful_tasks.switch_vehicle_control	切换载具控制模式
+contract-blade-forge-1.20.1-1.2.1hotfix.jar	key.categories.maid_weapon	契约之刃
+contract-blade-forge-1.20.1-1.2.1hotfix.jar	key.maid_weapon.call_companion	呼唤／召回女仆
+contract-blade-forge-1.20.1-1.2.1hotfix.jar	key.maid_weapon.danmaku	施放／选择符卡
+contract-blade-forge-1.20.1-1.2.1hotfix.jar	key.maid_weapon.oath_manifestation	完全显现
+curios-forge-5.14.1+1.20.1.jar	key.curios.category	饰品
+curios-forge-5.14.1+1.20.1.jar	key.curios.open.desc	打开/关闭饰品栏
+epic-fight-20.14.17-mc1.20.1-forge.jar	key.epicfight.attack	攻击
+epic-fight-20.14.17-mc1.20.1-forge.jar	key.epicfight.combat	史诗战斗模式
+epic-fight-20.14.17-mc1.20.1-forge.jar	key.epicfight.config	打开配置画面
+epic-fight-20.14.17-mc1.20.1-forge.jar	key.epicfight.dodge	闪避技能
+epic-fight-20.14.17-mc1.20.1-forge.jar	key.epicfight.gui	史诗战斗界面
+epic-fight-20.14.17-mc1.20.1-forge.jar	key.epicfight.lock_on	开启锁定
+epic-fight-20.14.17-mc1.20.1-forge.jar	key.epicfight.mover_skill	行动技能
+epic-fight-20.14.17-mc1.20.1-forge.jar	key.epicfight.show_tooltip	显示武器进阶技能提示
+epic-fight-20.14.17-mc1.20.1-forge.jar	key.epicfight.skill_gui	打开技能编辑器
+epic-fight-20.14.17-mc1.20.1-forge.jar	key.epicfight.switch_mode	切换战斗/挖掘模式
+epic-fight-20.14.17-mc1.20.1-forge.jar	key.epicfight.weapon_innate_skill	武器进阶技能
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.group_1	Iron的法术与魔法书 - 常用
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.group_2	Iron的法术与魔法书 - 快捷施法
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_bar_modifier	法术条滚动辅助键位
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_1	快捷施法槽位 01
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_10	快捷施法槽位 10
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_11	快捷施法槽位 11
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_12	快捷施法槽位 12
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_13	快捷施法槽位 13
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_14	快捷施法槽位 14
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_15	快捷施法槽位 15
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_2	快捷施法槽位 02
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_3	快捷施法槽位 03
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_4	快捷施法槽位 04
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_5	快捷施法槽位 05
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_6	快捷施法槽位 06
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_7	快捷施法槽位 07
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_8	快捷施法槽位 08
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_quick_cast_9	快捷施法槽位 09
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_wheel	打开法术轮盘
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spell_wheel_toggle	切换法术轮盘
+irons_spellbooks-1.20.1-3.16.3.jar	key.irons_spellbooks.spellbook_cast	施放选定咒语
+L_Enders_Cataclysm-3.31.jar	key.cataclysm.ability	灾变能力
+L_Enders_Cataclysm-3.31.jar	key.cataclysm.boots_ability	灾变靴子能力
+L_Enders_Cataclysm-3.31.jar	key.cataclysm.chestplate_ability	灾变胸甲能力
+L_Enders_Cataclysm-3.31.jar	key.cataclysm.helmet_ability	灾变头盔能力
+L_Enders_Cataclysm-3.31.jar	key.categories.cataclysm	灾变能力键位（Cataclysm）
+maidmarriage-1.0.0-forge+mc1.20.1.jar	key.categories.maidmarriage	心契同眠
+maidmarriage-1.0.0-forge+mc1.20.1.jar	key.maidmarriage.carry_pose_debug	抱小女仆姿态调试
+maidmarriage-1.0.0-forge+mc1.20.1.jar	key.maidmarriage.interaction	交互按键
+maidmarriage-1.0.0-forge+mc1.20.1.jar	key.maidmarriage.maid_debug_panel	女仆调试面板
+maidmarriage-1.0.0-forge+mc1.20.1.jar	key.maidmarriage.pet_head	摸头举高高
+maidmarriage-1.0.0-forge+mc1.20.1.jar	key.maidmarriage.rhythm_hit	节奏判定键
+Mekanism-1.20.1-10.4.16.80.jar	key.mekanism.chest_mode	胸甲模式开关
+Mekanism-1.20.1-10.4.16.80.jar	key.mekanism.description	显示描述
+Mekanism-1.20.1-10.4.16.80.jar	key.mekanism.details	显示详细信息
+Mekanism-1.20.1-10.4.16.80.jar	key.mekanism.feet_mode	脚部模式切换
+Mekanism-1.20.1-10.4.16.80.jar	key.mekanism.head_mode	头部模式开关
+Mekanism-1.20.1-10.4.16.80.jar	key.mekanism.key_boost	加速
+Mekanism-1.20.1-10.4.16.80.jar	key.mekanism.key_hud	显示 HUD
+Mekanism-1.20.1-10.4.16.80.jar	key.mekanism.legs_mode	腿部模式开关
+Mekanism-1.20.1-10.4.16.80.jar	key.mekanism.mode	物品模式切换
+Mekanism-1.20.1-10.4.16.80.jar	key.mekanism.module_tweaker	模块调节器
+tacz-1.20.1-1.2.0.jar	key.category.tacz	永恒枪械工坊：Zero
+tacz-1.20.1-1.2.0.jar	key.tacz.aim.desc	瞄准
+tacz-1.20.1-1.2.0.jar	key.tacz.crawl.desc	爬行
+tacz-1.20.1-1.2.0.jar	key.tacz.fire_select.desc	开火模式
+tacz-1.20.1-1.2.0.jar	key.tacz.inspect.desc	检视
+tacz-1.20.1-1.2.0.jar	key.tacz.interact.desc	持械时互动
+tacz-1.20.1-1.2.0.jar	key.tacz.melee.desc	近战
+tacz-1.20.1-1.2.0.jar	key.tacz.open_config.desc	打开 TAC 配置文件
+tacz-1.20.1-1.2.0.jar	key.tacz.refit.desc	改装
+tacz-1.20.1-1.2.0.jar	key.tacz.reload.desc	换弹
+tacz-1.20.1-1.2.0.jar	key.tacz.shoot.desc	射击
+tacz-1.20.1-1.2.0.jar	key.tacz.unload.desc	卸弹
+tacz-1.20.1-1.2.0.jar	key.tacz.zoom.desc	缩放
+touhou_little_maid_personality-forge1.20.1-1.5.2.jar	key.pixel_arcade_ae3b.category	像素小游戏厅
+touhoulittlemaid-1.5.3-forge+mc1.20.1.jar	key.category.touhou_little_maid	Touhou Little Maid
+touhoulittlemaid-1.5.3-forge+mc1.20.1.jar	key.touhou_little_maid.dismount.desc	脱离扫帚
+touhoulittlemaid-1.5.3-forge+mc1.20.1.jar	key.touhou_little_maid.stt_chat.desc	女仆AI语言对话
+touhou-maid-affection-1.7.5.2.jar	key.categories.touhou_maid_affection	女仆亲亲
+touhou-maid-affection-1.7.5.2.jar	key.touhou_maid_affection.kiss_carried_maid	公主抱亲吻
+touhou-maid-affection-1.7.5.2.jar	key.touhou_maid_affection.kiss_targeted_maid	准星亲吻女仆
+touhou-maid-affection-1.7.5.2.jar	key.touhou_maid_affection.lap_pillow	休闲膝枕
+touhou-maid-affection-1.7.5.2.jar	key.touhou_maid_affection.lap_pillow_angle_lock	膝枕角度冻结
+touhou-maid-affection-1.7.5.2.jar	key.touhou_maid_affection.voice_preview	试听语音
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.category.yes_steve_model	是，史蒂夫模型
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.yes_steve_model.animation_roulette.desc	打开轮盘动画
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.yes_steve_model.debug_animation.desc	打开动画调试
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.yes_steve_model.extra_animation.0.desc	播放额外动画 0
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.yes_steve_model.extra_animation.1.desc	播放额外动画 1
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.yes_steve_model.extra_animation.2.desc	播放额外动画 2
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.yes_steve_model.extra_animation.3.desc	播放额外动画 3
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.yes_steve_model.extra_animation.4.desc	播放额外动画 4
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.yes_steve_model.extra_animation.5.desc	播放额外动画 5
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.yes_steve_model.extra_animation.6.desc	播放额外动画 6
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.yes_steve_model.extra_animation.7.desc	播放额外动画 7
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.yes_steve_model.extra_animation.none	无
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.yes_steve_model.lock_roulette.desc	锁定轮盘
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.yes_steve_model.open_extra_player_render.desc	打开额外玩家渲染配置
+ysm-2.6.5-forge+mc1.20.1-release.jar	key.yes_steve_model.player_model.desc	打开玩家模型界面

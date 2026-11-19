@@ -1,0 +1,31 @@
+
+[inventoryVoice]
+	#Use TLM's built-in LittleMaid PECO voice in the survival inventory.
+	#No voice files are included; the sword never plays a system item-get sound.
+	enabled = true
+	#Respects Minecraft's Neutral sound slider.
+	#Range: 0.0 ~ 1.0
+	volume = 0.6
+	#Chance to respond to the first real pickup.
+	#Range: 0.0 ~ 1.0
+	greetingChance = 0.4
+	#Chance to respond to quickly lifting the SAME blade again.
+	#Range: 0.0 ~ 1.0
+	curiousChance = 0.8
+	#Chance for a rare reaction on 3+ rapid lifts.
+	#Range: 0.0 ~ 1.0
+	playfulChance = 0.35
+	#Choose a small subset (up to 8/6/5 samples) by PCM length, loudness,
+	#silence and duplicate checks; this does NOT recognize spoken Japanese.
+	#Manual sample index overrides the automatic shortlist.
+	acousticShortlist = true
+	#Optional sample selection within the listed PECO event category.
+	#-1 = random among all available clips; 0+ = exact indexed clip.
+	#Indexes must be manually auditioned: category alone does not confirm meaning.
+	#Range: -1 ~ 255
+	greetingVariant = -1
+	#Range: -1 ~ 255
+	curiousVariant = -1
+	#Range: -1 ~ 255
+	playfulVariant = -1
+

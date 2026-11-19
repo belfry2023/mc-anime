@@ -1,0 +1,356 @@
+{
+  "hoyi_offers": [
+    {
+      "result": {
+        "item": "minecraft:golden_apple",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 1,
+      "priceMax": 2,
+      "maxUses": 16
+    },
+    {
+      "result": {
+        "item": "minecraft:enchanted_golden_apple",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 5,
+      "priceMax": 10,
+      "maxUses": 1
+    },
+    {
+      "result": {
+        "item": "touhou_little_maid_personality:maid_protection",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 1,
+      "maxUses": 1
+    },
+    {
+      "result": {
+        "item": "minecraft:potato",
+        "count": 1
+      },
+      "mainCost": "minecraft:wheat_seeds",
+      "priceMin": 16,
+      "maxUses": 1000000
+    },
+    {
+      "result": {
+        "item": "touhou_little_maid_personality:nameless_thing",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 48,
+      "maxUses": 3
+    },
+    {
+      "result": {
+        "item": "minecraft:diamond",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 6,
+      "maxUses": 1000000
+    },
+    {
+      "result": {
+        "item": "touhou_little_maid_personality:monster_battle_device",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 32,
+      "maxUses": 1000000
+    },
+    {
+      "result": {
+        "item": "touhou_little_maid_personality:beta_capsule_wand",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 5,
+      "maxUses": 1000000
+    },
+    {
+      "trinket": true,
+      "priceMin": 64,
+      "maxUses": 1
+    },
+    {
+      "trinket": true,
+      "priceMin": 64,
+      "maxUses": 1
+    },
+    {
+      "result": {
+        "item": "minecraft:gold_ingot",
+        "count": 5
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 1,
+      "extraCost": {
+        "item": "minecraft:raw_gold",
+        "count": 3
+      },
+      "maxUses": 1000000
+    },
+    {
+      "result": {
+        "item": "minecraft:iron_ingot",
+        "count": 5
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 1,
+      "extraCost": {
+        "item": "minecraft:raw_iron",
+        "count": 3
+      },
+      "maxUses": 1000000
+    },
+    {
+      "result": {
+        "item": "minecraft:netherite_ingot",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 10,
+      "extraCost": {
+        "item": "minecraft:ancient_debris",
+        "count": 2
+      },
+      "maxUses": 1000000
+    },
+    {
+      "result": {
+        "item": "minecraft:netherite_upgrade_smithing_template",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 64,
+      "maxUses": 1
+    },
+    {
+      "result": {
+        "item": "touhou_little_maid_personality:gift",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 10,
+      "maxUses": 5
+    },
+    {
+      "result": {
+        "item": "minecraft:cake",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 6,
+      "maxUses": 1000000
+    },
+    {
+      "result": {
+        "item": "minecraft:dragon_egg",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 64,
+      "extraCost": {
+        "item": "minecraft:nether_star",
+        "count": 1
+      },
+      "maxUses": 1
+    },
+    {
+      "result": {
+        "item": "minecraft:experience_bottle",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 1,
+      "maxUses": 1000000
+    },
+    {
+      "result": {
+        "potion": "touhou_little_maid_personality:hoyi_speed_iii"
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 10,
+      "maxUses": 3
+    },
+    {
+      "result": {
+        "potion": "touhou_little_maid_personality:hoyi_strength_iii"
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 10,
+      "maxUses": 3
+    },
+    {
+      "result": {
+        "potion": "touhou_little_maid_personality:hoyi_resistance_iii"
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 10,
+      "maxUses": 3
+    },
+    {
+      "result": {
+        "item": "minecraft:ender_pearl",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 5,
+      "maxUses": 8
+    },
+    {
+      "result": {
+        "item": "touhou_little_maid_personality:inflatable_hammer",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 2,
+      "maxUses": 1
+    },
+    {
+      "result": {
+        "item": "minecraft:emerald",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 5,
+      "maxUses": 1000000
+    },
+    {
+      "result": {
+        "item": "touhou_little_maid_personality:mystery_gift_box",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 12,
+      "maxUses": 1
+    },
+    {
+      "result": {
+        "item": "touhou_little_maid_spell:starwatch_compass",
+        "count": 1
+      },
+      "mainCost": "minecraft:baked_potato",
+      "priceMin": 64,
+      "extraCost": {
+        "item": "touhou_little_maid_spell:star_glow_flower_cluster",
+        "count": 16
+      },
+      "maxUses": 1000000
+    }
+  ],
+  "closeness_rewards": [
+    {
+      "max": 9,
+      "chance": 100,
+      "pool": [
+        {
+          "item": "minecraft:poisonous_potato",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "min": 10,
+      "max": 40,
+      "chance": 10,
+      "pool": [
+        {
+          "item": "minecraft:cake",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "min": 41,
+      "max": 69,
+      "chance": 100,
+      "pool": [
+        {
+          "item": "minecraft:cake",
+          "count": 1,
+          "weight": 4
+        },
+        {
+          "item": "minecraft:pumpkin_pie",
+          "count": 1,
+          "weight": 3
+        },
+        {
+          "item": "minecraft:rabbit_stew",
+          "count": 1,
+          "weight": 3
+        }
+      ]
+    },
+    {
+      "min": 70,
+      "max": 99,
+      "chance": 100,
+      "pool": [
+        {
+          "item": "minecraft:diamond",
+          "count": 1,
+          "weight": 4
+        },
+        {
+          "item": "minecraft:emerald",
+          "count": 2,
+          "weight": 10
+        },
+        {
+          "item": "minecraft:ender_pearl",
+          "count": 2,
+          "weight": 5
+        },
+        {
+          "item": "minecraft:wither_skeleton_skull",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "min": 100,
+      "chance": 100,
+      "pool": [
+        {
+          "item": "minecraft:diamond_block",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "item": "minecraft:poppy",
+          "count": 3,
+          "weight": 5
+        },
+        {
+          "item": "minecraft:emerald_block",
+          "count": 1,
+          "weight": 3
+        },
+        {
+          "item": "minecraft:nether_star",
+          "count": 1,
+          "weight": 1
+        }
+      ],
+      "extras": [
+        {
+          "special": "child_maid_egg",
+          "chance": 1,
+          "requireBound": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "modelActions": {
+    "wine_fox/05_magical|magic": "hold_mainhand:axe",
+    "wine_fox/08_sta|texture": "extra17",
+    "wine_fox/09_hailuo|texture": "boat",
+    "wine_fox/10_zhiban|default": "hold_mainhand:axe",
+    "wine_fox/21_saint|skin": "hold_mainhand:axe"
+  }
+}

@@ -1,0 +1,24 @@
+// 一次性清场：用原版命令清掉旧剧本留下的女仆，并把剧情状态重置到 stage 1
+// 触发点：玩家登录（KubeJS 在每次进世界时都会重新加载这个脚本）
+
+PlayerEvents.loggedIn(event => {
+  const p = event.player
+  const s = p.server
+
+  // 只在第一次登录时清场，避免把剧情里的新女仆也清掉
+  if (p.persistentData.getBoolean('mk_cleared_v2')) return
+
+  try {
+    // 清掉玩家 24 格内的所有 TLM 女仆（旧剧本残留的昏迷女仆/斯塔·柏/圣女的酒狐都在这里）
+    s.runCommandSilent('execute at ' + p.username + ' run kill @e[type=touhou_little_maid:maid,distance=..24]')
+    // 顺带清掉残留的追兵僵尸
+    s.runCommandSilent('execute at ' + p.username + ' run kill @e[type=minecraft:zombie,tag=mk_chase,distance=..64]')
+
+    p.persistentData.putBoolean('mk_cleared_v2', true)
+    p.persistentData.putInt('mk_stage', 1)
+    p.tell('§7（旧剧本留下的女仆已经清场，剧情从头开始）')
+    console.info('[mk-clean] cleared old maids near ' + p.username + ', mk_stage=1')
+  } catch (err) {
+    console.error('[mk-clean] failed: ' + err)
+  }
+})

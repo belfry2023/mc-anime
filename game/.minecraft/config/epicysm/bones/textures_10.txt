@@ -1,0 +1,371 @@
+Model yes_steve_model:textures/10 as EpicYSM reads it. Form posed: 'plain'
+name | form | as solver | role | joint | above | status | shown | pivot | rest rotation (rad)
+AllBody | plain | AllBody | BODY | Torso | MAllbody | driven | yes | -0.701 22.336 1.480 | -0.000 -0.000 0.000
+AllBody2 | 2 | - |  |  | ? | other form | no | -0.701 10.636 1.480 | -0.000 -0.000 0.000
+AllHead | plain | AllHead | HEAD_OUTER | Head | UpperBody | driven | yes | -0.701 27.466 1.480 | -0.000 -0.000 0.000
+AllHead2 | 2 | - |  |  | ? | other form | no | -0.701 9.961 -5.270 | -0.000 -0.000 0.000
+Arm | plain | Arm |  | Chest | UpperBody | held still | yes | -0.521 26.026 1.480 | -0.000 -0.000 0.000
+Arm2 | 2 | - |  |  | ? | other form | yes | -0.701 7.936 -2.570 | -0.000 -0.000 0.000
+BL | plain | BL |  |  | ? | held still | yes | -3.114 20.729 3.690 | -0.000 -0.000 0.000
+BL2 | plain | BL2 |  |  | ? | held still | yes | -2.976 15.106 4.841 | -0.000 -0.000 0.000
+BL3 | plain | BL3 |  |  | ? | held still | yes | -3.966 10.966 5.921 | -0.000 -0.000 0.000
+BM | plain | BM |  |  | ? | held still | yes | -0.701 20.222 3.647 | -0.000 -0.000 0.000
+BM2 | plain | BM2 |  |  | ? | held still | yes | -0.701 15.193 4.886 | -0.000 -0.000 0.000
+BM3 | plain | BM3 |  |  | ? | held still | yes | -0.701 10.772 6.077 | -0.000 -0.000 0.000
+BR | plain | BR |  |  | ? | held still | yes | 1.458 20.187 3.691 | -0.000 -0.000 0.000
+BR2 | plain | BR2 |  |  | ? | held still | yes | 1.951 15.194 4.843 | -0.000 -0.000 0.000
+BR3 | plain | BR3 |  |  | ? | held still | yes | 2.491 11.054 5.923 | -0.000 -0.000 0.000
+BackClothe | plain | BackClothe |  |  | ? | held still | yes | -0.695 20.133 3.647 | 0.022 -0.000 0.000
+BackpackLocator | plain | BackpackLocator |  | Chest | UpperBody | held still | yes | -0.701 25.936 1.480 | -0.000 -0.000 0.000
+Bangs | plain | Bangs |  |  | ? | held still | yes | -0.701 34.588 -2.167 | -0.000 -0.000 0.000
+BaseHair | plain | BaseHair |  |  | ? | held still | yes | -0.701 32.236 5.710 | -0.000 -0.000 0.000
+BladeLocator | plain | BladeLocator |  | Hand_R | RightHand | held still | yes | 2.472 14.484 1.525 | -0.000 -0.000 0.000
+Body | plain | Body | BODY |  | ? | held still | yes | -0.701 10.636 2.155 | -0.000 -0.000 0.000
+DownBody | plain | DownBody | LOWER | Torso | AllBody | driven | yes | -0.701 17.566 1.480 | -0.000 -0.000 0.000
+DownBody2 | 2 | - |  |  | ? | other form | yes | -0.701 10.636 9.580 | -0.000 -0.000 0.000
+Ear | plain | Ear |  |  | ? | held still | no | 2.333 34.827 -0.472 | -0.000 -0.000 0.000
+Ear2 | plain | Ear2 |  |  | ? | held still | yes | -0.701 14.011 -11.345 | -0.000 -0.000 0.000
+Elytra | plain | Elytra |  |  | ? | held still | yes | -0.701 27.704 4.180 | -0.000 -0.000 0.000
+EyeBrow | plain | EyeBrow |  |  | ? | held still | yes | -0.701 30.796 1.480 | -0.000 -0.000 0.000
+Eyelid | plain | Eyelid |  |  | ? | held still | yes | -0.701 29.986 1.480 | -0.000 -0.000 0.000
+Eyes | plain | Eyes |  |  | ? | held still | yes | -0.701 30.166 1.480 | -0.000 -0.000 0.000
+FFM | plain | FFM |  |  | ? | held still | yes | -0.884 20.494 -0.325 | -0.000 -0.000 0.000
+FFM1 | plain | FFM1 |  |  | ? | held still | yes | -0.611 20.983 -0.556 | -0.000 -0.000 0.000
+FFM1_1 | plain | FFM1_1 |  |  | ? | held still | yes | -0.881 16.933 -1.816 | -0.000 -0.000 0.000
+FFM2 | plain | FFM2 |  |  | ? | held still | yes | -2.581 20.513 -0.744 | -0.000 -0.000 0.000
+FFM2_1 | plain | FFM2_1 |  |  | ? | held still | yes | -3.301 16.913 -1.644 | -0.000 -0.000 0.000
+FFM3 | plain | FFM3 |  |  | ? | held still | yes | 1.182 20.295 -0.701 | -0.000 -0.000 0.000
+FFM3_1 | plain | FFM3_1 |  |  | ? | held still | yes | 1.583 16.361 -1.570 | -0.000 -0.000 0.000
+FL | plain | FL |  |  | ? | held still | yes | -2.632 20.230 -0.270 | -0.000 -0.000 0.000
+FL1 | plain | FL1 |  |  | ? | held still | yes | -3.367 16.941 -0.997 | -0.000 -0.000 0.000
+FL2 | plain | FL2 |  |  | ? | held still | yes | -4.459 10.908 -2.612 | -0.000 -0.000 0.000
+FLongHair | plain | FLongHair |  |  | ? | held still | yes | -0.701 27.431 6.137 | -0.000 -0.000 0.000
+FLongLeftHair | plain | FLongLeftHair |  |  | ? | held still | yes | -5.008 28.405 4.788 | -0.000 -0.000 0.000
+FLongRightHair | plain | FLongRightHair |  |  | ? | held still | yes | 3.606 28.405 4.788 | -0.000 -0.000 0.000
+FM | plain | FM |  |  | ? | held still | yes | -0.701 20.311 -0.592 | -0.000 -0.000 0.000
+FM1 | plain | FM1 |  |  | ? | held still | yes | -0.701 16.902 -1.201 | -0.000 -0.000 0.000
+FM2 | plain | FM2 |  |  | ? | held still | yes | -0.701 10.771 -2.662 | -0.000 -0.000 0.000
+FOX | plain | FOX |  | Leg_L | Root | held still | no | -0.701 -0.164 1.480 | -0.000 -0.000 0.000
+FR | plain | FR |  |  | ? | held still | yes | 1.876 20.530 -0.460 | -0.000 -0.000 0.000
+FR1 | plain | FR1 |  |  | ? | held still | yes | 1.889 16.926 -0.905 | -0.000 -0.000 0.000
+FR2 | plain | FR2 |  |  | ? | held still | yes | 2.789 10.896 -2.525 | -0.000 -0.000 0.000
+FrontClothe | plain | FrontClothe |  |  | ? | held still | yes | -0.673 20.769 -0.472 | -0.022 -0.000 0.000
+Hair | plain | Hair |  | Head | Head | held still | yes | -0.701 13.066 1.480 | -0.000 -0.000 0.000
+Head | plain | Head | HEAD_INNER | Head | MHead | driven | yes | -0.701 28.366 1.480 | -0.000 -0.000 0.000
+Head2 | 2 | - |  |  | ? | other form | no | -0.701 9.286 -5.270 | -0.000 -0.000 0.000
+LB | plain | LB |  |  | ? | held still | yes | -3.777 20.305 2.844 | -0.000 -0.000 0.000
+LB2 | plain | LB2 |  |  | ? | held still | yes | -4.408 16.900 3.244 | -0.000 -0.000 0.000
+LB3 | plain | LB3 |  |  | ? | held still | yes | -6.118 10.960 4.324 | -0.000 -0.000 0.000
+LF | plain | LF |  |  | ? | held still | yes | -3.598 20.277 0.077 | -0.000 -0.000 0.000
+LF2 | plain | LF2 |  |  | ? | held still | yes | -4.408 16.677 0.077 | -0.000 -0.000 0.000
+LF3 | plain | LF3 |  |  | ? | held still | yes | -6.208 10.917 -1.003 | -0.000 -0.000 0.000
+LM | plain | LM |  |  | ? | held still | yes | -3.757 20.542 1.480 | -0.000 -0.000 0.000
+LM2 | plain | LM2 |  |  | ? | held still | yes | -4.567 16.852 1.480 | -0.000 -0.000 0.000
+LM3 | plain | LM3 |  |  | ? | held still | yes | -6.277 10.732 1.480 | -0.000 -0.000 0.000
+LeftArm | plain | LeftArm | ARM_L | Arm_L | Arm | driven | yes | -3.626 26.026 1.480 | -0.000 -0.000 -0.314
+LeftArm2 | 2 | - |  |  | ? | other form | yes | -3.401 7.936 -2.570 | -0.000 -0.000 0.000
+LeftClothe | plain | LeftClothe |  |  | ? | held still | yes | -3.491 20.210 1.426 | -0.000 -0.000 0.131
+LeftEar | plain | LeftEar |  |  | ? | held still | yes | -4.751 14.011 -11.345 | -0.000 -0.000 0.000
+LeftEyeDot | plain | LeftEyeDot |  |  | ? | held still | yes | 0.402 13.651 -1.715 | -0.000 -0.000 0.000
+LeftEyebrow | plain | LeftEyebrow |  |  | ? | held still | yes | -3.288 30.931 -1.512 | -0.000 -0.000 -0.044
+LeftEyelid | plain | LeftEyelid |  |  | ? | held still | yes | -2.951 29.716 -1.242 | -0.000 -0.000 0.000
+LeftFoot | plain | LeftFoot | FOOT_L | Leg_L | LeftLowerLeg | driven | yes | -2.579 2.131 0.704 | -0.000 -0.000 0.000
+LeftForeArm | plain | LeftForeArm | FOREARM_L | Hand_L | LeftArm | driven | yes | -3.719 21.065 1.435 | -0.000 -0.000 0.000
+LeftHand | plain | LeftHand | HAND_L | Hand_L | LeftForeArm | driven | yes | -3.873 14.484 1.525 | -0.000 -0.000 0.000
+LeftHand2 | 2 | - |  |  | ? | other form | no | -2.051 7.261 -16.070 | 1.571 -0.000 1.571
+LeftHandLocator | plain | LeftHandLocator |  | Hand_L | LeftHand | held still | yes | -3.873 14.484 1.525 | -0.000 -0.000 0.000
+LeftHandLocator2 | 2 | - |  |  | ? | other form | no | -2.051 7.261 -16.070 | -0.000 -0.000 0.000
+LeftLeg | plain | LeftLeg | THIGH_L | Thigh_L | Leg | driven | yes | -2.861 16.891 1.480 | -0.000 -0.000 0.000
+LeftLeg2 | 2 | - |  |  | ? | other form | yes | -3.401 7.936 6.880 | -0.000 -0.000 0.000
+LeftLowerLeg | plain | LeftLowerLeg | SHIN_L | Leg_L | LeftLeg | driven | yes | -2.681 9.961 1.660 | -0.000 -0.000 0.000
+LeftShoulderLocator | plain | LeftShoulderLocator |  | Head | Head | held still | yes | -3.401 37.366 1.480 | -0.000 -0.000 0.000
+LeftSideHair | plain | LeftSideHair |  |  | ? | held still | yes | -4.616 34.151 -0.383 | -0.000 -0.000 0.000
+LeftWaistLocator | plain | LeftWaistLocator |  | Hand_L | LeftHand | held still | yes | -3.873 14.484 1.525 | -0.000 -0.000 0.000
+Left_ear | plain | Left_ear |  |  | ? | held still | yes | -4.314 36.787 -0.028 | -3.066 0.084 2.017
+Leg | plain | Leg |  | Torso | DownBody | held still | yes | -0.701 7.936 6.880 | -0.000 -0.000 0.000
+LongHair | plain | LongHair |  |  | ? | held still | yes | -0.701 27.431 6.137 | -0.000 -0.000 0.000
+LongHair2 | plain | LongHair2 |  |  | ? | held still | yes | -0.701 23.425 6.819 | -0.175 -0.000 0.000
+LongLeftHair | plain | LongLeftHair |  |  | ? | held still | yes | -5.008 28.405 4.788 | -0.000 -0.873 0.000
+LongLeftHair2 | plain | LongLeftHair2 |  |  | ? | held still | yes | -4.619 24.265 5.584 | -0.000 -0.000 0.000
+LongRightHair | plain | LongRightHair |  |  | ? | held still | yes | 3.606 28.405 4.788 | -0.000 0.873 0.000
+LongRightHair2 | plain | LongRightHair2 |  |  | ? | held still | yes | 3.217 24.265 5.584 | -0.000 -0.000 0.000
+MAllbody | plain | MAllbody | BODY | Torso | Root | driven | yes | -0.701 22.336 1.480 | -0.000 -0.000 0.000
+MBangs | plain | MBangs |  |  | ? | held still | yes | -0.701 34.588 -2.167 | -0.000 -0.000 0.000
+MHead | plain | MHead | HEAD_OUTER | Head | AllHead | driven | yes | -0.701 28.366 1.480 | -0.000 -0.000 0.000
+MLeftSideHair | plain | MLeftSideHair |  |  | ? | held still | yes | -4.616 34.151 -0.383 | -0.000 -0.000 0.000
+MLongHair | plain | MLongHair |  |  | ? | held still | yes | -0.701 27.431 6.137 | -0.000 -0.000 0.000
+MLongRightHair | plain | MLongRightHair |  |  | ? | held still | yes | 3.606 28.405 4.788 | -0.000 -0.000 0.000
+MRightSideHair | plain | MRightSideHair |  |  | ? | held still | yes | 3.214 34.151 -0.383 | -0.000 -0.000 0.000
+MRoot | plain | MRoot | ROOT | Root | ? | driven | yes | -0.701 -0.164 1.480 | -0.000 -0.000 0.000
+MTail | plain | MTail |  |  | ? | held still | yes | -0.701 19.575 2.948 | -0.000 -0.000 0.000
+MUpBody | plain | MUpBody | CHEST_LOW | Torso | AllBody | driven | yes | -0.701 17.566 1.480 | -0.000 -0.000 0.000
+MUpperBody | plain | MUpperBody | CHEST | Chest | UpBody | driven | yes | -0.701 21.404 1.480 | -0.000 -0.000 0.000
+Mask | plain | Mask |  |  | ? | held still | yes | -6.148 32.379 0.713 | -0.000 1.440 -0.131
+Mouth | plain | Mouth |  |  | ? | held still | yes | -0.701 28.636 -0.320 | -0.000 -0.000 0.000
+PistolLocator | plain | PistolLocator |  | Chest | UpperBody | held still | yes | 2.899 20.311 0.940 | 0.524 -0.000 0.000
+RB | plain | RB |  |  | ? | held still | yes | 2.363 20.181 2.740 | -0.000 -0.000 0.000
+RB2 | plain | RB2 |  |  | ? | held still | yes | 3.083 16.941 3.190 | -0.000 -0.000 0.000
+RB3 | plain | RB3 |  |  | ? | held still | yes | 4.343 10.821 4.180 | -0.000 -0.000 0.000
+RF | plain | RF |  |  | ? | held still | yes | 2.289 20.418 0.027 | -0.000 -0.000 0.000
+RF2 | plain | RF2 |  |  | ? | held still | yes | 3.188 16.803 -0.061 | -0.000 -0.000 0.000
+RF3 | plain | RF3 |  |  | ? | held still | yes | 4.797 10.884 -1.084 | -0.000 -0.000 0.000
+RM | plain | RM |  |  | ? | held still | yes | 2.085 20.542 1.480 | -0.000 -0.000 0.000
+RM2 | plain | RM2 |  |  | ? | held still | yes | 3.165 16.942 1.480 | -0.000 -0.000 0.000
+RM3 | plain | RM3 |  |  | ? | held still | yes | 4.875 10.732 1.480 | -0.000 -0.000 0.000
+RifleLocator | plain | RifleLocator |  | Chest | UpperBody | held still | yes | -0.701 22.471 3.550 | -0.000 -0.000 0.785
+RightArm | plain | RightArm | ARM_R | Arm_R | Arm | driven | yes | 2.224 26.026 1.480 | -0.000 -0.000 0.314
+RightArm2 | 2 | - |  |  | ? | other form | yes | 1.999 7.936 -2.570 | -0.000 -0.000 0.000
+RightClothe | plain | RightClothe |  |  | ? | held still | yes | 2.269 20.343 1.426 | -0.000 -0.000 -0.131
+RightEar | plain | RightEar |  |  | ? | held still | yes | 3.349 14.011 -11.345 | -0.000 -0.000 0.000
+RightEyeDot | plain | RightEyeDot |  |  | ? | held still | yes | 4.654 13.651 -1.715 | -0.000 -0.000 0.000
+RightEyebrow | plain | RightEyebrow |  |  | ? | held still | yes | 1.887 30.931 -1.512 | -0.000 -0.000 0.044
+RightEyelid | plain | RightEyelid |  |  | ? | held still | yes | 1.549 29.716 -1.242 | -0.000 -0.000 0.000
+RightFoot | plain | RightFoot | FOOT_R | Leg_R | RightLowerLeg | driven | yes | 1.178 2.131 0.704 | -0.000 -0.000 0.000
+RightForeArm | plain | RightForeArm | FOREARM_R | Hand_R | RightArm | driven | yes | 2.317 21.065 1.435 | -0.000 -0.000 0.000
+RightHand | plain | RightHand | HAND_R | Hand_R | RightForeArm | driven | yes | 2.472 14.484 1.525 | -0.000 -0.000 0.000
+RightHand2 | 2 | - |  |  | ? | other form | no | 0.649 7.261 -16.070 | -1.571 -0.000 1.571
+RightHandLocator | plain | RightHandLocator |  | Hand_R | RightHand | held still | yes | 2.472 14.484 1.525 | -0.000 -0.000 0.000
+RightHandLocator2 | 2 | - |  |  | ? | other form | no | 0.649 7.261 -16.070 | -0.000 -0.000 0.000
+RightLeg | plain | RightLeg | THIGH_R | Thigh_R | Leg | driven | yes | 1.459 16.891 1.480 | -0.000 -0.000 0.000
+RightLeg2 | 2 | - |  |  | ? | other form | yes | 1.999 7.936 6.880 | -0.000 -0.000 0.000
+RightLowerLeg | plain | RightLowerLeg | SHIN_R | Leg_R | RightLeg | driven | yes | 1.279 9.961 1.660 | -0.000 -0.000 0.000
+RightShoulderLocator | plain | RightShoulderLocator |  | Head | Head | held still | yes | 1.999 37.366 1.480 | -0.000 -0.000 0.000
+RightSideHair | plain | RightSideHair |  |  | ? | held still | yes | 3.214 34.151 -0.383 | -0.000 -0.000 0.000
+RightWaistLocator | plain | RightWaistLocator |  | Chest | UpperBody | held still | yes | 2.899 18.736 1.480 | 0.087 -0.000 0.000
+Right_ear | plain | Right_ear |  |  | ? | held still | yes | 2.913 36.787 -0.028 | -3.066 -0.084 -2.017
+Root | plain | Root | ROOT | Torso | MRoot | driven | yes | -0.701 -0.164 1.480 | -0.000 -0.000 0.000
+SheathLocator | plain | SheathLocator |  | Hand_L | LeftHand | held still | yes | -3.873 14.484 1.525 | -0.000 -0.000 0.000
+Tail | plain | Tail |  |  | ? | held still | yes | -0.701 19.575 2.948 | 0.567 -0.000 0.000
+Tail2 | plain | Tail2 |  |  | ? | held still | yes | -0.701 17.753 7.231 | -2.225 -0.000 0.000
+Tail3 | plain | Tail3 |  |  | ? | held still | yes | -0.701 12.736 10.989 | -0.000 -0.000 0.000
+Tail4 | plain | Tail4 |  |  | ? | held still | yes | -0.701 4.433 12.586 | -0.000 -0.000 0.000
+Tail5 | plain | Tail5 |  |  | ? | held still | yes | -0.701 3.983 13.936 | -0.000 -0.000 0.000
+Tail6 | plain | Tail6 |  |  | ? | held still | yes | -0.701 3.983 16.636 | -0.000 -0.000 0.000
+Tail7 | plain | Tail7 |  |  | ? | held still | yes | -0.701 4.433 19.111 | -0.000 -0.000 0.000
+UpBody | plain | UpBody | CHEST_LOW | Torso | MUpBody | driven | yes | -0.701 17.566 1.480 | -0.000 -0.000 0.000
+UpBody2 | 2 | - |  |  | ? | other form | no | -0.701 10.636 1.480 | -0.000 -0.000 0.000
+UpperBody | plain | UpperBody | CHEST | Chest | MUpperBody | driven | yes | -0.701 21.404 1.480 | -0.000 -0.000 0.000
+UpperBody2 | 2 | - |  |  | ? | other form | no | -0.701 10.636 1.480 | -0.000 -0.000 0.000
+bai | plain | bai |  |  | ? | held still | yes | -0.000 2.500 0.000 | -0.000 -0.000 0.000
+bone13 | plain | bone13 |  |  | ? | held still | yes | 6.499 33.136 -5.227 | -0.000 -0.000 0.000
+bone17 | plain | bone17 |  |  | ? | held still | yes | -0.116 28.974 -0.781 | -0.000 -0.000 1.134
+bone18 | plain | bone18 |  |  | ? | held still | yes | -1.286 28.974 -0.781 | -0.000 -0.000 -1.134
+bone2 | plain | bone2 |  |  | ? | held still | yes | 5.059 11.864 -9.028 | -0.000 -0.000 0.000
+bone23 | plain | bone23 |  |  | ? | held still | yes | -1.038 29.266 -0.781 | -0.000 -0.000 0.144
+bone24 | plain | bone24 |  |  | ? | held still | yes | -0.363 29.266 -0.781 | -0.000 -0.000 -0.144
+bone3 | plain | bone3 |  |  | ? | held still | yes | 6.499 154.136 -5.227 | -0.000 -0.000 0.000
+bone5 | plain | bone5 |  |  | ? | held still | yes | -0.701 13.066 1.480 | -0.000 -0.000 0.000
+bow | plain | bow |  |  | ? | held still | yes | 0.453 21.854 -0.995 | -0.000 -0.000 0.000
+bow2 | plain | bow2 |  |  | ? | held still | yes | -0.701 15.832 -3.886 | 1.571 -3.142 0.000
+bow3 | plain | bow3 |  |  | ? | held still | yes | -2.547 36.354 -4.495 | 0.221 0.170 -0.180
+bow4 | plain | bow4 |  |  | ? | held still | yes | -2.178 14.438 -8.442 | 0.221 0.170 -0.180
+bow5 | plain | bow5 |  |  | ? | held still | yes | -2.547 157.354 -4.495 | 0.221 0.170 -0.180
+bowL | plain | bowL |  |  | ? | held still | yes | -1.392 21.596 -1.021 | -0.000 -0.000 0.000
+bowL1 | plain | bowL1 |  |  | ? | held still | yes | -1.284 21.746 -0.921 | -0.000 -0.000 0.000
+bowL10 | plain | bowL10 |  |  | ? | held still | yes | -3.567 14.351 -8.383 | -0.000 -0.000 0.000
+bowL11 | plain | bowL11 |  |  | ? | held still | yes | -3.855 12.407 -8.815 | -0.000 -0.000 0.000
+bowL12 | plain | bowL12 |  |  | ? | held still | yes | -4.392 157.096 -4.521 | -0.000 -0.000 0.000
+bowL13 | plain | bowL13 |  |  | ? | held still | yes | -4.284 157.246 -4.421 | -0.000 -0.000 0.000
+bowL14 | plain | bowL14 |  |  | ? | held still | yes | -4.644 154.816 -4.961 | -0.000 -0.000 0.000
+bowL2 | plain | bowL2 |  |  | ? | held still | yes | -1.644 19.316 -1.461 | -0.000 -0.000 0.000
+bowL3 | plain | bowL3 |  |  | ? | held still | yes | -20.637 15.466 -3.891 | -0.000 0.087 0.000
+bowL4 | plain | bowL4 |  |  | ? | held still | yes | -20.611 14.610 -3.606 | -0.366 -0.019 -0.049
+bowL5 | plain | bowL5 |  |  | ? | held still | yes | -21.016 12.045 -4.551 | -0.000 -0.000 0.000
+bowL6 | plain | bowL6 |  |  | ? | held still | yes | -4.392 36.096 -4.521 | -0.000 -0.000 0.000
+bowL7 | plain | bowL7 |  |  | ? | held still | yes | -4.284 36.246 -4.421 | -0.000 -0.000 0.000
+bowL8 | plain | bowL8 |  |  | ? | held still | yes | -4.644 33.816 -4.961 | -0.000 -0.000 0.000
+bowL9 | plain | bowL9 |  |  | ? | held still | yes | -3.654 14.232 -8.463 | -0.000 -0.000 0.000
+bowR | plain | bowR |  |  | ? | held still | yes | -0.009 21.776 -1.021 | -0.000 -0.000 0.000
+bowR1 | plain | bowR1 |  |  | ? | held still | yes | -0.117 21.746 -1.078 | -0.000 -0.000 0.000
+bowR10 | plain | bowR10 |  |  | ? | held still | yes | -2.634 14.351 -8.509 | -0.000 -0.000 0.000
+bowR11 | plain | bowR11 |  |  | ? | held still | yes | -2.274 12.263 -8.725 | -0.000 -0.000 0.000
+bowR12 | plain | bowR12 |  |  | ? | held still | yes | -3.009 157.276 -4.521 | -0.000 -0.000 0.000
+bowR13 | plain | bowR13 |  |  | ? | held still | yes | -3.117 157.246 -4.578 | -0.000 -0.000 0.000
+bowR14 | plain | bowR14 |  |  | ? | held still | yes | -2.667 154.636 -4.848 | -0.000 -0.000 0.000
+bowR2 | plain | bowR2 |  |  | ? | held still | yes | 0.333 19.136 -1.348 | -0.000 -0.000 0.000
+bowR3 | plain | bowR3 |  |  | ? | held still | yes | -18.564 15.736 -3.891 | -0.000 -0.070 0.000
+bowR4 | plain | bowR4 |  |  | ? | held still | yes | -18.725 14.745 -3.843 | -0.382 0.160 0.129
+bowR5 | plain | bowR5 |  |  | ? | held still | yes | -18.050 11.775 -4.383 | -0.000 -0.000 0.000
+bowR6 | plain | bowR6 |  |  | ? | held still | yes | -3.009 36.276 -4.521 | -0.000 -0.000 0.000
+bowR7 | plain | bowR7 |  |  | ? | held still | yes | -3.117 36.246 -4.578 | -0.000 -0.000 0.000
+bowR8 | plain | bowR8 |  |  | ? | held still | yes | -2.667 33.636 -4.848 | -0.000 -0.000 0.000
+bowR9 | plain | bowR9 |  |  | ? | held still | yes | -2.548 14.376 -8.463 | -0.000 -0.000 0.000
+clothe | plain | clothe |  |  | ? | held still | yes | -0.701 20.379 1.413 | -0.000 -0.000 0.000
+fazhangbenti | plain | fazhangbenti |  |  | ? | held still | yes | 3.027 14.592 6.039 | -1.571 -0.000 -1.571
+fazhangbenti2 | plain | fazhangbenti2 |  |  | ? | held still | yes | -6.442 23.405 20.911 | -1.571 -0.000 -1.571
+fazhangbenti3 | plain | fazhangbenti3 |  |  | ? | held still | yes | 2.558 14.630 36.886 | -1.571 -0.000 -1.571
+gui | plain | gui |  |  | ? | held still | no | -0.000 0.000 0.000 | -0.000 -0.000 0.000
+hathalf1 | plain | hathalf1 |  |  | ? | held still | yes | -0.701 32.236 -5.227 | -0.000 -0.000 0.000
+hathalf10 | plain | hathalf10 |  |  | ? | held still | yes | -0.701 153.236 -5.227 | -0.000 -0.000 0.000
+hathalf11 | plain | hathalf11 |  |  | ? | held still | yes | -0.701 153.236 -5.227 | -0.000 -0.000 0.000
+hathalf12 | plain | hathalf12 |  |  | ? | held still | yes | -0.701 153.236 -5.227 | -0.000 -0.000 0.000
+hathalf2 | plain | hathalf2 |  |  | ? | held still | yes | -0.701 32.236 -5.227 | -0.000 -0.000 0.000
+hathalf3 | plain | hathalf3 |  |  | ? | held still | yes | -0.701 32.236 -5.227 | -0.000 -0.000 0.000
+hathalf4 | plain | hathalf4 |  |  | ? | held still | yes | -0.701 32.236 -5.227 | -0.000 -0.000 0.000
+hathalf5 | plain | hathalf5 |  |  | ? | held still | yes | -0.701 11.144 -9.028 | -0.000 -0.000 0.000
+hathalf6 | plain | hathalf6 |  |  | ? | held still | yes | -0.701 11.144 -9.028 | -0.000 -0.000 0.000
+hathalf7 | plain | hathalf7 |  |  | ? | held still | yes | -0.701 11.144 -9.028 | -0.000 -0.000 0.000
+hathalf8 | plain | hathalf8 |  |  | ? | held still | yes | -0.701 11.144 -9.028 | -0.000 -0.000 0.000
+hathalf9 | plain | hathalf9 |  |  | ? | held still | yes | -0.701 153.236 -5.227 | -0.000 -0.000 0.000
+hathil | plain | hathil |  |  | ? | held still | yes | 0.110 43.420 2.918 | -0.000 -0.000 0.000
+hathil2 | plain | hathil2 |  |  | ? | held still | yes | -0.052 20.091 -2.512 | -0.000 -0.000 0.000
+hathil3 | plain | hathil3 |  |  | ? | held still | yes | 0.110 164.420 2.918 | -0.000 -0.000 0.000
+hathilhil | plain | hathilhil |  |  | ? | held still | yes | -7.991 42.463 5.390 | -0.000 -0.000 0.000
+hathilhil2 | plain | hathilhil2 |  |  | ? | held still | yes | -6.533 19.325 -0.535 | -0.000 -0.000 0.000
+hathilhil3 | plain | hathilhil3 |  |  | ? | held still | yes | -7.991 163.463 5.390 | -0.000 -0.000 0.000
+hatmainmain | plain | hatmainmain |  |  | ? | held still | yes | -0.701 32.236 -5.227 | -0.000 -0.000 0.000
+hatmainmain2 | plain | hatmainmain2 |  |  | ? | held still | yes | -0.701 11.144 -9.028 | -0.000 -0.000 0.000
+hatmainmain3 | plain | hatmainmain3 |  |  | ? | held still | yes | -0.701 153.236 -5.227 | -0.000 -0.000 0.000
+hatsideback | plain | hatsideback |  |  | ? | held still | yes | -0.701 32.236 1.973 | -0.000 -0.000 0.000
+hatsideback2 | plain | hatsideback2 |  |  | ? | held still | yes | -0.701 11.144 -3.268 | -0.000 -0.000 0.000
+hatsideback3 | plain | hatsideback3 |  |  | ? | held still | yes | -0.701 153.236 1.973 | -0.000 -0.000 0.000
+hatsidefront | plain | hatsidefront |  |  | ? | held still | yes | -0.701 32.236 1.973 | -0.000 -0.000 0.000
+hatsidefront2 | plain | hatsidefront2 |  |  | ? | held still | yes | -0.701 11.144 -3.268 | -0.000 -0.000 0.000
+hatsidefront3 | plain | hatsidefront3 |  |  | ? | held still | yes | -0.701 153.236 1.973 | -0.000 -0.000 0.000
+hatsideleft | plain | hatsideleft |  |  | ? | held still | yes | -0.701 32.236 1.973 | -0.000 -0.000 0.000
+hatsideleft2 | plain | hatsideleft2 |  |  | ? | held still | yes | -0.701 11.144 -3.268 | -0.000 -0.000 0.000
+hatsideleft3 | plain | hatsideleft3 |  |  | ? | held still | yes | -0.701 153.236 1.973 | -0.000 -0.000 0.000
+hatsideright | plain | hatsideright |  |  | ? | held still | yes | -0.701 32.236 1.973 | -0.000 -0.000 0.000
+hatsideright2 | plain | hatsideright2 |  |  | ? | held still | yes | -0.701 11.144 -3.268 | -0.000 -0.000 0.000
+hatsideright3 | plain | hatsideright3 |  |  | ? | held still | yes | -0.701 153.236 1.973 | -0.000 -0.000 0.000
+hong | plain | hong |  |  | ? | held still | yes | -0.000 2.500 -0.500 | -0.000 -0.000 0.000
+jingya | plain | jingya |  |  | ? | held still | yes | -0.813 29.266 -0.781 | -0.000 -0.000 0.000
+kongju | plain | kongju |  |  | ? | held still | yes | -0.813 28.816 -0.781 | -0.000 -0.000 0.000
+lan | plain | lan |  |  | ? | held still | yes | -0.000 2.500 -0.500 | -0.000 -0.000 0.000
+lan2 | plain | lan2 |  |  | ? | held still | yes | -0.000 2.500 -0.500 | -0.000 -0.000 0.000
+lan3 | plain | lan3 |  |  | ? | held still | yes | -0.000 2.500 -0.500 | -0.000 -0.000 0.000
+lan4 | plain | lan4 |  |  | ? | held still | yes | -0.000 2.500 -0.500 | -0.000 -0.000 0.000
+mofazhang | plain | mofazhang |  |  | ? | held still | no | 2.238 15.289 2.182 | -0.000 -0.000 0.000
+mofazhang2 | plain | mofazhang2 |  |  | ? | held still | yes | -7.006 24.064 14.804 | -0.000 -1.571 0.698
+mofazhang3 | plain | mofazhang3 |  |  | ? | held still | no | 1.994 15.964 24.704 | -0.000 -1.571 0.000
+molang | plain | molang |  |  | ? | held still | yes | -0.000 0.000 0.000 | -0.000 -0.000 0.000
+molang2 | plain | molang2 |  |  | ? | held still | yes | -0.000 0.000 0.000 | -0.000 -0.000 0.000
+molang3 | plain | molang3 |  |  | ? | held still | yes | -0.000 0.000 0.000 | -0.000 -0.000 0.000
+rightshou | plain | rightshou |  |  | ? | held still | yes | 2.477 14.887 1.843 | -0.000 -0.000 0.000
+wb | plain | wb |  |  | ? | held still | yes | -0.701 10.636 9.580 | -0.000 -0.000 0.000
+weixiao | plain | weixiao |  |  | ? | held still | yes | -0.701 28.816 -0.781 | -0.000 -0.000 0.000
+witchcap | plain | witchcap |  |  | ? | held still | yes | -0.701 32.236 1.973 | 0.052 -0.000 0.000
+witchcap2 | plain | witchcap2 |  |  | ? | held still | yes | -0.701 11.236 -3.027 | -1.623 -0.000 3.142
+witchcap3 | plain | witchcap3 |  |  | ? | held still | no | -0.701 153.236 1.973 | 0.052 -0.000 0.000
+xiao | plain | xiao |  |  | ? | held still | yes | -0.701 28.749 -0.781 | -0.000 -0.000 0.000
+ysmGlowLeftEyePublic | plain | ysmGlowLeftEyePublic |  |  | ? | held still | yes | -2.703 30.166 -1.094 | -0.000 -0.000 0.000
+ysmGlowLeftEyelidBase | plain | ysmGlowLeftEyelidBase |  |  | ? | held still | yes | -2.793 30.166 -1.242 | -0.000 -0.000 0.000
+ysmGlowMLongLeftHair | plain | ysmGlowMLongLeftHair |  |  | ? | held still | yes | -5.008 28.405 4.788 | -0.000 -0.000 0.000
+ysmGlowRightEyePublic | plain | ysmGlowRightEyePublic |  |  | ? | held still | yes | 1.302 30.166 -1.094 | -0.000 -0.000 0.000
+ysmGlowRightEyelidBase | plain | ysmGlowRightEyelidBase |  |  | ? | held still | yes | 1.392 30.166 -1.242 | -0.000 -0.000 0.000
+ysmGlowbone10 | plain | ysmGlowbone10 |  |  | ? | held still | yes | 0.851 14.486 -15.119 | -0.000 -0.000 0.000
+ysmGlowbone11 | plain | ysmGlowbone11 |  |  | ? | held still | yes | -6.804 23.419 9.379 | -0.000 -0.000 0.000
+ysmGlowbone13 | plain | ysmGlowbone13 |  |  | ? | held still | yes | -7.736 23.314 7.544 | -0.000 -0.000 0.000
+ysmGlowbone14 | plain | ysmGlowbone14 |  |  | ? | held still | yes | -6.806 23.423 -0.237 | -0.000 -0.000 0.000
+ysmGlowbone15 | plain | ysmGlowbone15 |  |  | ? | held still | yes | -7.880 23.302 -2.352 | -0.000 -0.000 0.000
+ysmGlowbone16 | plain | ysmGlowbone16 |  |  | ? | held still | yes | -6.806 23.423 25.413 | -0.000 -0.000 0.000
+ysmGlowbone17 | plain | ysmGlowbone17 |  |  | ? | held still | yes | -7.880 23.302 23.298 | -0.000 -0.000 0.000
+ysmGlowbone20 | plain | ysmGlowbone20 |  |  | ? | held still | yes | 2.193 7.835 9.247 | -0.000 -0.000 0.000
+ysmGlowbone21 | plain | ysmGlowbone21 |  |  | ? | held still | yes | 0.613 7.657 6.137 | -0.000 -0.000 0.000
+ysmGlowbone22 | plain | ysmGlowbone22 |  |  | ? | held still | yes | 2.194 14.648 6.963 | -0.000 -0.000 0.000
+ysmGlowbone23 | plain | ysmGlowbone23 |  |  | ? | held still | yes | 1.120 14.527 4.848 | -0.000 -0.000 0.000
+ysmGlowbone24 | plain | ysmGlowbone24 |  |  | ? | held still | yes | 2.194 14.648 14.613 | -0.000 -0.000 0.000
+ysmGlowbone25 | plain | ysmGlowbone25 |  |  | ? | held still | yes | 1.120 14.527 12.498 | -0.000 -0.000 0.000
+ysmGlowbone27 | plain | ysmGlowbone27 |  |  | ? | held still | yes | 2.431 14.664 -12.008 | -0.000 -0.000 0.000
+ysmGlowbone4 | plain | ysmGlowbone4 |  |  | ? | held still | yes | 2.438 14.648 -13.758 | -0.000 -0.000 0.000
+ysmGlowbone5 | plain | ysmGlowbone5 |  |  | ? | held still | yes | 1.364 14.527 -15.874 | -0.000 -0.000 0.000
+ysmGlowbone6 | plain | ysmGlowbone6 |  |  | ? | held still | yes | 2.438 14.648 -12.408 | -0.000 -0.000 0.000
+ysmGlowbone7 | plain | ysmGlowbone7 |  |  | ? | held still | yes | 1.364 14.527 -14.524 | -0.000 -0.000 0.000
+ysmGlowdamofazhen | plain | ysmGlowdamofazhen |  |  | ? | held still | no | 2.688 14.839 -29.318 | -0.000 -0.000 -0.305
+ysmGlowdamofazhen2 | plain | ysmGlowdamofazhen2 |  |  | ? | held still | no | 2.688 14.614 -38.318 | -3.142 -0.000 -0.305
+ysmGlowdamofazhen3 | plain | ysmGlowdamofazhen3 |  |  | ? | held still | no | -0.312 45.614 28.682 | -3.142 -0.000 0.000
+ysmGlowfoxeyes | plain | ysmGlowfoxeyes |  |  | ? | held still | yes | -0.701 9.286 -5.270 | -0.000 -0.000 0.000
+ysmGlowhathalf | plain | ysmGlowhathalf |  |  | ? | held still | yes | -0.701 32.236 -5.227 | -0.000 -0.000 0.000
+ysmGlowhathalf2 | plain | ysmGlowhathalf2 |  |  | ? | held still | yes | -0.701 11.144 -9.028 | -0.000 -0.000 0.000
+ysmGlowhathalf3 | plain | ysmGlowhathalf3 |  |  | ? | held still | yes | -0.701 153.236 -5.227 | -0.000 -0.000 0.000
+ysmGlowmaoquan2 | plain | ysmGlowmaoquan2 |  |  | ? | held still | yes | -7.001 35.836 8.273 | 0.131 0.006 0.088
+ysmGlowmaoquan3 | plain | ysmGlowmaoquan3 |  |  | ? | held still | yes | -5.741 14.024 1.772 | 0.131 0.006 0.088
+ysmGlowmaoquan4 | plain | ysmGlowmaoquan4 |  |  | ? | held still | yes | -7.001 156.836 8.273 | 0.131 0.006 0.088
+ysmGlowmofazhen | plain | ysmGlowmofazhen |  |  | ? | held still | no | 2.693 14.712 -15.641 | -0.000 -0.000 0.000
+ysmGlowmofazhen10 | plain | ysmGlowmofazhen10 |  |  | ? | held still | yes | 2.693 27.981 -39.941 | -0.000 -0.000 0.000
+ysmGlowmofazhen11 | plain | ysmGlowmofazhen11 |  |  | ? | held still | yes | -10.807 14.481 -39.941 | -0.000 -0.000 0.000
+ysmGlowmofazhen12 | plain | ysmGlowmofazhen12 |  |  | ? | held still | yes | 16.193 14.481 -39.716 | -0.000 -0.000 0.000
+ysmGlowmofazhen13 | plain | ysmGlowmofazhen13 |  |  | ? | held still | yes | 2.693 0.981 -39.716 | -0.000 -0.000 0.000
+ysmGlowmofazhen14 | plain | ysmGlowmofazhen14 |  |  | ? | held still | no | -0.907 22.812 -42.641 | -0.000 -0.000 0.000
+ysmGlowmofazhen15 | plain | ysmGlowmofazhen15 |  |  | ? | held still | yes | -0.307 73.981 27.059 | -0.000 -0.000 0.000
+ysmGlowmofazhen16 | plain | ysmGlowmofazhen16 |  |  | ? | held still | yes | -28.807 45.481 27.059 | -0.000 -0.000 0.000
+ysmGlowmofazhen17 | plain | ysmGlowmofazhen17 |  |  | ? | held still | yes | 28.193 45.481 27.284 | -0.000 -0.000 0.000
+ysmGlowmofazhen18 | plain | ysmGlowmofazhen18 |  |  | ? | held still | yes | -0.307 16.981 27.284 | -0.000 -0.000 0.000
+ysmGlowmofazhen19 | plain | ysmGlowmofazhen19 |  |  | ? | held still | no | 0.093 45.812 36.359 | -0.000 -0.000 0.000
+ysmGlowmofazhen2 | plain | ysmGlowmofazhen2 |  |  | ? | held still | no | 2.693 14.712 -11.141 | -0.000 -0.000 0.000
+ysmGlowmofazhen3 | plain | ysmGlowmofazhen3 |  |  | ? | held still | no | 2.693 14.712 -19.241 | -0.000 -0.000 0.000
+ysmGlowmofazhen4 | plain | ysmGlowmofazhen4 |  |  | ? | held still | no | 2.693 14.712 -23.741 | -0.000 -0.000 0.000
+ysmGlowmofazhen5 | plain | ysmGlowmofazhen5 |  |  | ? | held still | yes | 1.999 14.712 -1.220 | -0.000 -0.000 0.000
+ysmGlowmofazhen6 | plain | ysmGlowmofazhen6 |  |  | ? | held still | yes | 2.693 23.706 -30.941 | -0.000 -0.000 0.000
+ysmGlowmofazhen7 | plain | ysmGlowmofazhen7 |  |  | ? | held still | yes | -6.307 14.706 -30.941 | -0.000 -0.000 0.000
+ysmGlowmofazhen8 | plain | ysmGlowmofazhen8 |  |  | ? | held still | yes | 11.693 14.706 -30.716 | -0.000 -0.000 0.000
+ysmGlowmofazhen9 | plain | ysmGlowmofazhen9 |  |  | ? | held still | yes | 2.693 5.706 -30.716 | -0.000 -0.000 0.000
+ysmGlowmofazhenL | plain | ysmGlowmofazhenL |  |  | ? | held still | no | -41.907 22.812 -28.641 | -0.000 -0.000 0.000
+ysmGlowmofazhenR | plain | ysmGlowmofazhenR |  |  | ? | held still | no | 41.093 22.812 -28.641 | -0.000 -0.000 0.000
+ysmGlowmoshi | plain | ysmGlowmoshi |  |  | ? | held still | yes | 3.027 14.592 6.039 | -0.000 -0.000 0.000
+ysmGlowmoshi10 | plain | ysmGlowmoshi10 |  |  | ? | held still | yes | -8.547 157.254 5.980 | -0.000 -0.000 0.000
+ysmGlowmoshi11 | plain | ysmGlowmoshi11 |  |  | ? | held still | yes | -2.547 157.354 -4.495 | -0.000 -0.000 0.000
+ysmGlowmoshi2 | plain | ysmGlowmoshi2 |  |  | ? | held still | yes | -6.442 23.405 20.911 | -0.000 -0.000 0.000
+ysmGlowmoshi3 | plain | ysmGlowmoshi3 |  |  | ? | held still | yes | 2.368 14.525 6.461 | -0.000 -0.000 0.000
+ysmGlowmoshi4 | plain | ysmGlowmoshi4 |  |  | ? | held still | yes | 2.558 14.630 36.886 | -0.000 -0.000 0.000
+ysmGlowmoshi5 | plain | ysmGlowmoshi5 |  |  | ? | held still | yes | 0.453 21.854 -0.995 | -0.000 -0.000 0.000
+ysmGlowmoshi6 | plain | ysmGlowmoshi6 |  |  | ? | held still | yes | -8.547 36.254 5.980 | -0.000 -0.000 0.000
+ysmGlowmoshi7 | plain | ysmGlowmoshi7 |  |  | ? | held still | yes | -2.547 36.354 -4.495 | -0.000 -0.000 0.000
+ysmGlowmoshi8 | plain | ysmGlowmoshi8 |  |  | ? | held still | yes | -6.978 14.358 -0.062 | -0.000 -0.000 0.000
+ysmGlowmoshi9 | plain | ysmGlowmoshi9 |  |  | ? | held still | yes | -2.178 14.438 -8.442 | -0.000 -0.000 0.000
+ysmGlowquan10 | plain | ysmGlowquan10 |  |  | ? | held still | yes | -6.791 23.389 7.513 | -1.571 -0.000 2.662
+ysmGlowquan11 | plain | ysmGlowquan11 |  |  | ? | held still | yes | -6.808 23.104 7.513 | -0.000 -0.000 0.000
+ysmGlowquan12 | plain | ysmGlowquan12 |  |  | ? | held still | yes | -6.791 23.389 -2.387 | -1.571 -0.000 -1.134
+ysmGlowquan13 | plain | ysmGlowquan13 |  |  | ? | held still | yes | -6.811 23.061 -2.387 | -0.000 -0.000 0.000
+ysmGlowquan14 | plain | ysmGlowquan14 |  |  | ? | held still | yes | -6.791 23.389 23.263 | -1.571 -0.000 -2.356
+ysmGlowquan15 | plain | ysmGlowquan15 |  |  | ? | held still | yes | -6.811 23.061 23.263 | -0.000 -0.000 0.000
+ysmGlowquan18 | plain | ysmGlowquan18 |  |  | ? | held still | yes | 2.212 14.618 6.080 | -1.571 -0.000 2.662
+ysmGlowquan19 | plain | ysmGlowquan19 |  |  | ? | held still | yes | 2.185 7.302 6.085 | -0.000 -0.000 0.000
+ysmGlowquan2 | plain | ysmGlowquan2 |  |  | ? | held still | yes | 2.453 14.614 -15.170 | -1.571 -0.000 2.662
+ysmGlowquan20 | plain | ysmGlowquan20 |  |  | ? | held still | yes | 2.209 14.614 4.813 | -1.571 -0.000 -1.134
+ysmGlowquan21 | plain | ysmGlowquan21 |  |  | ? | held still | yes | 2.189 14.286 4.813 | -0.000 -0.000 0.000
+ysmGlowquan22 | plain | ysmGlowquan22 |  |  | ? | held still | yes | 2.209 14.614 12.463 | -1.571 -0.000 -2.356
+ysmGlowquan23 | plain | ysmGlowquan23 |  |  | ? | held still | yes | 2.189 14.286 12.463 | -0.000 -0.000 0.000
+ysmGlowquan3 | plain | ysmGlowquan3 |  |  | ? | held still | yes | 2.453 14.614 -15.908 | -1.571 -0.000 -1.134
+ysmGlowquan4 | plain | ysmGlowquan4 |  |  | ? | held still | yes | 2.453 14.614 -14.558 | -1.571 -0.000 -2.356
+ysmGlowquan5 | plain | ysmGlowquan5 |  |  | ? | held still | yes | 2.424 14.131 -15.170 | -0.000 -0.000 0.000
+ysmGlowquan6 | plain | ysmGlowquan6 |  |  | ? | held still | yes | 2.433 14.286 -15.908 | -0.000 -0.000 0.000
+ysmGlowquan7 | plain | ysmGlowquan7 |  |  | ? | held still | yes | 2.433 14.286 -14.558 | -0.000 -0.000 0.000
+ysmGlowshizijia | plain | ysmGlowshizijia |  |  | ? | held still | yes | -9.974 29.693 -7.362 | 2.799 0.824 -0.155
+ysmGlowshizijia10 | plain | ysmGlowshizijia10 |  |  | ? | held still | yes | -9.974 150.693 -7.362 | 2.799 0.824 -0.155
+ysmGlowshizijia11 | plain | ysmGlowshizijia11 |  |  | ? | held still | yes | 8.339 150.851 12.224 | 2.845 0.837 -0.093
+ysmGlowshizijia12 | plain | ysmGlowshizijia12 |  |  | ? | held still | yes | -9.911 149.779 11.911 | 2.845 0.837 -0.093
+ysmGlowshizijia2 | plain | ysmGlowshizijia2 |  |  | ? | held still | yes | 8.753 31.999 -7.035 | 2.845 0.837 -0.093
+ysmGlowshizijia3 | plain | ysmGlowshizijia3 |  |  | ? | held still | yes | 8.339 29.851 12.224 | 2.845 0.837 -0.093
+ysmGlowshizijia4 | plain | ysmGlowshizijia4 |  |  | ? | held still | yes | -9.911 28.779 11.911 | 2.845 0.837 -0.093
+ysmGlowshizijia5 | plain | ysmGlowshizijia5 |  |  | ? | held still | yes | 6.863 10.954 -10.474 | 2.845 0.837 -0.093
+ysmGlowshizijia6 | plain | ysmGlowshizijia6 |  |  | ? | held still | yes | -8.120 9.109 -10.736 | 2.799 0.824 -0.155
+ysmGlowshizijia7 | plain | ysmGlowshizijia7 |  |  | ? | held still | yes | 6.531 9.236 4.933 | 2.845 0.837 -0.093
+ysmGlowshizijia8 | plain | ysmGlowshizijia8 |  |  | ? | held still | yes | -8.069 8.378 4.682 | 2.845 0.837 -0.093
+ysmGlowshizijia9 | plain | ysmGlowshizijia9 |  |  | ? | held still | yes | 8.753 152.999 -7.035 | 2.845 0.837 -0.093
+zui | plain | zui |  |  | ? | held still | no | -0.701 7.261 -13.370 | -0.000 -0.000 0.000
+Skeleton built from the pivots, in model units with x to Epic Fight's right (the model's sideways axis runs Epic Fight's way; 18.74 units per block by the head's height, drawn at 0.700; 0 joint(s) moved to a body's proportions):
+  Root          0.000   16.891    1.480  from a bone of the model's own
+  Thigh_R       1.459   16.891    1.480  from a bone of the model's own
+  Leg_R         1.279    9.961    1.660  from a bone of the model's own
+  Knee_R        1.279    9.961    1.660  from a bone of the model's own
+  Thigh_L      -2.861   16.891    1.480  from a bone of the model's own
+  Leg_L        -2.681    9.961    1.660  from a bone of the model's own
+  Knee_L       -2.681    9.961    1.660  from a bone of the model's own
+  Torso         0.000   17.537    1.480  from a bone of the model's own
+  Chest        -0.701   21.404    1.480  from a bone of the model's own
+  Head         -0.701   28.366    1.480  from a bone of the model's own
+  Shoulder_R    0.000   28.366    1.480  from a bone of the model's own
+  Arm_R         2.224   26.026    1.480  from a bone of the model's own
+  Hand_R        2.317   21.065    1.435  from a bone of the model's own
+  Tool_R        2.472   14.484    1.525  from a bone of the model's own
+  Elbow_R       2.317   21.065    1.435  from a bone of the model's own
+  Shoulder_L    0.000   28.366    1.480  from a bone of the model's own
+  Arm_L        -3.626   26.026    1.480  from a bone of the model's own
+  Hand_L       -3.719   21.065    1.435  from a bone of the model's own
+  Tool_L       -3.873   14.484    1.525  from a bone of the model's own
+  Elbow_L      -3.719   21.065    1.435  from a bone of the model's own
+Hand locator RightHandLocator rests at 2.472 14.484 1.525, 6.584 units from Hand_R (0.155 -6.581 0.090)
+Hand locator LeftHandLocator rests at -3.873 14.484 1.525, 6.584 units from Hand_L (-0.155 -6.581 0.090)
+Weapons of the model's own, put away in battle: [bow3, bow4, bow2, SheathLocator, bow, BladeLocator, RifleLocator, bow5, PistolLocator]
+Carried along by a joint (not posed by name): [Hair by Head, RightShoulderLocator by Head, FOX by Leg_L, SheathLocator by Hand_L, LeftShoulderLocator by Head, Arm by Chest, RightHandLocator by Hand_R, RightWaistLocator by Chest, BackpackLocator by Chest, BladeLocator by Hand_R, LeftHandLocator by Hand_L, RifleLocator by Chest, Leg by Torso, LeftWaistLocator by Hand_L, PistolLocator by Chest]
