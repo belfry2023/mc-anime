@@ -168,6 +168,21 @@
       fx.play(saint, kind, fx.center(e), saint.getOwner())
     }
   }
+  // Old saves can contain a literal name even when mkSpiritSkin was already set.
+  // Upgrade the loaded spirit itself; its owner may be sitting, offline or in another dimension.
+  function restoreSkin(e) {
+    if (!e.tags.contains('mk_shikigami')) return
+    var kind = String(e.persistentData.getString('mkSpirit'))
+    if (kind !== 'wheel' && kind !== 'fusion') return
+    var key = 'mk.spirit.' + kind, name = e.getCustomName()
+    var legacy = kind === 'wheel' ? ['魔虚罗', '魔虚落'] : ['融合怪·颚吐', '融合怪', '颚吐', '鄂吐']
+    if (!name || legacy.includes(String(name.getString())) || String(name.getString()) === key) {
+      var translated = Component.translatable(key)
+      if (!name || !name.equals(translated)) e.setCustomName(translated)
+    }
+    e.persistentData.putBoolean('mkSpiritSkin', true)
+  }
+  EntityEvents.spawned('minecraft:iron_golem', (ev) => restoreSkin(ev.entity))
   // A summoned golem has its own chunk and dimension. Recover that same UUID after the party moves.
   function findSpirit(saint, kind) {
     var d = saint.persistentData,
@@ -217,10 +232,7 @@
       if (target && !j.locked(saint)) summon(saint, kind)
       var spirit = findSpirit(saint, kind)
       if (!spirit || !spirit.isAlive()) return
-      if (!spirit.persistentData.getBoolean('mkSpiritSkin')) {
-        spirit.setCustomName(Component.translatable('mk.spirit.' + kind))
-        spirit.persistentData.putBoolean('mkSpiritSkin', true)
-      }
+      if (!spirit.persistentData.getBoolean('mkSpiritSkin')) restoreSkin(spirit)
       if (spirit.distanceToEntity(saint) > 18) {
         var spot = s.safeSpot(spirit, saint, 3)
         if (spot) spirit.teleportTo(spot[0], spot[1], spot[2])

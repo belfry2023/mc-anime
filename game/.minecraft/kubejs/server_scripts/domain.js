@@ -7,6 +7,15 @@
   function act(p, cmd) {
     var key = selected(p),
       m = s.get(p, cmd === 'unbind' ? 'star' : key)
+    if (cmd === 'spirits') {
+      var saint = s.get(p, 'saint')
+      if (!saint) { p.tell('请先靠近本维度内已签约的圣女。'); return 0 }
+      p.sendData('mk_spirit_check', {
+        wheel: String(saint.persistentData.getString('mkSummon_wheel')),
+        fusion: String(saint.persistentData.getString('mkSummon_fusion'))
+      })
+      return 1
+    }
     if (cmd === 'return') {
       if (global.mkScenes.emergency(p)) return 1
       p.tell('你当前没有无量空处的入场记录。')
@@ -64,15 +73,23 @@
       p.tell(s.roles[key].name + ' · ' + (cmd === 'auto' ? '自主施术' : '听令施术'))
       return 1
     }
-    var ok = false
+    var ok = false, a, fused = false
     if (cmd === 'unbind') ok = j.unbind(m)
     else if (cmd === 'cast') ok = j.domain(m)
     else {
-      var a = j.aim(p, m),
-        look = p.getLookAngle()
-      ok = j.cast(m, cmd, a, [p.x + look.x() * 32, p.eyeY + look.y() * 32, p.z + look.z() * 32])
+      var reach = cmd === 'dismantle' ? 36 : cmd === 'cleave' ? 3.2 : 40
+      a = j.aim(p, m, reach)
+      var end = null
+      if (!a && (cmd === 'cleave' || cmd === 'blink')) a = j.nearest(m, reach, true)
+      else if (!a) end = j.aimPoint(p, m, reach, cmd === 'dismantle')
+      fused = m.persistentData.contains('mkPending') && (cmd === 'red' || cmd === 'blue')
+      ok = j.cast(m, cmd, a, end)
     }
-    if (ok) return 1
+    if (ok) {
+      if (j.costs[cmd]) p.tell('§b' + s.roles[key].name + ' · ' + global.mkFX.label(fused ? 'purple' : cmd) +
+        ' §7→ ' + (a ? a.getDisplayName().getString() : '准星落点'))
+      return 1
+    }
     var d = m.persistentData,
       now = j.time(m),
       reason
@@ -94,6 +111,7 @@
     else if (d.contains('mkPending')) reason = '正在蓄势，可用相反术式融合成茈'
     else reason = cmd === 'cast' ? '领域场地暂不可用' : '需锁定范围内的可见敌人或有效落点'
     global.mkFX.notice(p, '§e' + reason)
+    p.tell('§e未施术 · ' + reason)
     return 0
   }
   ServerEvents.commandRegistry((e) => {
@@ -115,6 +133,7 @@
       'cast',
       'unbind',
       'status',
+      'spirits',
       'return',
       'auto',
       'manual',

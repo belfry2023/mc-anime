@@ -1,0 +1,11 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "mc_anime:font/techniques.png",
+      "ascent": 8,
+      "height": 16,
+      "chars": ["\ue010\ue011\ue012\ue013\ue014"]
+    }
+  ]
+}

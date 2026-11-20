@@ -77,14 +77,14 @@
     })
     return target
   }
-  function aim(p, m) {
+  function aim(p, m, reach) {
     var view = p.getLookAngle(),
       start = p.getEyePosition()
     var picked = null,
-      first = 65
-    area(m, m.x, m.y, m.z, 48).forEach((e) => {
-      var end = start.add(view.scale(64)),
-        hit = e.boundingBox.inflate(0.65).clip(start, end)
+      first = 129,
+      end = start.add(view.scale(128))
+    area(m, m.x, m.y, m.z, reach || 48).forEach((e) => {
+      var hit = e.boundingBox.inflate(0.65).clip(start, end)
       if (hit.isPresent()) {
         var dist = start.distanceTo(hit.get())
         if (dist < first && p.hasLineOfSight(e)) {
@@ -93,7 +93,16 @@
         }
       }
     })
-    return picked || nearest(m, 36, true)
+    return picked || (reach ? null : nearest(m, 36, true))
+  }
+  function aimPoint(p, m, reach, throughBlocks) {
+    var eye = p.getEyePosition(),
+      dest = throughBlocks ? eye.add(p.getLookAngle().scale(reach)) : p.pick(reach, 1, false).getLocation(),
+      a = [m.x, m.eyeY, m.z],
+      b = [dest.x(), dest.y(), dest.z()],
+      len = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2])
+    if (len <= reach) return b
+    return a.map((v, i) => v + ((b[i] - v) * reach) / len)
   }
   function point(e) {
     return [e.x, e.y + Math.min(e.bbHeight * 0.5, 3), e.z]
@@ -187,22 +196,34 @@
       )
         m.level.destroyBlock(pos, false, m)
     }
-    effects.play(m, 'dismantle', b, m.getOwner())
+    if (!target) {
+      var origin = m.getEyePosition(), tip = origin.add(u[0] * dist, u[1] * dist, u[2] * dist),
+        closest = dist + 1
+      area(m, m.x, m.y, m.z, 36).forEach((e) => {
+        var contact = e.boundingBox.inflate(0.25).clip(origin, tip)
+        if (!contact.isPresent()) return
+        var along = origin.distanceTo(contact.get())
+        if (along < closest) { closest = along; target = e }
+      })
+    }
     if (target) hit(m, target, scaled(m, 52), 'ranged')
+    effects.play(m, 'dismantle', b, m.getOwner())
+    effects.mark(m, 'dismantle', a, b)
   }
-  function startOrb(m, kind, target) {
+  function startOrb(m, kind, target, end) {
     var d = m.persistentData,
-      t = point(target),
+      t = target ? point(target) : end,
       a = [m.x, m.eyeY, m.z],
       u = direction(a, t)
     effects.play(m, kind, kind === 'purple' ? a : t, m.getOwner())
     if (kind === 'red') {
       fx(m, 'FLAME', t[0], t[1], t[2], 32, 1.5)
       area(m, t[0], t[1], t[2], 9).forEach((e) => {
-        var v = e.is(target) ? u : direction(t, point(e))
+        var v = target && e.is(target) ? u : direction(t, point(e))
         e.addMotion(v[0] * 2.2, 0.7 + Math.max(0, v[1]), v[2] * 2.2)
         hit(m, e, 120, 'ranged')
       })
+      effects.mark(m, 'red', t)
       return
     }
     var job = NBT.compoundTag(),
@@ -213,6 +234,7 @@
     })
     job.putInt('age', 0)
     d.put('mkOrb_' + kind, job)
+    effects.mark(m, kind, base, kind === 'purple' ? a.map((v, i) => v + u[i] * 48) : null)
   }
   function updateOrbs(m) {
     var d = m.persistentData
@@ -329,7 +351,7 @@
     d.putDouble('mkDomainX', m.x)
     d.putDouble('mkDomainY', m.y)
     d.putDouble('mkDomainZ', m.z)
-    ;['mkPending', 'mkCleave', 'mkOrb_blue', 'mkOrb_purple'].forEach((k) => d.remove(k))
+    ;['mkPending', 'mkOrbTarget', 'mkOrbAim', 'mkCleave', 'mkOrb_blue', 'mkOrb_purple'].forEach((k) => d.remove(k))
     var p = m.getOwner(),
       spell = saint ? 'shrine' : 'void'
     effects.play(m, spell, null, p)
@@ -371,7 +393,7 @@
       (role === 'saint' && action !== 'dismantle' && action !== 'cleave') ||
       (role === 'star' && !['blue', 'red', 'purple', 'blink'].includes(action)) ||
       (role !== 'star' && role !== 'saint') ||
-      (!target && !(action === 'dismantle' && end))
+      (!target && (!end || action === 'cleave' || action === 'blink'))
     )
       return false
     if (
@@ -390,7 +412,9 @@
       ) {
         if (!spend(m, costs.purple)) return false
         d.remove('mkPending')
-        startOrb(m, 'purple', target)
+        d.remove('mkOrbAim')
+        d.remove('mkOrbTarget')
+        startOrb(m, 'purple', target, end)
         d.putLong('mkNext', now + 24)
         return true
       }
@@ -401,7 +425,12 @@
       effects.notice(m.getOwner(), '§b蓄势 · ' + effects.label(action))
       effects.dot(m.level, action === 'blue' ? 'SOUL_FIRE_FLAME' : 'FLAME', point(m), 12, 0.4)
       d.putString('mkPending', action)
-      d.putString('mkOrbTarget', String(target.uuid))
+      if (target) d.putString('mkOrbTarget', String(target.uuid))
+      else d.remove('mkOrbTarget')
+      var aim = target ? point(target) : end,
+        landing = NBT.compoundTag()
+      ;['X', 'Y', 'Z'].forEach((k, i) => landing.putDouble(k, aim[i]))
+      d.put('mkOrbAim', landing)
       d.putLong('mkRelease', now + 4)
       return true
     }
@@ -416,11 +445,12 @@
     if (action === 'dismantle') dismantle(m, target, end)
     if (action === 'cleave') {
       effects.play(m, 'cleave', point(target), m.getOwner())
+      effects.mark(m, 'cleave', point(target))
       d.putString('mkCleave', String(target.uuid))
       d.putInt('mkCuts', 5)
       d.putLong('mkCutAt', now)
     }
-    if (action === 'purple') startOrb(m, action, target)
+    if (action === 'purple') startOrb(m, action, target, end)
     d.putLong('mkNext', now + (role === 'saint' ? (phase(m) ? 10 : 20) : 24))
     return true
   }
@@ -430,10 +460,15 @@
     if (locked(m)) return
     if (d.contains('mkPending') && now >= d.getLong('mkRelease')) {
       var action = String(d.getString('mkPending')),
-        target = team.lookup(m.level, d.getString('mkOrbTarget'))
+        target = team.lookup(m.level, d.getString('mkOrbTarget')),
+        landing = d.getCompound('mkOrbAim'),
+        end = landing.contains('X') ? ['X', 'Y', 'Z'].map((k) => landing.getDouble(k)) : null
       d.remove('mkPending')
-      if (target && hostile(m, target) && spend(m, costs[action])) {
-        startOrb(m, action, target)
+      d.remove('mkOrbAim')
+      d.remove('mkOrbTarget')
+      if (target && !hostile(m, target)) target = null
+      if ((target || end) && spend(m, costs[action])) {
+        startOrb(m, action, target, end)
         d.putLong('mkNext', now + 24)
       } else effects.notice(m.getOwner(), '§7蓄势中断 · 目标已消失或咒力不足')
     }
@@ -457,6 +492,7 @@
     area: area,
     nearest: nearest,
     aim: aim,
+    aimPoint: aimPoint,
     hit: hit,
     fx: fx,
     time: time,

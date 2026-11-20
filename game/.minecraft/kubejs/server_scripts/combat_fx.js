@@ -54,6 +54,57 @@
   function notice(p, message) {
     if (p && p.isPlayer()) p.setStatusMessage(Text.of(message))
   }
+  // One full-bright billboard per cast. Its UUID and lifetime belong to the visual, never to the target.
+  var marks = {
+    dismantle: ['\ue010', 8, 7], cleave: ['\ue011', 9, 13], blue: ['\ue012', 7, 24],
+    red: ['\ue013', 10, 12], purple: ['\ue014', 11, 16]
+  }
+  var live = global.mkCastDisplays || []
+  global.mkCastDisplays = live
+  function mark(m, id, from, to) {
+    var style = marks[id], level = m.level, e = level.createEntity('minecraft:text_display')
+    var scale = style[1], ticks = style[2]
+    e.mergeNbt({
+      text: JSON.stringify({text: style[0], font: 'mc_anime:techniques'}),
+      billboard: 'center', background: 0, shadow: false, view_range: 2,
+      brightness: {block: 15, sky: 15},
+      transformation: {translation: [0, 0, 0], scale: [scale, scale, scale],
+        left_rotation: [0, 0, 0, 1], right_rotation: [0, 0, 0, 1]}
+    })
+    e.setPos(from[0], from[1], from[2])
+    e.addTag('mk_cast_fx')
+    var d = e.persistentData
+    d.putLong('end', Number(level.getTime()) + ticks)
+    if (to) {
+      d.putInt('travel', id === 'dismantle' ? 4 : ticks)
+      ;['X', 'Y', 'Z'].forEach((k, i) => {
+        d.putDouble('from' + k, from[i])
+        d.putDouble('to' + k, to[i])
+      })
+      d.putLong('start', Number(level.getTime()))
+    }
+    level.addFreshEntity(e)
+  }
+  EntityEvents.spawned('minecraft:text_display', (ev) => {
+    var e = ev.entity
+    if (!e.tags.contains('mk_cast_fx')) return
+    if (e.persistentData.getLong('end') <= Number(e.level.getTime())) ev.cancel()
+    else live.push(e)
+  })
+  ServerEvents.tick(() => {
+    for (var i = live.length - 1; i >= 0; i--) {
+      var e = live[i], d = e.persistentData, now = Number(e.level.getTime())
+      if (e.isRemoved() || now >= d.getLong('end')) {
+        if (!e.isRemoved()) e.discard()
+        live.splice(i, 1)
+      } else if (d.contains('travel')) {
+        var t = Math.min(1, (now - d.getLong('start')) / d.getInt('travel'))
+        var p = ['X', 'Y', 'Z'].map((k) => d.getDouble('from' + k) * (1 - t) + d.getDouble('to' + k) * t)
+        e.setPos(p[0], p[1], p[2])
+      }
+    }
+  })
+  ServerEvents.unloaded(() => { live.length = 0 })
   function effect(e, id, at, owner, minTicks) {
     var style = styles[id],
       d = e.persistentData,
@@ -84,6 +135,7 @@
     dot: dot,
     ring: ring,
     line: line,
+    mark: mark,
     play: effect,
     notice: notice,
     label: (id) => (styles[id] ? styles[id][0] : id)
