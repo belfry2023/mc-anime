@@ -229,8 +229,86 @@ function mkHomeRedstone(env) {
   s(px + 2, py + 1, z1 + 2, 'minecraft:note_block[note=12]')
 }
 
+// ---------- 读取保存的房子：优先内存 global，其次 kubejs/home_saved.json ----------
+function mkHomeGetSaved() {
+  if (global.mkHomeSaved && global.mkHomeSaved.blocks) return global.mkHomeSaved
+  try {
+    var j = JsonIO.read('kubejs/home_saved.json')
+    if (j && j.blocks && j.blocks.length) {
+      global.mkHomeSaved = j
+      return j
+    }
+  } catch (e) {}
+  return null
+}
+
+// ---------- 复刻手工保存的房子（数据驱动，优先级高于程序化别墅） ----------
+function mkHomeFromSaved(server, p) {
+  var d = mkHomeGetSaved()
+  if (!d || !d.blocks || !d.blocks.length) return false
+  var level = p.level
+  var ax = d.anchor[0], ay = d.anchor[1], az = d.anchor[2]
+  var sx = d.size[0], sy = d.size[1], sz = d.size[2]
+  // 锚点方块（玩家标记锚点时脚下那一格）对齐到 /mkhome 执行者脚下那一格
+  var ox = Math.floor(p.x) - ax
+  var oy = Math.floor(p.y) - ay
+  var oz = Math.floor(p.z) - az
+  if (oy < level.getMinBuildHeight() || oy + sy - 1 >= level.getMaxBuildHeight()) {
+    p.tell('§c此处高度不足以放置保存的房子。'); return false
+  }
+  if (!level.getWorldBorder().isWithinBounds(ox + 0.5, oz + 0.5) ||
+      !level.getWorldBorder().isWithinBounds(ox + sx - 0.5, oz + sz - 0.5)) {
+    p.tell('§c房子会越过世界边界。'); return false
+  }
+  // 加载覆盖区域 chunk
+  var xc0 = ox >> 4, xc1 = (ox + sx - 1) >> 4
+  var zc0 = oz >> 4, zc1 = (oz + sz - 1) >> 4
+  var cx, cz
+  for (cx = xc0; cx <= xc1; cx++) for (cz = zc0; cz <= zc1; cz++) level.getChunk(cx, cz)
+  // 清空目标区域（分批 fill air）
+  var run = function(c) { return server.runCommandSilent('execute in ' + level.dimension + ' run ' + c) }
+  var cap = level.gameRules.getInt(Java.loadClass('net.minecraft.world.level.GameRules').RULE_COMMAND_MODIFICATION_BLOCK_LIMIT)
+  function fillAir(x0, y0, z0, x1, y1, z1) {
+    var lo = [Math.min(x0, x1), Math.min(y0, y1), Math.min(z0, z1)]
+    var hi = [Math.max(x0, x1), Math.max(y0, y1), Math.max(z0, z1)]
+    var span = [hi[0] - lo[0] + 1, hi[1] - lo[1] + 1, hi[2] - lo[2] + 1]
+    if (span[0] * span[1] * span[2] > cap) {
+      var axis = span.indexOf(Math.max.apply(null, span))
+      var mid = Math.floor((hi[axis] + lo[axis]) / 2)
+      var l = hi.slice(), r = lo.slice()
+      l[axis] = mid; r[axis] = mid + 1
+      fillAir(lo[0], lo[1], lo[2], l[0], l[1], l[2])
+      fillAir(r[0], r[1], r[2], hi[0], hi[1], hi[2])
+      return
+    }
+    run('fill ' + lo.join(' ') + ' ' + hi.join(' ') + ' minecraft:air')
+  }
+  fillAir(ox, oy, oz, ox + sx - 1, oy + sy - 1, oz + sz - 1)
+  // 逐块放置（含方块状态）
+  var i, blk, failBlocks = 0, failEntities = 0
+  for (i = 0; i < d.blocks.length; i++) {
+    blk = d.blocks[i]
+    try { level.getBlock(ox + blk[0], oy + blk[1], oz + blk[2]).set(blk[3], blk[4]) } catch (err) { failBlocks++ }
+  }
+  // 恢复方块实体（箱子内容、告示牌文字、旗帜图案等）
+  var TagParser = Java.loadClass('net.minecraft.nbt.TagParser')
+  for (i = 0; i < d.entities.length; i++) {
+    var ent = d.entities[i]
+    try {
+      var tag = TagParser.parseTag(ent[3])
+      level.getBlock(ox + ent[0], oy + ent[1], oz + ent[2]).mergeEntityData(tag)
+    } catch (err) { failEntities++ }
+  }
+  p.teleportTo(Math.floor(p.x) + 0.5, Math.floor(p.y), Math.floor(p.z) + 0.5)
+  p.tell('§b房子已按保存的结构复刻完成。' + (failBlocks > 0 || failEntities > 0 ? '（' + failBlocks + ' 个方块 / ' + failEntities + ' 个方块实体放置失败，请检查 KubeJS 日志）' : ''))
+  return true
+}
+
 // ---------- 总装 ----------
 function buildHome(server, p) {
+  if (global.mkHomeSaved && global.mkHomeSaved.blocks && global.mkHomeSaved.blocks.length) {
+    return mkHomeFromSaved(server, p)
+  }
   var env = mkHomeMakeEnv(server, p)
 
   var level=p.level
