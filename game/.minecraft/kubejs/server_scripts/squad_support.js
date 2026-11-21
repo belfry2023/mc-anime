@@ -157,7 +157,7 @@
     // 女仆列表里也不会把它算成玩家的女仆。
     if (e instanceof Tame) {
       e.setTame(true)
-      e.setOwnerUUID(saint.getUUID())
+      e.setOwnerUUID(saint.uuid)
       e.setOrderedToSit(false)
     }
     e.setPersistenceRequired()
@@ -197,10 +197,17 @@
     if (d.contains(key)) {
       var id = String(d.getString(key)),
         r = saint.server.persistentData
-      if (!r.contains('mkLost_' + id)) return
-      d.remove(key)
-      d.putLong('mkReturn_' + kind, r.getLong('mkLost_' + id) + 600)
-      r.remove('mkLost_' + id)
+      if (r.contains('mkLost_' + id)) {
+        d.remove(key)
+        d.putLong('mkReturn_' + kind, r.getLong('mkLost_' + id) + 600)
+        r.remove('mkLost_' + id)
+      } else if (!s.lookup(saint.level, id)) {
+        // 记录还在但实体已不存在（自毁/被清理/卸载未回）→ 清掉残留记录，允许重新召唤
+        d.remove(key)
+        d.remove('mkSpiritAt_' + kind)
+      } else {
+        return
+      }
     }
     if (now < d.getLong('mkReturn_' + kind)) return
     var e = makeSpirit(saint, kind, null)
@@ -263,9 +270,9 @@
       }
       // 旧式神可能还挂在你名下（ownerUUID=玩家），统一改成归属圣女
       try {
-        if (String(spirit.getOwnerUUID()) !== String(saint.getUUID())) {
+        if (String(spirit.getOwnerUUID()) !== String(saint.uuid)) {
           spirit.setTame(true)
-          spirit.setOwnerUUID(saint.getUUID())
+          spirit.setOwnerUUID(saint.uuid)
         }
       } catch (errOwner) {}
       // 旧式神可能还挂着 touhou_little_maid:attack（会导致 StartAttacking 空目标 NPE），统一换回 idle
