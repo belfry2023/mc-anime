@@ -134,6 +134,38 @@
         /cactus|cramming|in_wall|falling|stalagmite|fly_into_wall|sweet_berry_bush/.test(id))
     )
   }
+  var spiritForms = Platform.isLoaded('cataclysm')
+    ? {wheel: 'cataclysm:modern_remnant', fusion: 'cataclysm:the_baby_leviathan'}
+    : {wheel: 'minecraft:wolf', fusion: 'minecraft:cat'}
+  function makeSpirit(saint, kind, old) {
+    var e = saint.level.createEntity(spiritForms[kind])
+    var spot = old ? [old.x, old.y, old.z] : s.safeSpot(e, saint, 3)
+    if (!spot || !saint.getOwnerUUID()) return null
+    e.setPos(spot[0], spot[1], spot[2])
+    e.setTame(true)
+    e.setOwnerUUID(saint.getOwnerUUID())
+    e.setOrderedToSit(false)
+    if (Platform.isLoaded('cataclysm')) e.setCommand(1)
+    e.setPersistenceRequired()
+    if (old) {
+      e.persistentData.merge(old.persistentData)
+      e.setRotation(old.yaw, old.pitch)
+    }
+    e.setCustomName(old && old.hasCustomName() ? old.getCustomName() : Component.translatable('mk.spirit.' + kind))
+    e.setCustomNameVisible(true)
+    e.addTag('mk_shikigami')
+    e.persistentData.putString('mkSpirit', kind)
+    e.persistentData.putString('mkSaint', String(saint.uuid))
+    e.persistentData.putString('mkOwner', s.ownerOf(saint))
+    e.getAttribute(A.MAX_HEALTH).setBaseValue(kind === 'wheel' ? 720 : 480)
+    var attack = e.getAttribute(A.ATTACK_DAMAGE)
+    if (attack) attack.setBaseValue(kind === 'wheel' ? 86 : 36)
+    e.setHealth(old ? e.maxHealth * old.health / old.maxHealth : e.maxHealth)
+    if (!saint.level.addFreshEntity(e)) return null
+    saint.persistentData.putString('mkSummon_' + kind, String(e.uuid))
+    if (old) old.discard()
+    return e
+  }
   function summon(saint, kind) {
     var d = saint.persistentData,
       key = 'mkSummon_' + kind,
@@ -147,43 +179,9 @@
       r.remove('mkLost_' + id)
     }
     if (now < d.getLong('mkReturn_' + kind)) return
-    var e = saint.level.createEntity('minecraft:iron_golem'),
-      spot = s.safeSpot(e, saint, 3)
-    if (!spot) return
-    e.setPos(spot[0], spot[1], spot[2])
-    e.setPlayerCreated(true)
-    e.setPersistenceRequired()
-    e.setCustomName(Component.translatable('mk.spirit.' + kind))
-    e.persistentData.putBoolean('mkSpiritSkin', true)
-    e.setCustomNameVisible(true)
-    e.addTag('mk_shikigami')
-    e.persistentData.putString('mkSpirit', kind)
-    e.persistentData.putString('mkSaint', String(saint.uuid))
-    e.persistentData.putString('mkOwner', s.ownerOf(saint))
-    e.getAttribute(A.MAX_HEALTH).setBaseValue(kind === 'wheel' ? 720 : 480)
-    e.getAttribute(A.ATTACK_DAMAGE).setBaseValue(kind === 'wheel' ? 86 : 36)
-    e.setHealth(e.maxHealth)
-    if (saint.level.addFreshEntity(e)) {
-      d.putString(key, String(e.uuid))
-      fx.play(saint, kind, fx.center(e), saint.getOwner())
-    }
+    var e = makeSpirit(saint, kind, null)
+    if (e) fx.play(saint, kind, fx.center(e), saint.getOwner())
   }
-  // Old saves can contain a literal name even when mkSpiritSkin was already set.
-  // Upgrade the loaded spirit itself; its owner may be sitting, offline or in another dimension.
-  function restoreSkin(e) {
-    if (!e.tags.contains('mk_shikigami')) return
-    var kind = String(e.persistentData.getString('mkSpirit'))
-    if (kind !== 'wheel' && kind !== 'fusion') return
-    var key = 'mk.spirit.' + kind, name = e.getCustomName()
-    var legacy = kind === 'wheel' ? ['魔虚罗', '魔虚落'] : ['融合怪·颚吐', '融合怪', '颚吐', '鄂吐']
-    if (!name || legacy.includes(String(name.getString())) || String(name.getString()) === key) {
-      var translated = Component.translatable(key)
-      if (!name || !name.equals(translated)) e.setCustomName(translated)
-    }
-    e.persistentData.putBoolean('mkSpiritSkin', true)
-  }
-  EntityEvents.spawned('minecraft:iron_golem', (ev) => restoreSkin(ev.entity))
-  // A summoned golem has its own chunk and dimension. Recover that same UUID after the party moves.
   function findSpirit(saint, kind) {
     var d = saint.persistentData,
       id = d.getString('mkSummon_' + kind)
@@ -216,6 +214,11 @@
         spirit = s.lookup(saint.level, id)
       }
     }
+    if (spirit && spirit.isAlive() && String(spirit.type) === 'minecraft:iron_golem' &&
+        spirit.tags.contains('mk_shikigami') && String(spirit.persistentData.getString('mkSpirit')) === kind &&
+        String(spirit.persistentData.getString('mkSaint')) === String(saint.uuid)) {
+      spirit = makeSpirit(saint, kind, spirit) || spirit
+    }
     if (spirit) {
       var pos = NBT.compoundTag()
       pos.putString('dim', String(spirit.level.dimension))
@@ -232,7 +235,6 @@
       if (target && !j.locked(saint)) summon(saint, kind)
       var spirit = findSpirit(saint, kind)
       if (!spirit || !spirit.isAlive()) return
-      if (!spirit.persistentData.getBoolean('mkSpiritSkin')) restoreSkin(spirit)
       if (spirit.distanceToEntity(saint) > 18) {
         var spot = s.safeSpot(spirit, saint, 3)
         if (spot) spirit.teleportTo(spot[0], spot[1], spot[2])
@@ -261,6 +263,10 @@
     var role = s.roleOf(e)
     if (!role || !s.roles[role] || !e.isAlive()) return
     if (role === 'magic') blade.train(e, clock(e))
+    if (role === 'saint' && clock(e) % 20 === 0 && (!j.active(e) || !e.getOwner())) {
+      findSpirit(e, 'wheel')
+      findSpirit(e, 'fusion')
+    }
     if (!j.active(e)) return
     var now = clock(e),
       d = e.persistentData
@@ -315,6 +321,10 @@
       from = src.getActual(),
       role = s.roleOf(e),
       id = damageId(src)
+    if (from && from.tags.contains('mk_shikigami') && !j.hostile(from, e)) {
+      ev.setCanceled(true)
+      return
+    }
     if (from && from.persistentData.getLong('mkStillEnd') > clock(from)) {
       ev.setCanceled(true)
       return
@@ -425,6 +435,7 @@
     )
       ev.setNewTarget(null)
   }
+  global.mkFindSpirit = findSpirit
   global.mkCombatHooks = {
     tick: tick,
     attack: attack,
