@@ -230,20 +230,32 @@ function mkHomeRedstone(env) {
 }
 
 // ---------- 读取保存的房子：优先内存 global，其次 kubejs/home_saved.json ----------
+// /savehome go 会把房子数据写成 kubejs/home_saved.json。
+// 这里每次 /mkhome 都直接读这个 json，所以游戏里重新导出后不需要再在外面生成 js，也不需要重启。
+var mkHomeSavedRawLen = -1
 function mkHomeGetSaved() {
-  if (global.mkHomeSaved && global.mkHomeSaved.blocks) return global.mkHomeSaved
   try {
-    // 注意：JsonIO.read 返回的是 Java Map（点号取属性不可靠）；
-    // JsonIO.parse 会把 JSON 转成真正的 JS 对象/数组，属性与下标访问都正常。
-    var j = JsonIO.parse(JsonIO.readString('kubejs/home_saved.json'))
-    if (j && j.blocks && j.blocks.length) {
-      global.mkHomeSaved = j
-      return j
+    var raw = JsonIO.readString('kubejs/home_saved.json')
+    if (raw) {
+      var len = String(raw).length
+      // 同一个文件解析过一次就不再重复解析（/mkhome 里这个方法会被调两次）
+      if (global.mkHomeSaved && global.mkHomeSaved.blocks && mkHomeSavedRawLen === len) return global.mkHomeSaved
+      var j = null
+      // Rhino 自带标准 JSON，返回的是真正的 JS 对象/数组（JsonIO.read 返回的是 Java Map，点号取不到属性）
+      if (typeof JSON !== 'undefined' && JSON.parse) j = JSON.parse(String(raw))
+      else j = JsonIO.parse(String(raw))
+      if (j && j.blocks && j.blocks.length) {
+        global.mkHomeSaved = j
+        mkHomeSavedRawLen = len
+        return j
+      }
+      console.info('[MKHOME] home_saved.json 结构不对: blocks=' + (j && j.blocks ? j.blocks.length : 'null'))
     }
-    console.info('[MKHOME] home_saved.json 读取成功但不是预期的结构: blocks=' + (j && j.blocks ? j.blocks.length : 'null'))
   } catch (e) {
     console.info('[MKHOME] 读取 home_saved.json 失败: ' + e)
   }
+  // 兜底：本次会话里 /savehome go 刚写进内存的数据（或者 home_saved_data.js 预先挂好的数据）
+  if (global.mkHomeSaved && global.mkHomeSaved.blocks && global.mkHomeSaved.blocks.length) return global.mkHomeSaved
   return null
 }
 

@@ -73,6 +73,10 @@ game/.minecraft/forge-1.20.1-47.4.29-installer.jar.log
 game/.minecraft/rimulib.log
 game/.minecraft/shooting_star.log
 
+# ---------- 房子导出数据（游戏里 /savehome go 生成，体积大且经常变，不进仓库） ----------
+game/.minecraft/kubejs/home_saved.json
+game/.minecraft/kubejs/server_scripts/home_saved_data.js
+
 # ---------- 备份文件（*.bak 一律忽略，但保留 kubejs 归档脚本） ----------
 *.bak
 !game/.minecraft/kubejs/_archived_scripts/*.bak
