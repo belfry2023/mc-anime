@@ -21,6 +21,7 @@ game/.minecraft/tlm_custom_pack/
 game/.minecraft/defaultconfigs/
 game/.minecraft/resourcepacks/
 game/.minecraft/patchouli_books/
+game/.minecraft/config/touhou_little_maid/file/
 
 # ---------- config 内的缓存 / 内置模型 / 资源包 ----------
 game/.minecraft/config/yes_steve_model/builtin/
