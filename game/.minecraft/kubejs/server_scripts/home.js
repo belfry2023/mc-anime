@@ -233,12 +233,17 @@ function mkHomeRedstone(env) {
 function mkHomeGetSaved() {
   if (global.mkHomeSaved && global.mkHomeSaved.blocks) return global.mkHomeSaved
   try {
-    var j = JsonIO.read('kubejs/home_saved.json')
+    // 注意：JsonIO.read 返回的是 Java Map（点号取属性不可靠）；
+    // JsonIO.parse 会把 JSON 转成真正的 JS 对象/数组，属性与下标访问都正常。
+    var j = JsonIO.parse(JsonIO.readString('kubejs/home_saved.json'))
     if (j && j.blocks && j.blocks.length) {
       global.mkHomeSaved = j
       return j
     }
-  } catch (e) {}
+    console.info('[MKHOME] home_saved.json 读取成功但不是预期的结构: blocks=' + (j && j.blocks ? j.blocks.length : 'null'))
+  } catch (e) {
+    console.info('[MKHOME] 读取 home_saved.json 失败: ' + e)
+  }
   return null
 }
 
@@ -306,7 +311,9 @@ function mkHomeFromSaved(server, p) {
 
 // ---------- 总装 ----------
 function buildHome(server, p) {
-  if (global.mkHomeSaved && global.mkHomeSaved.blocks && global.mkHomeSaved.blocks.length) {
+  // 关键：这里必须调用 mkHomeGetSaved()（会尝试从 kubejs/home_saved.json 读取），
+  // 不能只查 global.mkHomeSaved——重启后内存里没有数据，否则会静默回退到旧程序化别墅。
+  if (mkHomeGetSaved()) {
     return mkHomeFromSaved(server, p)
   }
   var env = mkHomeMakeEnv(server, p)
