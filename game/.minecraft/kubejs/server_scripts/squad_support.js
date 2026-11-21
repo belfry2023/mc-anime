@@ -14,6 +14,9 @@
   var Serial = Java.loadClass('net.minecraft.network.syncher.EntityDataSerializers')
   var flags = Serial.BYTE.createAccessor(0)
   var Tame = Java.loadClass('net.minecraft.world.entity.TamableAnimal')
+  var Slots = Java.loadClass('net.minecraft.world.entity.EquipmentSlot')
+  var Tasks = Java.loadClass('com.github.tartaricacid.touhoulittlemaid.entity.task.TaskManager')
+  var Memo = Java.loadClass('net.minecraft.world.entity.ai.memory.MemoryModuleType')
   var clock = (e) => j.time(e)
   function ally(p, e) {
     if (!e) return false
@@ -134,30 +137,37 @@
         /cactus|cramming|in_wall|falling|stalagmite|fly_into_wall|sweet_berry_bush/.test(id))
     )
   }
-  var spiritForms = Platform.isLoaded('cataclysm')
-    ? {wheel: 'cataclysm:scylla', fusion: 'cataclysm:maledictus'}
-    : {wheel: 'minecraft:wolf', fusion: 'minecraft:cat'}
+  // 式神用女仆躯体承载（无 BOSS 血条/音乐/推挤），外观取自契约双生狐模型包 contract_fox
+  var spiritMaid = 'touhou_little_maid:maid'
+  var spiritModels = Platform.isLoaded('touhou_little_maid')
+    ? {wheel: 'contract_fox:fox_black', fusion: 'contract_fox:fox_white'}
+    : {wheel: 'geckolib:winefox_nine_tailed', fusion: 'geckolib:winefox_magical'}
+  var spiritTasks = {wheel: 'touhou_little_maid:attack', fusion: 'touhou_little_maid:attack'}
   function makeSpirit(saint, kind, old) {
-    var e = saint.level.createEntity(spiritForms[kind])
-    var spot = old ? [old.x, old.y, old.z] : s.safeSpot(e, saint, 4) || s.safeSpot(e, saint, 3)
+    var e = saint.level.createEntity(spiritMaid)
+    var spot = old ? [old.x, old.y, old.z] : s.safeSpot(e, saint, 3) || s.safeSpot(e, saint, 2)
     if (!spot || !saint.getOwnerUUID()) return null
     e.setPos(spot[0], spot[1], spot[2])
-    // 斯库拉/咒翼灵骸是 BOSS，不是 TamableAnimal：驯服/命令接口只在宠物上调用
-    if (e instanceof Tame) {
+    var owner = saint.getOwner()
+    if (owner && owner.isPlayer()) e.tame(owner)
+    else if (e instanceof Tame) {
       e.setTame(true)
       e.setOwnerUUID(saint.getOwnerUUID())
       e.setOrderedToSit(false)
-      if (Platform.isLoaded('cataclysm')) {
-        try {
-          e.setCommand(1)
-        } catch (err) {}
-      }
     }
     e.setPersistenceRequired()
     if (old) {
       e.persistentData.merge(old.persistentData)
       e.setRotation(old.yaw, old.pitch)
     }
+    try {
+      e.setModelId(spiritModels[kind])
+    } catch (errModel) {
+      // 模型包缺失时回退到内置的酒狐系列，保证式神一定可见
+      try { e.setModelId('geckolib:winefox_magical') } catch (errFallback) {}
+    }
+    var task = Tasks.findTask(spiritTasks[kind])
+    if (task.isPresent()) e.setTask(task.get())
     e.setCustomName(old && old.hasCustomName() ? old.getCustomName() : Component.translatable('mk.spirit.' + kind))
     e.setCustomNameVisible(true)
     e.addTag('mk_shikigami')
@@ -167,6 +177,8 @@
     e.getAttribute(A.MAX_HEALTH).setBaseValue(kind === 'wheel' ? 720 : 480)
     var attack = e.getAttribute(A.ATTACK_DAMAGE)
     if (attack) attack.setBaseValue(kind === 'wheel' ? 86 : 36)
+    e.setItemSlot(Slots.MAINHAND, Item.of(kind === 'wheel' ? 'minecraft:netherite_sword' : 'touhou_little_maid_spell:star_shadow_staff'))
+    try { e.setPickup(false) } catch (errPick) {}
     e.setHealth(old ? e.maxHealth * old.health / old.maxHealth : e.maxHealth)
     if (!saint.level.addFreshEntity(e)) return null
     saint.persistentData.putString('mkSummon_' + kind, String(e.uuid))
@@ -221,14 +233,24 @@
         spirit = s.lookup(saint.level, id)
       }
     }
-    // 形态升级：旧版铁傀儡或旧的猫/狼/现世遗魂/幼年利维坦式神，一律替换成当前形态
+    // 形态升级：旧版 BOSS/铁傀儡/猫狼式神，一律替换成当前的女仆式神形态
     if (spirit && spirit.isAlive() && spirit.tags.contains('mk_shikigami') &&
         String(spirit.persistentData.getString('mkSpirit')) === kind &&
         String(spirit.persistentData.getString('mkSaint')) === String(saint.uuid) &&
-        String(spirit.type) !== spiritForms[kind] && d.getLong('mkFormRetry') <= now) {
+        String(spirit.type) !== spiritMaid && d.getLong('mkFormRetry') <= now) {
       var upgraded = makeSpirit(saint, kind, spirit)
       if (upgraded) spirit = upgraded
       else d.putLong('mkFormRetry', now + 200)
+    }
+    // 已换成女仆躯体但模型不对（换了模型包或旧形态遗留）时刷新模型
+    if (spirit && spirit.isAlive() && String(spirit.type) === spiritMaid &&
+        String(spirit.persistentData.getString('mkSpirit')) === kind &&
+        String(spirit.getModelId()) !== spiritModels[kind] && d.getLong('mkFormRetry') <= now) {
+      try {
+        spirit.setModelId(spiritModels[kind])
+      } catch (err) {
+        d.putLong('mkFormRetry', now + 200)
+      }
     }
     if (spirit) {
       var pos = NBT.compoundTag()
@@ -239,6 +261,28 @@
     }
     return spirit
   }
+  function spiritFight(spirit, target, kind) {
+    var d = spirit.persistentData,
+      now = clock(spirit)
+    if (!target || !target.isAlive()) {
+      if (spirit.getTarget()) spirit.setTarget(null)
+      return
+    }
+    spirit.setTarget(target)
+    if (spirit.isOrderedToSit && spirit.isOrderedToSit()) spirit.setOrderedToSit(false)
+    try {
+      spirit.getBrain().setMemory(Memo.ATTACK_TARGET, target)
+    } catch (errBrain) {}
+    var distance = spirit.distanceToEntity(target)
+    if (distance > 3.2) {
+      if (now % 10 === 0) spirit.getNavigation().moveTo(target, 1.2)
+      return
+    }
+    if (d.getLong('mkSpiritSwing') > now) return
+    d.putLong('mkSpiritSwing', now + (kind === 'wheel' ? 12 : 20))
+    spirit.swing('main_hand')
+    j.hit(spirit, target, spirit.getAttributeValue(A.ATTACK_DAMAGE), 'blade')
+  }
   function spirits(saint, target) {
     var d = saint.persistentData,
       now = clock(saint)
@@ -246,19 +290,11 @@
       if (target && !j.locked(saint)) summon(saint, kind)
       var spirit = findSpirit(saint, kind)
       if (!spirit || !spirit.isAlive()) return
-      if (spirit.distanceToEntity(saint) > 18) {
+      if (spirit.distanceToEntity(saint) > 10) {
         var spot = s.safeSpot(spirit, saint, 3)
         if (spot) spirit.teleportTo(spot[0], spot[1], spot[2])
       }
-      if (target) spirit.setTarget(target)
-      else if (spirit instanceof j.mob && spirit.getTarget() && !j.hostile(saint, spirit.getTarget()))
-        spirit.setTarget(null)
-      // BOSS 形态（斯库拉/咒翼灵骸）右键交互会写入 HomePos，导致跟随途中被"回家"逻辑拉走；持续清空
-      if (!(spirit instanceof Tame)) {
-        try {
-          spirit.setHomePos(null)
-        } catch (err) {}
-      }
+      spiritFight(spirit, target, kind)
       if (kind === 'wheel') {
         if (spirit.health < spirit.maxHealth) fx.play(spirit, 'adapt', null, null, 40)
         spirit.heal(120)
