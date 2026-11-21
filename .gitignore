@@ -3,6 +3,20 @@
 # 本仓库只保留「核心配置 / 脚本 / 文档」，不传运行时与大体积文件。
 # ============================================================
 
+# ---------- 通用垃圾（任意目录） ----------
+__pycache__/
+*.py[cod]
+*.class
+*.log
+*.err
+hs_err_pid*
+*.tmp
+*.temp
+~$*
+.DS_Store
+Thumbs.db
+desktop.ini
+
 # ---------- .minecraft 运行时与大体积目录 ----------
 game/.minecraft/mods/
 game/.minecraft/mods-disabled/
@@ -21,12 +35,19 @@ game/.minecraft/tlm_custom_pack/
 game/.minecraft/defaultconfigs/
 game/.minecraft/resourcepacks/
 game/.minecraft/patchouli_books/
+game/.minecraft/screenshots/
+game/.minecraft/shaderpacks/
+game/.minecraft/blueprints/
+game/.minecraft/schematics/
 game/.minecraft/config/touhou_little_maid/file/
 
-# ---------- config 内的缓存 / 内置模型 / 资源包 ----------
+# ---------- config 内的缓存 / 内置模型 / 资源包（可整目录重建） ----------
 game/.minecraft/config/yes_steve_model/builtin/
 game/.minecraft/config/yes_steve_model/cache/
 game/.minecraft/config/ysm_geo_compat/resourcepack/
+game/.minecraft/config/**/cache/
+game/.minecraft/config/**/builtin/
+game/.minecraft/config/**/resourcepack/
 
 # ---------- PCL2 启动器与 native 二进制（不传） ----------
 /game/JavaWrapper.jar
@@ -52,21 +73,24 @@ game/.minecraft/forge-1.20.1-47.4.29-installer.jar.log
 game/.minecraft/rimulib.log
 game/.minecraft/shooting_star.log
 
+# ---------- 备份文件（*.bak 一律忽略，但保留 kubejs 归档脚本） ----------
+*.bak
+!game/.minecraft/kubejs/_archived_scripts/*.bak
+
 # ---------- 测试服务器 / JDK / 临时目录 ----------
 jdk/
-server-test2/
-server-test3/
-server-test6/
+server-test*/
 tmp/
 tmp_is/
 tmp_maidspell/
 
-# ---------- 根目录截图 / 安装包 / 日志 / 临时调试脚本 ----------
+# ---------- 根目录截图 / 安装包 / 日志 / 临时调试残留 ----------
 /screenshot*.png
 /shot-*.png
 /forge-1.20.1-47.4.29-installer.jar
 /server-run*.log
 /server-run*.err
+/launch-test*.ps1
 /tmp_*.py
 /tmp_*.json
 /tmp_*.dat

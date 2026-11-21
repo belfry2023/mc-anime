@@ -135,17 +135,24 @@
     )
   }
   var spiritForms = Platform.isLoaded('cataclysm')
-    ? {wheel: 'cataclysm:modern_remnant', fusion: 'cataclysm:the_baby_leviathan'}
+    ? {wheel: 'cataclysm:scylla', fusion: 'cataclysm:maledictus'}
     : {wheel: 'minecraft:wolf', fusion: 'minecraft:cat'}
   function makeSpirit(saint, kind, old) {
     var e = saint.level.createEntity(spiritForms[kind])
-    var spot = old ? [old.x, old.y, old.z] : s.safeSpot(e, saint, 3)
+    var spot = old ? [old.x, old.y, old.z] : s.safeSpot(e, saint, 4) || s.safeSpot(e, saint, 3)
     if (!spot || !saint.getOwnerUUID()) return null
     e.setPos(spot[0], spot[1], spot[2])
-    e.setTame(true)
-    e.setOwnerUUID(saint.getOwnerUUID())
-    e.setOrderedToSit(false)
-    if (Platform.isLoaded('cataclysm')) e.setCommand(1)
+    // 斯库拉/咒翼灵骸是 BOSS，不是 TamableAnimal：驯服/命令接口只在宠物上调用
+    if (e instanceof Tame) {
+      e.setTame(true)
+      e.setOwnerUUID(saint.getOwnerUUID())
+      e.setOrderedToSit(false)
+      if (Platform.isLoaded('cataclysm')) {
+        try {
+          e.setCommand(1)
+        } catch (err) {}
+      }
+    }
     e.setPersistenceRequired()
     if (old) {
       e.persistentData.merge(old.persistentData)
@@ -214,10 +221,14 @@
         spirit = s.lookup(saint.level, id)
       }
     }
-    if (spirit && spirit.isAlive() && String(spirit.type) === 'minecraft:iron_golem' &&
-        spirit.tags.contains('mk_shikigami') && String(spirit.persistentData.getString('mkSpirit')) === kind &&
-        String(spirit.persistentData.getString('mkSaint')) === String(saint.uuid)) {
-      spirit = makeSpirit(saint, kind, spirit) || spirit
+    // 形态升级：旧版铁傀儡或旧的猫/狼/现世遗魂/幼年利维坦式神，一律替换成当前形态
+    if (spirit && spirit.isAlive() && spirit.tags.contains('mk_shikigami') &&
+        String(spirit.persistentData.getString('mkSpirit')) === kind &&
+        String(spirit.persistentData.getString('mkSaint')) === String(saint.uuid) &&
+        String(spirit.type) !== spiritForms[kind] && d.getLong('mkFormRetry') <= now) {
+      var upgraded = makeSpirit(saint, kind, spirit)
+      if (upgraded) spirit = upgraded
+      else d.putLong('mkFormRetry', now + 200)
     }
     if (spirit) {
       var pos = NBT.compoundTag()
@@ -240,6 +251,14 @@
         if (spot) spirit.teleportTo(spot[0], spot[1], spot[2])
       }
       if (target) spirit.setTarget(target)
+      else if (spirit instanceof j.mob && spirit.getTarget() && !j.hostile(saint, spirit.getTarget()))
+        spirit.setTarget(null)
+      // BOSS 形态（斯库拉/咒翼灵骸）右键交互会写入 HomePos，导致跟随途中被"回家"逻辑拉走；持续清空
+      if (!(spirit instanceof Tame)) {
+        try {
+          spirit.setHomePos(null)
+        } catch (err) {}
+      }
       if (kind === 'wheel') {
         if (spirit.health < spirit.maxHealth) fx.play(spirit, 'adapt', null, null, 40)
         spirit.heal(120)

@@ -139,17 +139,43 @@
   function burnedOut(m) {
     return locked(m) && m.persistentData.getLong('mkDomainEnd') <= time(m)
   }
-  function freeze(e, ticks) {
+  // 冻结：定身 + 记录「持续伤害来源」，冻结期间每秒掉血，敌人不会脱战回血。
+  // src=施术女仆，dps=每秒伤害，key=伤害类型（ranged/domain...）
+  function freeze(e, ticks, src, dps, key) {
     var d = e.persistentData,
       now = time(e)
     if (d.getLong('mkStillEnd') <= now) {
       d.putDouble('mkStillX', e.x)
       d.putDouble('mkStillY', e.y)
       d.putDouble('mkStillZ', e.z)
+      d.putLong('mkStillNext', 0)
     }
     d.putLong('mkStillEnd', Math.max(d.getLong('mkStillEnd'), now + ticks))
+    if (src) {
+      d.putString('mkStillSrc', String(src.uuid))
+      d.putDouble('mkStillDps', Number(dps) || 0)
+      d.putString('mkStillKey', String(key || 'ranged'))
+    }
     e.setMotion(0, 0, 0)
     if (e instanceof Mob) e.getNavigation().stop()
+  }
+  // 冻结期间的持续伤害脉冲：每 10 tick 掉一次血，并把仇恨重新挂回施术女仆，
+  // 避免敌人因长时间无伤害判定而脱战、回血，或进入无法被锁定的状态。
+  function stillPulse(e) {
+    var d = e.persistentData
+    if (!d.contains('mkStillSrc')) return
+    var dps = d.getDouble('mkStillDps')
+    if (!(dps > 0)) return
+    var now = time(e)
+    if (now < d.getLong('mkStillNext')) return
+    d.putLong('mkStillNext', now + 10)
+    var squad = global.mkSquad
+    var m = squad && squad.lookup ? squad.lookup(e.level, d.getString('mkStillSrc')) : null
+    if (!m || !m.isAlive() || !hostile(m, e)) return
+    e.invulnerableTime = 0
+    hit(m, e, dps * 0.5, String(d.getString('mkStillKey') || 'ranged'))
+    if (e instanceof Mob && e.getTarget() !== m) e.setTarget(m)
+    effects.dot(e.level, 'DAMAGE_INDICATOR', point(e), 1, 0)
   }
   function stasis(event) {
     var e = event.entity,
@@ -157,6 +183,10 @@
     if (e.level.isClientSide() || !d.contains('mkStillEnd') || !e.isAlive()) return
     if (time(e) >= d.getLong('mkStillEnd')) {
       d.remove('mkStillEnd')
+      d.remove('mkStillSrc')
+      d.remove('mkStillDps')
+      d.remove('mkStillKey')
+      d.remove('mkStillNext')
       return
     }
     var x = d.getDouble('mkStillX'),
@@ -164,6 +194,7 @@
       z = d.getDouble('mkStillZ')
     if (e.getDistanceSq(x, y, z) > 0.0001) e.teleportTo(x, y, z)
     e.setMotion(0, 0, 0)
+    stillPulse(e)
     if (e.invulnerableTime > 0) e.invulnerableTime--
     if (e.hurtTime > 0) e.hurtTime--
     event.setCanceled(true)
@@ -272,7 +303,7 @@
               job.putBoolean(String(e.uuid), true)
               effects.dot(m.level, 'FLASH', point(e), 1, 0)
               hit(m, e, 260, 'ranged')
-              if (e.isAlive()) freeze(e, 1200)
+              if (e.isAlive()) freeze(e, 1200, m, 40, 'ranged')
             })
         }
         job.putDouble('X', x)
@@ -329,7 +360,8 @@
     var key = 'mkVoid_' + m.uuid
     if (e.persistentData.contains(key) && e.persistentData.getLong(key) === stamp) return
     e.persistentData.putLong(key, stamp)
-    freeze(e, 3600)
+    // 无量空处：冻结期间持续掉血（按最大生命 2%/秒，6~60 之间），敌人不会因定身而脱战回血。
+    freeze(e, 3600, m, Math.min(60, Math.max(6, e.maxHealth * 0.02)), 'domain')
     hit(m, e, Math.min(480, 0.65 * e.maxHealth), 'domain')
   }
   function domain(m) {
