@@ -2,6 +2,10 @@
 // 改成 true 可恢复开局自动生成；任何时间都可以手动执行 /mkarmy 召唤/补齐这 4 名队员。
 var MK_AUTO_SQUAD = false
 
+// 新世界开局是否自动建造房屋（调 /mkhome 那套别墅/手工房子）。
+// 改成 true 可恢复开局自动建房；任何时间都可以在空地上手动执行 /mkhome。
+var MK_AUTO_HOME = false
+
 // A server may tick for hours before the first real player joins a new world.
 ServerEvents.loaded(e => {
   var d = e.server.persistentData
@@ -11,7 +15,7 @@ PlayerEvents.loggedIn(e => {
   var p = e.player,
     d = e.server.persistentData
   if (!d.getBoolean('mkNewRosterWorld')) return
-  if (!d.getBoolean('mkBuiltStarterHome') && p.level.isOverworld()) {
+  if (MK_AUTO_HOME && !d.getBoolean('mkBuiltStarterHome') && p.level.isOverworld()) {
     if (global.mkBuildHome(e.server, p)) d.putBoolean('mkBuiltStarterHome', true)
   }
   if (MK_AUTO_SQUAD) global.mkSquad.ensure(p)
