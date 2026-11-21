@@ -17,6 +17,7 @@
   var Slots = Java.loadClass('net.minecraft.world.entity.EquipmentSlot')
   var Tasks = Java.loadClass('com.github.tartaricacid.touhoulittlemaid.entity.task.TaskManager')
   var Memo = Java.loadClass('net.minecraft.world.entity.ai.memory.MemoryModuleType')
+  var idleTaskRef = null // 式神统一用 idle 任务，缓存避免反复 findTask
   var clock = (e) => j.time(e)
   function ally(p, e) {
     if (!e) return false
@@ -142,7 +143,9 @@
   var spiritModels = Platform.isLoaded('touhou_little_maid')
     ? {wheel: 'contract_fox:fox_black', fusion: 'contract_fox:fox_white'}
     : {wheel: 'geckolib:winefox_nine_tailed', fusion: 'geckolib:winefox_magical'}
-  var spiritTasks = {wheel: 'touhou_little_maid:attack', fusion: 'touhou_little_maid:attack'}
+  // 式神不挂 TLM 的攻击任务：TLM 1.5.3 的 TaskAttack 脑内 StartAttacking 在目标为 null 时
+  // 会执行 Optional.of(null) 抛 NPE 导致女仆 ticking 崩溃。改用 idle 任务，战斗由本脚本驱动。
+  var spiritTasks = {wheel: 'touhou_little_maid:idle', fusion: 'touhou_little_maid:idle'}
   function makeSpirit(saint, kind, old) {
     var e = saint.level.createEntity(spiritMaid)
     var spot = old ? [old.x, old.y, old.z] : s.safeSpot(e, saint, 3) || s.safeSpot(e, saint, 2)
@@ -242,15 +245,23 @@
       if (upgraded) spirit = upgraded
       else d.putLong('mkFormRetry', now + 200)
     }
-    // 已换成女仆躯体但模型不对（换了模型包或旧形态遗留）时刷新模型
+    // 已换成女仆躯体但模型/任务不对（换了模型包、旧形态遗留、旧版 attack 任务）时刷新
     if (spirit && spirit.isAlive() && String(spirit.type) === spiritMaid &&
         String(spirit.persistentData.getString('mkSpirit')) === kind &&
-        String(spirit.getModelId()) !== spiritModels[kind] && d.getLong('mkFormRetry') <= now) {
-      try {
-        spirit.setModelId(spiritModels[kind])
-      } catch (err) {
-        d.putLong('mkFormRetry', now + 200)
+        d.getLong('mkFormRetry') <= now) {
+      if (String(spirit.getModelId()) !== spiritModels[kind]) {
+        try {
+          spirit.setModelId(spiritModels[kind])
+        } catch (err) {
+          d.putLong('mkFormRetry', now + 200)
+        }
       }
+      // 旧式神可能还挂着 touhou_little_maid:attack（会导致 StartAttacking 空目标 NPE），统一换回 idle
+      try {
+        var wantTask = Tasks.findTask(spiritTasks[kind])
+        if (wantTask.isPresent() && String(spirit.getTask().getUid()) !== String(wantTask.get().getUid()))
+          spirit.setTask(wantTask.get())
+      } catch (errTask) {}
     }
     if (spirit) {
       var pos = NBT.compoundTag()
@@ -270,12 +281,18 @@
     }
     spirit.setTarget(target)
     if (spirit.isOrderedToSit && spirit.isOrderedToSit()) spirit.setOrderedToSit(false)
-    try {
-      spirit.getBrain().setMemory(Memo.ATTACK_TARGET, target)
-    } catch (errBrain) {}
     var distance = spirit.distanceToEntity(target)
     if (distance > 3.2) {
-      if (now % 10 === 0) spirit.getNavigation().moveTo(target, 1.2)
+      if (now % 10 === 0) {
+        // 走近一点：距离太远直接瞬移到目标附近，避免脑导航被 idle 任务覆盖后原地不动
+        if (distance > 8) {
+          var spot = s.safeSpot(spirit, target, 3)
+          if (spot) spirit.teleportTo(spot[0], spot[1], spot[2])
+        } else {
+          try { spirit.getNavigation().moveTo(target, 1.2) } catch (errMove) {}
+        }
+        try { spirit.getLookControl().setLookAt(target, 30, 30) } catch (errLook) {}
+      }
       return
     }
     if (d.getLong('mkSpiritSwing') > now) return
@@ -314,6 +331,19 @@
   }
   function tick(ev) {
     var e = ev.entity
+    // 兜底：任何还挂着 attack 任务的式神立刻切成 idle。
+    // TLM 1.5.3 的 TaskAttack 在 StartAttacking 里对 null 目标执行 Optional.of(null)，会让女仆 tick 崩溃。
+    if (e.tags.contains('mk_shikigami') && String(e.type) === spiritMaid) {
+      try {
+        if (String(e.getTask().getUid()) !== 'touhou_little_maid:idle') {
+          if (!idleTaskRef) {
+            var idleOpt = Tasks.findTask('touhou_little_maid:idle')
+            if (idleOpt.isPresent()) idleTaskRef = idleOpt.get()
+          }
+          if (idleTaskRef) e.setTask(idleTaskRef)
+        }
+      } catch (errSpiritTask) {}
+    }
     if (e.persistentData.contains('mkStillEnd')) j.stasis(ev)
     var role = s.roleOf(e)
     if (!role || !s.roles[role] || !e.isAlive()) return
