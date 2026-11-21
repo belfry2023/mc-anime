@@ -220,6 +220,7 @@
       // Spawn listeners can apply native personality defaults. Set bond after insertion as well.
       maxBond(m)
       record.putString(key, String(m.uuid))
+      global.mkEquipBaubles(m)
       made++
     })
     if (made) p.tell('§b已签约 ' + made + ' 名队员。用 /mkcheck 检查装备与羁绊，/mkstatus 查看任务。')

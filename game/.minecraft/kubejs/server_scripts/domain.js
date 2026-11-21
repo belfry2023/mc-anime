@@ -10,9 +10,11 @@
     if (cmd === 'spirits') {
       var saint = s.get(p, 'saint')
       if (!saint) { p.tell('请先靠近本维度内已签约的圣女。'); return 0 }
-      p.sendData('mk_spirit_check', {
-        wheel: String(saint.persistentData.getString('mkSummon_wheel')),
-        fusion: String(saint.persistentData.getString('mkSummon_fusion'))
+      ;['wheel', 'fusion'].forEach((kind) => {
+        var spirit = global.mkFindSpirit(saint, kind)
+        p.tell((kind === 'wheel' ? '魔虚罗' : '颚吐') + ' · ' + (spirit ?
+          String(spirit.type) + ' · ' + Math.ceil(spirit.health) + '/' + Math.ceil(spirit.maxHealth) + ' HP' :
+          saint.persistentData.contains('mkSummon_' + kind) ? '暂未加载' : '尚未召唤'))
       })
       return 1
     }
