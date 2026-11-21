@@ -12,6 +12,7 @@
     unbind: ['术式熔断已解除', 'ENCHANT', 'block.beacon.activate', 1.4],
     wheel: ['式神显现 · 魔虚罗', 'ENCHANT', 'entity.elder_guardian.curse', 1.4],
     fusion: ['式神显现 · 颚吐', 'SOUL', 'block.respawn_anchor.charge', 0.8],
+    return: ['式神归位', 'REVERSE_PORTAL', 'entity.enderman.teleport', 1.1],
     adapt: ['魔虚罗 · 适应再生', 'HAPPY_VILLAGER', 'block.amethyst_block.chime', 0.75],
     support: ['颚吐 · 嘲讽与回流', 'HEART', 'block.beacon.power_select', 1.5],
     phase: ['圣女 · 二阶段解放', 'TOTEM_OF_UNDYING', 'item.totem.use', 0.85],

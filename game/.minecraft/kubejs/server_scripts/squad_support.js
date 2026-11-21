@@ -151,11 +151,13 @@
     var spot = old ? [old.x, old.y, old.z] : s.safeSpot(e, saint, 3) || s.safeSpot(e, saint, 2)
     if (!spot || !saint.getOwnerUUID()) return null
     e.setPos(spot[0], spot[1], spot[2])
-    var owner = saint.getOwner()
-    if (owner && owner.isPlayer()) e.tame(owner)
-    else if (e instanceof Tame) {
+    // 式神归属圣女本人，而不是玩家：ownerUUID 指向圣女。
+    // TLM 的 getOwner() 只认玩家（内部用 PlayerList 按 UUID 查找），指向非玩家时返回 null，
+    // 跟随/投喂等 owner 任务都会因 `owner instanceof Player` 判空而自动跳过，
+    // 女仆列表里也不会把它算成玩家的女仆。
+    if (e instanceof Tame) {
       e.setTame(true)
-      e.setOwnerUUID(saint.getOwnerUUID())
+      e.setOwnerUUID(saint.getUUID())
       e.setOrderedToSit(false)
     }
     e.setPersistenceRequired()
@@ -202,7 +204,10 @@
     }
     if (now < d.getLong('mkReturn_' + kind)) return
     var e = makeSpirit(saint, kind, null)
-    if (e) fx.play(saint, kind, fx.center(e), saint.getOwner())
+    if (e) {
+      d.putLong('mkSpiritGuard', now)
+      fx.play(saint, kind, fx.center(e), saint.getOwner())
+    }
   }
   function findSpirit(saint, kind) {
     var d = saint.persistentData,
@@ -256,6 +261,13 @@
           d.putLong('mkFormRetry', now + 200)
         }
       }
+      // 旧式神可能还挂在你名下（ownerUUID=玩家），统一改成归属圣女
+      try {
+        if (String(spirit.getOwnerUUID()) !== String(saint.getUUID())) {
+          spirit.setTame(true)
+          spirit.setOwnerUUID(saint.getUUID())
+        }
+      } catch (errOwner) {}
       // 旧式神可能还挂着 touhou_little_maid:attack（会导致 StartAttacking 空目标 NPE），统一换回 idle
       try {
         var wantTask = Tasks.findTask(spiritTasks[kind])
@@ -300,9 +312,33 @@
     spirit.swing('main_hand')
     j.hit(spirit, target, spirit.getAttributeValue(A.ATTACK_DAMAGE), 'blade')
   }
+  function dismissSpirit(saint, kind, spirit) {
+    var d = saint.persistentData
+    if (spirit && spirit.isAlive()) {
+      fx.play(spirit, 'return', fx.center(spirit), saint.getOwner(), 20)
+      spirit.discard()
+    }
+    d.remove('mkSummon_' + kind)
+    d.remove('mkSpiritAt_' + kind)
+    d.putLong('mkSpiritGuard', 0)
+  }
+  // 式神是「打完就收」的召唤物：圣女连续 30 秒（600 tick）没有目标就主动归位消失。
+  // 圣女不活动时不会走 spirits()，所以战斗态与空闲态都要调用这个检查。
+  function spiritGuardCheck(saint) {
+    var d = saint.persistentData,
+      g = d.getLong('mkSpiritGuard')
+    if (g > 0 && clock(saint) - g > 600) {
+      dismissSpirit(saint, 'wheel', findSpirit(saint, 'wheel'))
+      dismissSpirit(saint, 'fusion', findSpirit(saint, 'fusion'))
+      return true
+    }
+    return false
+  }
   function spirits(saint, target) {
     var d = saint.persistentData,
       now = clock(saint)
+    if (target) d.putLong('mkSpiritGuard', now)
+    if (spiritGuardCheck(saint)) return
     ;['wheel', 'fusion'].forEach((kind) => {
       if (target && !j.locked(saint)) summon(saint, kind)
       var spirit = findSpirit(saint, kind)
@@ -343,6 +379,15 @@
           if (idleTaskRef) e.setTask(idleTaskRef)
         }
       } catch (errSpiritTask) {}
+      // 圣女没了/死了就归位：连续 20 秒找不到活着的圣女，式神自行消失
+      if (clock(e) % 20 === 0) {
+        var saintRef = s.lookup(e.level, String(e.persistentData.getString('mkSaint')))
+        var miss = e.persistentData.getInt('mkSpiritMiss')
+        if (!saintRef || !saintRef.isAlive()) {
+          e.persistentData.putInt('mkSpiritMiss', miss + 20)
+          if (miss + 20 > 400) e.discard()
+        } else e.persistentData.putInt('mkSpiritMiss', 0)
+      }
     }
     if (e.persistentData.contains('mkStillEnd')) j.stasis(ev)
     var role = s.roleOf(e)
@@ -351,6 +396,7 @@
     if (role === 'saint' && clock(e) % 20 === 0 && (!j.active(e) || !e.getOwner())) {
       findSpirit(e, 'wheel')
       findSpirit(e, 'fusion')
+      spiritGuardCheck(e)
     }
     if (!j.active(e)) return
     var now = clock(e),
@@ -499,6 +545,11 @@
       return
     }
     var a = ev.source.getActual()
+    // 圣女真的倒下（二阶段之后）→ 两个式神立刻归位，不留孤儿女仆在你的世界里
+    if (s.roleOf(e) === 'saint') {
+      dismissSpirit(e, 'wheel', findSpirit(e, 'wheel'))
+      dismissSpirit(e, 'fusion', findSpirit(e, 'fusion'))
+    }
     if (a && j.boss(e) && j.hostile(a, e, true)) {
       var p = a.isPlayer()
         ? a
