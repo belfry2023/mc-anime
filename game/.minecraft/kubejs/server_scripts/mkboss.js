@@ -42,11 +42,12 @@ function mkBossCompass(dx, dz) {
 }
 
 // 返回 [x, y, z, 水平距离, 方位]，找不到返回 null
-function mkBossFind(player, structureId) {
+// 半径单位 = 区块（100 区块 = 1600 格，原版 locate 用的就是这个）
+function mkBossFind(player, structureId, radius) {
   try {
     var key = TagKey.create(Registries.STRUCTURE, new ResourceLocation(structureId))
     var origin = new BlockPos(Math.floor(player.x), Math.floor(player.y), Math.floor(player.z))
-    var found = player.level.findNearestMapStructure(key, origin, 100, false)
+    var found = player.level.findNearestMapStructure(key, origin, radius, false)
     if (!found) return null
     var bp = found.getFirst()
     var dx = bp.getX() - origin.getX()
@@ -64,14 +65,16 @@ function mkBossFind(player, structureId) {
   }
 }
 
-function mkBossRun(player, list) {
-  player.tell('§b[MK] 灾变 BOSS 雷达 §7· 维度 ' + String(player.level.dimension))
+function mkBossRun(player, list, radius) {
+  player.tell(
+    '§b[MK] 灾变 BOSS 雷达 §7· 维度 ' + String(player.level.dimension) + ' §7· 半径 ' + radius * 16 + ' 格'
+  )
   var miss = 0
   list.forEach(function (entry) {
-    var r = mkBossFind(player, entry[1])
+    var r = mkBossFind(player, entry[1], radius)
     if (!r) {
       miss = miss + 1
-      player.tell('§c✘ §e' + entry[0] + ' §8' + entry[1] + ' §7— 附近找不到')
+      player.tell('§c✘ §e' + entry[0] + ' §8' + entry[1] + ' §7— 半径内没有')
       return
     }
     player.tell(
@@ -80,7 +83,8 @@ function mkBossRun(player, list) {
     )
   })
   if (miss > 0) {
-    player.tell('§8没找到的多半是不在当前维度/群系：末影守卫→末地，焰魔/灵魂锻炉→下界，沉没之城→深海，斯库拉→暖海，冰封系→雪原，诅咒金字塔→沙漠')
+    player.tell('§8没找到的可能是不在当前维度/群系：末影守卫→末地，焰魔/灵魂锻炉→下界，沉没之城→深海，斯库拉→暖海，冰封系→雪原，诅咒金字塔→沙漠')
+    player.tell('§8想搜更远就用 §e/mkboss far §8（半径 9600 格，会卡一下）')
   }
   player.tell('§8/mkboss all 连小结构一起扫；坐标可直接 /tp x y z')
 }
@@ -88,17 +92,23 @@ function mkBossRun(player, list) {
 ServerEvents.commandRegistry(function (ev) {
   var L = ev.commands.literal
 
+  function bossCmd(radius) {
+    return function (c) {
+      mkBossRun(c.source.playerOrException, MK_BOSS_MAJOR, radius)
+      return 1
+    }
+  }
+  function bossAllCmd(radius) {
+    return function (c) {
+      mkBossRun(c.source.playerOrException, MK_BOSS_MAJOR.concat(MK_BOSS_MINOR), radius)
+      return 1
+    }
+  }
+
   ev.register(
     L('mkboss')
-      .executes(function (c) {
-        mkBossRun(c.source.playerOrException, MK_BOSS_MAJOR)
-        return 1
-      })
-      .then(
-        L('all').executes(function (c) {
-          mkBossRun(c.source.playerOrException, MK_BOSS_MAJOR.concat(MK_BOSS_MINOR))
-          return 1
-        })
-      )
+      .executes(bossCmd(100))
+      .then(L('far').executes(bossCmd(600)))
+      .then(L('all').executes(bossAllCmd(100)).then(L('far').executes(bossAllCmd(600))))
   )
 })
