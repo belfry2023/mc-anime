@@ -16,7 +16,8 @@ import struct
 import sys
 import time
 
-REMOVE_MATCH = ("the_obsessed", "themanfromthefog", "anomaly")
+# 已卸载的模组 modId（`modId` 取自各自 jar 的 META-INF/mods.toml）
+REMOVE_MATCH = ("the_obsessed", "themanfromthefog", "anomaly", "man")
 
 
 # ---------------- 最小 NBT 读取/写入 ----------------
@@ -159,6 +160,24 @@ def save_level_dat(path, t, name, payload):
         f.write(raw)
 
 
+def _strip_mod_refs(node, removed, path=""):
+    """递归删除所有以已卸载模组为命名空间的对象键（维度、ForgeCaps 等）。"""
+    if isinstance(node, dict):
+        for k in list(node.keys()):
+            low = k.lower()
+            ns = low.split(":")[0]
+            if ns in REMOVE_MATCH or low.startswith(tuple(m + ":" for m in REMOVE_MATCH)) \
+                    or (":" in k and any(m in low for m in REMOVE_MATCH)):
+                removed.append(path + "/" + k)
+                del node[k]
+                continue
+            tt, v = node[k]
+            _strip_mod_refs(v, removed, path + "/" + k)
+    elif isinstance(node, tuple) and len(node) == 3 and node[0] == "list":
+        for idx, it in enumerate(node[2]):
+            _strip_mod_refs(it, removed, path + "[%d]" % idx)
+
+
 def patch_world(world_dir, dry_run=False):
     level = os.path.join(world_dir, "level.dat")
     if not os.path.exists(level):
@@ -191,7 +210,17 @@ def patch_world(world_dir, dry_run=False):
                 kept.append(s)
         dp[field] = (lt, ("list", 8, kept))
     if not changed_enabled and not changed_disabled:
-        return (world_dir, "无需修改", [], [])
+        stripped = []
+        _strip_mod_refs(payload, stripped)
+        if not stripped:
+            return (world_dir, "无需修改", [], [])
+        if not dry_run:
+            backup = level + ".bak-" + time.strftime("%Y%m%d-%H%M%S")
+            shutil.copy2(level, backup)
+            save_level_dat(level, t, name, payload)
+        return (world_dir, "已修改(维度/数据)", changed_enabled, changed_disabled)
+    stripped = []
+    _strip_mod_refs(payload, stripped)
     if not dry_run:
         backup = level + ".bak-" + time.strftime("%Y%m%d-%H%M%S")
         shutil.copy2(level, backup)
