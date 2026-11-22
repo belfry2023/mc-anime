@@ -17,16 +17,51 @@ var GlobalResearchTreeClass = Java.loadClass('com.minecolonies.api.research.IGlo
 var ColonyManagerClass = Java.loadClass('com.minecolonies.api.colony.IColonyManager')
 
 // 取玩家所在位置的殖民地（返回 null 表示不在任何殖民地里）
+var mkResearchLastError = ''
 function mkResearchColony(player) {
+  mkResearchLastError = ''
+  var level = null
   try {
-    var mgr = ColonyManagerClass.getInstance()
-    var level = player.minecraftEntity.level()
-    var pos = player.minecraftEntity.blockPosition()
-    return mgr.getColonyByPosFromWorld(level, pos)
-  } catch (e) {
-    console.info('[MKRESEARCH] 取殖民地失败: ' + e)
+    level = player.level
+  } catch (e0) {
+    mkResearchLastError = '取 level 失败: ' + e0
     return null
   }
+  var pos = null
+  try {
+    pos = player.blockPosition()
+  } catch (e1) {
+    mkResearchLastError = '取坐标失败: ' + e1
+    return null
+  }
+
+  var mgr = ColonyManagerClass.getInstance()
+
+  // 方案一：按坐标直接问管理器
+  try {
+    var c = mgr.getColonyByPosFromWorld(level, pos)
+    if (c) return c
+  } catch (e2) {
+    mkResearchLastError = 'getColonyByPosFromWorld: ' + e2
+  }
+
+  // 方案二：列出这个世界所有殖民地，自己判断坐标在谁的领土里
+  try {
+    var list = mgr.getColonies(level)
+    for (var i = 0; i < list.size(); i++) {
+      var col = list.get(i)
+      try {
+        if (col.isCoordInColony(level, pos)) return col
+      } catch (e3) {}
+    }
+    if (list.size() > 0) mkResearchLastError += '（本世界有 ' + list.size() + ' 个殖民地，但坐标不在任何一个领土内）'
+    else mkResearchLastError += '（本世界没有已加载的殖民地）'
+  } catch (e4) {
+    mkResearchLastError += ' getColonies: ' + e4
+  }
+
+  console.info('[MKRESEARCH] 找殖民地失败: ' + mkResearchLastError)
+  return null
 }
 
 // 把某个全局研究的所有子研究压进队列
@@ -96,7 +131,9 @@ function mkResearchWalk(colony, complete) {
 function mkResearchRun(player, complete) {
   var colony = mkResearchColony(player)
   if (!colony) {
-    player.tell('§c[研究] 你不在任何殖民地范围内——走到自己的殖民地领土里再执行。')
+    player.tell('§c[研究] 没找到你脚下的殖民地。')
+    if (mkResearchLastError) player.tell('§7诊断：' + mkResearchLastError)
+    player.tell('§7请站在自己殖民地领土内（市政厅周围的领地范围）再执行；/mc colony info 可以看殖民地范围。')
     return 0
   }
   var name = '?'
