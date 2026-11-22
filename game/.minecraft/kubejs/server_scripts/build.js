@@ -73,8 +73,9 @@ function mkBuildFill(player, quiet) {
   var it = buildings.values().iterator()
   while (it.hasNext()) {
     var b = it.next()
-    if (!(b instanceof MK_BUILD_ABS_BUILDER)) continue
 
+    // 不按类名过滤：任何能给出「当前建造所需材料」的建筑都处理
+    // （建筑工小屋 AbstractBuildingStructureBuilder 是主要来源，矿工小屋等同族也一并覆盖）
     var needed = null
     try { needed = b.getNeededResources() } catch (e1) { continue }
     if (!needed || needed.size() === 0) continue
