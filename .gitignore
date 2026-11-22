@@ -99,3 +99,8 @@ tmp_maidspell/
 /tmp_*.json
 /tmp_*.dat
 /scan_blocks.py
+
+# ---------- 存档备份与 mod 运行时数据（体积大，不进仓库） ----------
+backups/
+game/.minecraft/millenaire/
+game/.minecraft/millenaire-custom/
