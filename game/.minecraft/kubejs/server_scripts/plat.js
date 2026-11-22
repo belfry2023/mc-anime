@@ -4,9 +4,29 @@
 //   /mkplat big        大平台（半径 32 → 65×65）
 //   /mkplat small      小平台（半径 12 → 25×25）
 //   /mkplat huge       超大平台（半径 48 → 97×97，慎用，会削平地形）
-// 说明：平台顶面在玩家脚下方 1 格（你正好站上去），向下 3 格泥土垫底，
-//       向上 6 格空气，避免山体/树挡住建房。
+// 说明：平台顶面在玩家脚下方 1 格（你正好站上去），向下 4 格泥土垫底，
+//       平台上方 6 格全部清成空气（树、山体、雪都清掉），再在四角放海晶灯。
+// 注意：/fill 单条命令最多 32768 格（gamerule commandModificationBlockLimit），
+//       超大平台一次填会超限而整条命令失败，所以这里按 Z 轴切片分批执行。
 // 需要重启客户端才会注册新命令。
+
+var PLAT_CLEAR_HEIGHT = 6   // 平台上方清空的高度（格）
+var PLAT_DEPTH = 4          // 平台向下垫底的厚度（格）
+var PLAT_FILL_LIMIT = 30000 // 单条 /fill 允许的最大格数（留着安全余量）
+
+// 分批 /fill：按 Z 轴切片，保证每片体积不超过 PLAT_FILL_LIMIT
+function platFill(server, dim, x0, y0, z0, x1, y1, z1, block) {
+  var sx = x1 - x0 + 1
+  var sy = y1 - y0 + 1
+  var perSlice = sx * sy
+  if (perSlice <= 0) return
+  var slice = Math.max(1, Math.floor(PLAT_FILL_LIMIT / perSlice))
+  for (var z = z0; z <= z1; z += slice) {
+    var zEnd = Math.min(z1, z + slice - 1)
+    server.runCommandSilent('execute in ' + dim + ' run fill ' +
+      x0 + ' ' + y0 + ' ' + z + ' ' + x1 + ' ' + y1 + ' ' + zEnd + ' ' + block)
+  }
+}
 
 function platBuild(server, player, radius) {
   var px = Math.floor(player.x)
@@ -17,23 +37,20 @@ function platBuild(server, player, radius) {
   var top = py - 1
 
   var dim = String(player.level.dimension)
-  function run(cmd) {
-    server.runCommandSilent('execute in ' + dim + ' run ' + cmd)
-  }
 
-  // 1) 垫底：泥土/石头，防止平台悬空边角
-  run('fill ' + x0 + ' ' + (top - 4) + ' ' + z0 + ' ' + x1 + ' ' + (top - 1) + ' ' + z1 + ' minecraft:dirt')
+  // 1) 垫底：先把平台下方 PLAT_DEPTH 格填成泥土，防止悬空边角
+  platFill(server, dim, x0, top - PLAT_DEPTH, z0, x1, top - 1, z1, 'minecraft:dirt')
   // 2) 表层草方块
-  run('fill ' + x0 + ' ' + top + ' ' + z0 + ' ' + x1 + ' ' + top + ' ' + z1 + ' minecraft:grass_block')
-  // 3) 清空上方 6 格，避免树/山体挡建筑
-  run('fill ' + x0 + ' ' + py + ' ' + z0 + ' ' + x1 + ' ' + (py + 5) + ' ' + z1 + ' minecraft:air')
+  platFill(server, dim, x0, top, z0, x1, top, z1, 'minecraft:grass_block')
+  // 3) 清空平台上方 PLAT_CLEAR_HEIGHT 格（树/山体/雪/水都清掉）
+  platFill(server, dim, x0, py, z0, x1, py + PLAT_CLEAR_HEIGHT - 1, z1, 'minecraft:air')
   // 4) 四角放灯方便夜间施工
   ;[[x0, z0], [x0, z1], [x1, z0], [x1, z1]].forEach(function (c) {
-    run('setblock ' + c[0] + ' ' + py + ' ' + c[1] + ' minecraft:sea_lantern')
+    server.runCommandSilent('execute in ' + dim + ' run setblock ' + c[0] + ' ' + py + ' ' + c[1] + ' minecraft:sea_lantern')
   })
 
   var side = radius * 2 + 1
-  player.tell('§a[平台] 已在脚下铺好 §e' + side + '×' + side + '§a 的草地平台（顶面 y=' + top + '）。')
+  player.tell('§a[平台] 已在脚下铺好 §e' + side + '×' + side + '§a 的草地平台（顶面 y=' + top + '，上方清空 ' + PLAT_CLEAR_HEIGHT + ' 格）。')
   player.tell('§7放殖民地的话：先 §e/mkcolony§7 领小屋，再把市政厅放在平台中央。')
 }
 
