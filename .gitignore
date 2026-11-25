@@ -100,7 +100,7 @@ tmp_maidspell/
 /tmp_*.dat
 /scan_blocks.py
 
-# ---------- ´æµµ±¸·İÓë mod ÔËĞĞÊ±Êı¾İ£¨Ìå»ı´ó£¬²»½ø²Ö¿â£© ----------
+# ---------- ï¿½æµµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ mod ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½İ£ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬²ï¿½ï¿½ï¿½ï¿½Ö¿â£© ----------
 backups/
 game/.minecraft/millenaire/
 game/.minecraft/millenaire-custom/
@@ -108,5 +108,11 @@ game/.minecraft/millenaire-custom/
 # ---------- åˆ†å‘äº§ç‰©ï¼ˆtools\build-dist.ps1 ç”Ÿæˆï¼Œä½“ç§¯å¤§ï¼Œä¸å…¥åº“ï¼‰ ----------
 /dist/
 
-# playit ÄÚÍø´©Í¸¿Í»§¶Ë£¨±¾»ú×¨ÓÃ£¬²»Èë¿â£©
+# playit ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½Í»ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½ï¿½×¨ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½â£©
 tools/playit/*.exe
+# ---------- è¿è¡Œæ—¶çŠ¶æ€ï¼ˆæœåŠ¡å™¨åˆ—è¡¨ / æ¨¡å‹ç™½åå•ï¼‰ ----------
+game/.minecraft/servers.dat
+game/.minecraft/servers.dat_old
+game/.minecraft/sexmod/custom_models/
+# ---------- ä¸‹è½½çš„å®‰è£…å™¨ï¼ˆä½“ç§¯å¤§ï¼Œä¸å…¥åº“ï¼‰ ----------
+tools/è”æœº-Tailscale/tailscale-setup*.exe
