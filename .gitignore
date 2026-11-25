@@ -104,3 +104,6 @@ tmp_maidspell/
 backups/
 game/.minecraft/millenaire/
 game/.minecraft/millenaire-custom/
+
+# ---------- 分发产物（tools\build-dist.ps1 生成，体积大，不入库） ----------
+/dist/
