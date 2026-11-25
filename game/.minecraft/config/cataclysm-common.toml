@@ -358,21 +358,21 @@
 		[mobs.ender_guardian.cap_config]
 			#Damage Cap
 			#Range: 0.0 ~ 1000000.0
-				damage_cap = 9999.0
+			damage_cap = 9999.0
 			#Dps Cap
 			#Range: 1.0 ~ 1000000.0
-				dps_cap = 9999.0
+			dps_cap = 9999.0
 			#DPS Limit Time
 			#Range: 1 ~ 100
 			dps_limit_time = 20
 			#Range Cap
 			#Range: 1.0 ~ 1000000.0
-				range_cap = 512.0
+			range_cap = 512.0
 
 		[mobs.ender_guardian.nature_heal_config]
 			#Nature Heal
 			#Range: 0.0 ~ 1000000.0
-				nature_heal = 0.0
+			nature_heal = 0.0
 
 		[mobs.ender_guardian.respawner_config]
 			#Respawner
@@ -398,21 +398,21 @@
 		[mobs.ender_golem.cap_config]
 			#Damage Cap
 			#Range: 0.0 ~ 1000000.0
-				damage_cap = 9999.0
+			damage_cap = 9999.0
 			#Dps Cap
 			#Range: 1.0 ~ 1000000.0
-				dps_cap = 9999.0
+			dps_cap = 9999.0
 			#DPS Limit Time
 			#Range: 1 ~ 100
 			dps_limit_time = 20
 			#Range Cap
 			#Range: 1.0 ~ 1000000.0
-				range_cap = 512.0
+			range_cap = 512.0
 
 		[mobs.ender_golem.nature_heal_config]
 			#Nature Heal
 			#Range: 0.0 ~ 1000000.0
-				nature_heal = 0.0
+			nature_heal = 0.0
 
 		[mobs.ender_golem.ignore_mobgriefing_config]
 			#Ignore MobGriefing
@@ -454,21 +454,21 @@
 		[mobs.netherite_monstrosity.cap_config]
 			#Damage Cap
 			#Range: 0.0 ~ 1000000.0
-				damage_cap = 9999.0
+			damage_cap = 9999.0
 			#Dps Cap
 			#Range: 1.0 ~ 1000000.0
-				dps_cap = 9999.0
+			dps_cap = 9999.0
 			#DPS Limit Time
 			#Range: 1 ~ 100
 			dps_limit_time = 20
 			#Range Cap
 			#Range: 1.0 ~ 1000000.0
-				range_cap = 512.0
+			range_cap = 512.0
 
 		[mobs.netherite_monstrosity.nature_heal_config]
 			#Nature Heal
 			#Range: 0.0 ~ 1000000.0
-				nature_heal = 0.0
+			nature_heal = 0.0
 
 		[mobs.netherite_monstrosity.respawner_config]
 			#Respawner
@@ -506,21 +506,21 @@
 		[mobs.ignis.cap_config]
 			#Damage Cap
 			#Range: 0.0 ~ 1000000.0
-				damage_cap = 9999.0
+			damage_cap = 9999.0
 			#Dps Cap
 			#Range: 1.0 ~ 1000000.0
-				dps_cap = 9999.0
+			dps_cap = 9999.0
 			#DPS Limit Time
 			#Range: 1 ~ 100
 			dps_limit_time = 20
 			#Range Cap
 			#Range: 1.0 ~ 1000000.0
-				range_cap = 512.0
+			range_cap = 512.0
 
 		[mobs.ignis.nature_heal_config]
 			#Nature Heal
 			#Range: 0.0 ~ 1000000.0
-				nature_heal = 0.0
+			nature_heal = 0.0
 
 		[mobs.ignis.ignore_mobgriefing_config]
 			#Ignore MobGriefing
@@ -576,21 +576,21 @@
 		[mobs.harbinger.cap_config]
 			#Damage Cap
 			#Range: 0.0 ~ 1000000.0
-				damage_cap = 9999.0
+			damage_cap = 9999.0
 			#Dps Cap
 			#Range: 1.0 ~ 1000000.0
-				dps_cap = 9999.0
+			dps_cap = 9999.0
 			#DPS Limit Time
 			#Range: 1 ~ 100
 			dps_limit_time = 20
 			#Range Cap
 			#Range: 1.0 ~ 1000000.0
-				range_cap = 512.0
+			range_cap = 512.0
 
 		[mobs.harbinger.nature_heal_config]
 			#Nature Heal
 			#Range: 0.0 ~ 1000000.0
-				nature_heal = 0.0
+			nature_heal = 0.0
 
 		[mobs.harbinger.respawner_config]
 			#Respawner
@@ -683,21 +683,21 @@
 		[mobs.leviathan.cap_config]
 			#Damage Cap
 			#Range: 0.0 ~ 1000000.0
-				damage_cap = 9999.0
+			damage_cap = 9999.0
 			#Dps Cap
 			#Range: 1.0 ~ 1000000.0
-				dps_cap = 9999.0
+			dps_cap = 9999.0
 			#DPS Limit Time
 			#Range: 1 ~ 100
 			dps_limit_time = 20
 			#Range Cap
 			#Range: 1.0 ~ 1000000.0
-				range_cap = 512.0
+			range_cap = 512.0
 
 		[mobs.leviathan.nature_heal_config]
 			#Nature Heal
 			#Range: 0.0 ~ 1000000.0
-				nature_heal = 0.0
+			nature_heal = 0.0
 
 	[mobs.baby_leviathan]
 
@@ -737,21 +737,21 @@
 		[mobs.ancient_remnant.cap_config]
 			#Damage Cap
 			#Range: 0.0 ~ 1000000.0
-				damage_cap = 9999.0
+			damage_cap = 9999.0
 			#Dps Cap
 			#Range: 1.0 ~ 1000000.0
-				dps_cap = 9999.0
+			dps_cap = 9999.0
 			#DPS Limit Time
 			#Range: 1 ~ 100
 			dps_limit_time = 20
 			#Range Cap
 			#Range: 1.0 ~ 1000000.0
-				range_cap = 512.0
+			range_cap = 512.0
 
 		[mobs.ancient_remnant.nature_heal_config]
 			#Nature Heal
 			#Range: 0.0 ~ 1000000.0
-				nature_heal = 0.0
+			nature_heal = 0.0
 
 		[mobs.ancient_remnant.respawner_config]
 			#Respawner
@@ -840,21 +840,21 @@
 		[mobs.maledictus.cap_config]
 			#Damage Cap
 			#Range: 0.0 ~ 1000000.0
-				damage_cap = 9999.0
+			damage_cap = 9999.0
 			#Dps Cap
 			#Range: 1.0 ~ 1000000.0
-				dps_cap = 9999.0
+			dps_cap = 9999.0
 			#DPS Limit Time
 			#Range: 1 ~ 100
 			dps_limit_time = 20
 			#Range Cap
 			#Range: 1.0 ~ 1000000.0
-				range_cap = 512.0
+			range_cap = 512.0
 
 		[mobs.maledictus.nature_heal_config]
 			#Nature Heal
 			#Range: 0.0 ~ 1000000.0
-				nature_heal = 0.0
+			nature_heal = 0.0
 
 		[mobs.maledictus.ignore_mobgriefing_config]
 			#Ignore MobGriefing
@@ -876,7 +876,7 @@
 		[mobs.aptrgangr.nature_heal_config]
 			#Nature Heal
 			#Range: 0.0 ~ 1000000.0
-				nature_heal = 0.0
+			nature_heal = 0.0
 
 	[mobs.scylla]
 		#Spear Damage
@@ -917,16 +917,16 @@
 		[mobs.scylla.cap_config]
 			#Damage Cap
 			#Range: 0.0 ~ 1000000.0
-				damage_cap = 9999.0
+			damage_cap = 9999.0
 			#Dps Cap
 			#Range: 1.0 ~ 1000000.0
-				dps_cap = 9999.0
+			dps_cap = 9999.0
 			#DPS Limit Time
 			#Range: 1 ~ 100
 			dps_limit_time = 20
 			#Range Cap
 			#Range: 1.0 ~ 1000000.0
-				range_cap = 512.0
+			range_cap = 512.0
 
 		[mobs.scylla.respawner_config]
 			#Respawner
@@ -935,7 +935,7 @@
 		[mobs.scylla.nature_heal_config]
 			#Nature Heal
 			#Range: 0.0 ~ 1000000.0
-				nature_heal = 0.0
+			nature_heal = 0.0
 
 		[mobs.scylla.ignore_mobgriefing_config]
 			#Ignore MobGriefing
@@ -954,16 +954,16 @@
 		[mobs.clawdian.cap_config]
 			#Damage Cap
 			#Range: 0.0 ~ 1000000.0
-				damage_cap = 9999.0
+			damage_cap = 9999.0
 			#Dps Cap
 			#Range: 1.0 ~ 1000000.0
-				dps_cap = 9999.0
+			dps_cap = 9999.0
 			#DPS Limit Time
 			#Range: 1 ~ 100
 			dps_limit_time = 20
 			#Range Cap
 			#Range: 1.0 ~ 1000000.0
-				range_cap = 512.0
+			range_cap = 512.0
 
 		[mobs.clawdian.ignore_mobgriefing_config]
 			#Ignore MobGriefing
@@ -972,7 +972,7 @@
 		[mobs.clawdian.nature_heal_config]
 			#Nature Heal
 			#Range: 0.0 ~ 1000000.0
-				nature_heal = 0.0
+			nature_heal = 0.0
 
 [blocks]
 
