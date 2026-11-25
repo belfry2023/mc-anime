@@ -233,7 +233,7 @@ try {
   $ws = New-Object -ComObject WScript.Shell
   $lnk = $ws.CreateShortcut($lnkPath)
   $lnk.TargetPath = (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe')
-  $lnk.Arguments = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "' + (Join-Path $target 'launch-game.ps1') + '"'
+  $lnk.Arguments = '-NoProfile -ExecutionPolicy Bypass -File "' + (Join-Path $target 'launch-game.ps1') + '"'
   $lnk.WorkingDirectory = $target
   $lnk.IconLocation = (Join-Path $target 'payload\game\.minecraft\icon.ico')
   $lnk.Save()

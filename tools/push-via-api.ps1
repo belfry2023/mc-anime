@@ -2,6 +2,8 @@
 # 用法: powershell -NoProfile -ExecutionPolicy Bypass -File tools\push-via-api.ps1 [-Squash]
 param(
     [switch]$Squash,
+    [string]$BaseLocal = '',
+    [string]$Msg = '',
     [string]$Branch = 'main',
     [string]$Repo   = 'belfry2023/mc-anime'
 )

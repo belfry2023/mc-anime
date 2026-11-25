@@ -10,6 +10,7 @@
 
 param(
   [switch]$NoZip,
+  [switch]$TrimJdk,
   [string]$Out = 'dist\release'
 )
 
@@ -72,19 +73,20 @@ foreach ($f in @('launch-game.ps1', '启动.bat', '启动游戏.bat')) {
   Copy-Item (Join-Path $srcClient $f) (Join-Path $payload $f) -Force
 }
 
-Write-Step '用 jlink 生成最小 Java 运行时'
+Write-Step '准备自带 Java 运行时（默认完整 JDK 17，最稳；-TrimJdk 才用 jlink 精简）'
 $jdkHome = Join-Path $root 'jdk\jdk-17.0.21+9'
-$jlink = Join-Path $jdkHome 'bin\jlink.exe'
 $runtimeDst = Join-Path $payload 'jdk\jdk-17.0.21+9'
-if (Test-Path $jlink) {
+if (Test-Path $runtimeDst) { Remove-Item $runtimeDst -Recurse -Force }
+$jlink = Join-Path $jdkHome 'bin\jlink.exe'
+if ($TrimJdk -and (Test-Path $jlink)) {
   $mods = 'java.base,java.logging,java.desktop,java.management,java.naming,java.security.sasl,java.sql,jdk.unsupported,jdk.crypto.ec,java.xml,java.instrument'
   & $jlink --add-modules $mods --strip-debug --no-header-files --no-man-pages --compress=2 --output $runtimeDst
   if ($LASTEXITCODE -ne 0) { throw 'jlink 失败' }
-  Write-Host ("  runtime = " + (Human ((Get-ChildItem $runtimeDst -Recurse -File | Measure-Object Length -Sum).Sum)))
 } else {
-  Write-Warning '找不到 jlink，退回复制完整 JDK'
   robocopy $jdkHome $runtimeDst /E /NFL /NDL /NJH /NJS /R:1 /W:1 | Out-Null
+  if ($LASTEXITCODE -ge 8) { throw ('复制 JDK 失败，robocopy 退出码 ' + $LASTEXITCODE) }
 }
+Write-Host ("  runtime = " + (Human ((Get-ChildItem $runtimeDst -Recurse -File | Measure-Object Length -Sum).Sum)))
 
 Write-Step '统计 payload 体积'
 $total = (Get-ChildItem $payload -Recurse -File | Measure-Object Length -Sum).Sum
