@@ -23,7 +23,7 @@
 var MKSnipeBefore = {}
 var MKSnipeAggro = {}
 var MKSnipeAggroTicks = 400 // 仇恨保持 400 tick ≈ 20 秒
-var MKAnimMonster = Java.loadClass('com.github.L_Ender.cataclysm.entity.InternalAnimationMonster.Internal_Animation_Monster')
+var MKAnimMonster = Java.loadClass('com.github.L_Ender.cataclysm.entity.InternalAnimationMonster.IABossMonsters.IABoss_monster')
 
 function mksKey (entity) {
   return String(entity.id)
