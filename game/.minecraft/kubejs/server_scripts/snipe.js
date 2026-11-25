@@ -64,10 +64,31 @@ ForgeEvents.onEvent('com.tacz.guns.api.event.common.EntityHurtByGunEvent$Post', 
     // 无来源伤害：calculateRange 会返回 -1，Boss 的「射程外免伤」直接失效
     var src = level.damageSources().generic()
 
+    mkSnipeForceVulnerable(target)
     target.invulnerableTime = 0
     target.hurt(src, dmg)
 
     var after = target.getHealth()
+    if (after >= before) {
+      // 最后一招：直接把血写下去（前面被无敌/未唤醒/招架挡住了）
+      var hp = target.getHealth()
+      var next = hp - dmg
+      if (next <= 0) {
+        // 让它按正常死亡流程走（掉落、死亡动画、boss 血条清理）
+        try { target.hurt(level.damageSources().genericKill(), Math.max(1000, hp * 4)) } catch (errKill) {}
+        after = target.getHealth()
+        if (after >= before) {
+          try { target.kill() } catch (errK) {}
+          after = target.getHealth()
+        }
+      } else {
+        try { target.setHealth(next); after = target.getHealth() } catch (errSet) {}
+      }
+      if (after < before) {
+        console.info('[MKSNIPE] 强制扣血 ' + String(target.type) + ' -' + (before - after).toFixed(1))
+      }
+    }
+
     if (after < before) {
       console.info('[MKSNIPE] ' + String(target.type) + ' -' + (before - after).toFixed(1) + ' (' + before.toFixed(1) + ' -> ' + after.toFixed(1) + ')')
       if (attacker && attacker.isPlayer && attacker.isPlayer()) {
@@ -83,6 +104,19 @@ ForgeEvents.onEvent('com.tacz.guns.api.event.common.EntityHurtByGunEvent$Post', 
     console.info('[MKSNIPE] error ' + err)
   }
 })
+
+// 把 Boss 强行拉成「可被伤害」状态：
+//   - 清掉实体无敌标记（invulnerable）
+//   - 唤醒睡眠/出生动画（Cataclysm 用 attackState 23/24 表示睡/醒）
+//   - 清无敌帧
+function mkSnipeForceVulnerable (boss) {
+  try { if (boss.isInvulnerable()) boss.setInvulnerable(false) } catch (errInv) {}
+  try {
+    var state = boss.getAttackState()
+    if (state >= 23 && state <= 24) boss.setAttackState(0)
+  } catch (errState) {}
+  try { boss.invulnerableTime = 0 } catch (errTime) {}
+}
 
 function mkSnipeAggro (boss, player) {
   try {
