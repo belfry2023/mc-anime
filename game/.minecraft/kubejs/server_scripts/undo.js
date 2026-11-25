@@ -1,19 +1,23 @@
-// /mkundo —— 撤销 /mkfast 补全的方块
+// /mkundo —— 把 /mkfast 弄乱的工地清回「空地」，让建筑工重新按图纸正常施工
 //
-// 原理：/mkfast 只会把「当前方块 ≠ 蓝图目标方块」的位置补成蓝图方块。
-//       所以反向撤销就是：对同一批工单蓝图位置，凡是「当前方块 == 蓝图目标方块」的，
-//       说明它现在正是补全后的样子 —— 直接改回空气，让工地回到「待建」状态。
-//       建筑工随后会按图纸重新正常施工（也可以直接在建筑 GUI 里打包/取消这个工单）。
+// 背景：/mkfast 用原版 setblock 直接塞蓝图方块，绕过了 MineColonies 的
+//       · 替换方块（placeholder / substitution）解析
+//       · 工单旋转 / 镜像
+//       · 材料扣减与施工阶段
+//       所以塞进去的方块类型/朝向和建筑工期望的不一样，工单就卡住不认。
+//
+// 补救：把「已认领工单」蓝图范围内的方块统一切成空气（保留 blockhut* 建筑核心方块），
+//       让工地回到「什么都没有」的状态，建筑工随后会重新清场 + 按图纸正确施工。
 //
 // 安全措施：
-//   * 只处理「已认领（isClaimed）」工单的蓝图范围，不动其它地方；
-//   * 跳过 air 目标、跳过所有 blockhut* 方块（不删建筑核心方块）；
-//   * 每 tick 最多改 MKUNDO_BUDGET 块，避免上次那种「单 tick 上万次改动」把渲染线程搞崩；
-//   * 默认只统计（dry run），加 go 才真删。
+//   * 只动已认领工单的蓝图范围，不动范围外的地形建筑；
+//   * 跳过所有 blockhut* 方块（不删建筑本体，工单不会消失）；
+//   * 每 tick 最多 MKUNDO_BUDGET 块，避免单 tick 巨量改动把渲染线程搞崩；
+//   * /mkundo 默认只统计，/mkundo go 才真清。
 
 var MKUNDO_COLONY = Java.loadClass('com.minecolonies.api.colony.IColonyManager')
 
-var MKUNDO_BUDGET = 300     // 每 tick 最多清除多少块
+var MKUNDO_BUDGET = 300     // 每 tick 最多清多少块
 var MKUNDO_SCAN = 4000      // 每 tick 最多检查多少个位置
 
 var mkundoSession = null
@@ -49,6 +53,7 @@ function mkundoCollect(colony) {
         jobs.push({
           map: map,
           loc: wo.getLocation(),
+          box: wo.getBoundingBox(),
           primary: bp.getPrimaryBlockOffset(),
           keys: map.keySet().toArray(),
           idx: 0,
@@ -67,14 +72,14 @@ function mkundoIsAir(state) {
   return state === 'minecraft:air' || state === 'minecraft:cave_air' || state === 'minecraft:void_air'
 }
 
-function mkundoSkipTarget(state) {
+function mkundoIsHut(state) {
   return state.indexOf(':blockhut') > 0
 }
 
 function mkundoFinish(s, player) {
-  var msg = '§a[MK] 撤销完成：清除了 ' + s.cleared + ' 块（恢复成待建状态）。'
   try {
-    player.tell(msg)
+    player.tell('§a[MK] 清场完成：清掉了 ' + s.cleared + ' 块方块，工地已恢复成空地。')
+    player.tell('§7[MK] 现在让建筑工重新施工：到建筑 GUI 里确认一下工单状态，或等一下它自己重新接管。')
   } catch (e) {}
   console.info('[MKUNDO] done, cleared=' + s.cleared)
   mkundoSession = null
@@ -109,20 +114,21 @@ function mkundoStep(server) {
     job.idx++
     scanned++
     try {
-      var info = job.map.get(key)
-      if (!info) continue
-      var state = String(info.getState())
-      if (mkundoIsAir(state)) continue
-      if (mkundoSkipTarget(state)) continue
       var wp = job.loc.offset(key).subtract(job.primary)
       var x = wp.getX()
       var y = wp.getY()
       var z = wp.getZ()
+      // 安全护栏：只有落在「工单包围盒外扩 16 格」内的位置才清，避免换算出错时清到远处
+      try {
+        var box = job.box
+        if (box && (x < box.minX - 16 || x > box.maxX + 16 || y < box.minY - 16 || y > box.maxY + 16 || z < box.minZ - 16 || z > box.maxZ + 16)) continue
+      } catch (eBox) {}
       var cur = ''
       try {
         cur = String(level.getBlock(x, y, z).blockState)
       } catch (eCur) {}
-      if (cur !== state) continue
+      if (cur === '' || mkundoIsAir(cur)) continue
+      if (mkundoIsHut(cur)) continue
       server.runCommandSilent('execute in ' + dim + ' run setblock ' + x + ' ' + y + ' ' + z + ' air')
       cleared++
       budget--
@@ -139,14 +145,14 @@ function mkundoStep(server) {
     try {
       var remain = 0
       for (var i = s.ji; i < s.jobs.length; i++) remain += s.jobs[i].total - s.jobs[i].idx
-      player.tell('§7[MK] 撤销中… 已清除 ' + s.cleared + ' 块，剩余检查约 ' + remain + ' 个位置')
+      player.tell('§7[MK] 清场中… 已清除 ' + s.cleared + ' 块，剩余检查约 ' + remain + ' 个位置')
     } catch (eTell) {}
   }
 }
 
 function mkundoStart(player) {
   if (mkundoSession) {
-    player.tell('§e[MK] 已经有撤销任务在跑，先 /mkundo stop。')
+    player.tell('§e[MK] 已经有清场任务在跑，先 /mkundo stop。')
     return
   }
   var level = player.level
@@ -157,25 +163,25 @@ function mkundoStart(player) {
   }
   var jobs = mkundoCollect(colony)
   if (jobs.length === 0) {
-    player.tell('§e[MK] 没有找到「已认领 + 有蓝图」的工单，没什么可撤销的。')
+    player.tell('§e[MK] 没有找到「已认领 + 有蓝图」的工单，没什么可清的。')
     return
   }
   var total = 0
   for (var i = 0; i < jobs.length; i++) total += jobs[i].total
   mkundoSession = { player: player, jobs: jobs, ji: 0, cleared: 0, errors: 0 }
-  player.tell('§e[MK] 开始撤销 ' + jobs.length + ' 个工地（共 ' + total + ' 个蓝图位置）。')
-  player.tell('§7[MK] 如果这栋楼你想整个放弃：撤销完后到建筑 GUI 里把这栋「打包/拆除」掉最干净。')
+  player.tell('§e[MK] 开始清场：' + jobs.length + ' 个工地，共 ' + total + ' 个蓝图位置。')
+  player.tell('§7[MK] 只会清成空气，blockhut* 建筑核心方块会保留，范围内的其它方块（含你之前放的）都会被清掉。')
   console.info('[MKUNDO] start jobs=' + jobs.length + ' positions=' + total)
 }
 
 function mkundoStop(player) {
   if (!mkundoSession) {
-    player.tell('§7[MK] 当前没有撤销任务。')
+    player.tell('§7[MK] 当前没有清场任务。')
     return
   }
   var n = mkundoSession.cleared
   mkundoSession = null
-  player.tell('§e[MK] 已停止撤销，共清除 ' + n + ' 块。')
+  player.tell('§e[MK] 已停止清场，共清除 ' + n + ' 块。')
 }
 
 ServerEvents.commandRegistry(event => {
@@ -197,7 +203,7 @@ ServerEvents.commandRegistry(event => {
       .then(L('status').executes(ctx => {
         var s = mkundoSession
         var p = ctx.source.playerOrException
-        if (!s) p.tell('§7[MK] 当前没有撤销任务。')
+        if (!s) p.tell('§7[MK] 当前没有清场任务。')
         else p.tell('§7[MK] 工地 ' + (s.ji + 1) + '/' + s.jobs.length + '，已清除 ' + s.cleared + ' 块。')
         return 1
       }))
