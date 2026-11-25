@@ -137,17 +137,28 @@ Write-Host '        mc-anime 一键联机（' + $Address + '）'
 Write-Host '  ==========================================='
 Write-Host ''
 
-# 1) 没有游戏就自动下载并解压
-if (!(Test-Path $launcher)) {
+# 1) 没有游戏就自动下载解压；已有游戏则检查更新（Release 里的整合包一更新就自动重下）
+$stampFile = Join-Path $game 'installed-build.txt'
+
+function Get-RemoteStamp {
+  try {
+    $api = 'https://api.github.com/repos/belfry2023/mc-anime/releases/tags/v1.0.0'
+    $rel = Invoke-RestMethod -Uri $api -Headers @{ 'User-Agent' = 'mc-anime' } -TimeoutSec 30
+    $asset = $rel.assets | Where-Object { $_.name -eq 'mc-anime-client.zip' } | Select-Object -First 1
+    if ($asset) { return [string]$asset.updated_at }
+  } catch { }
+  return ''
+}
+
+function Install-Client {
   if (!(Test-Path $zip)) {
-    Write-Host '  第一次使用：正在下载整合包（约 1.4 GB，看网速，可能要一会儿）...'
+    Write-Host '  正在下载整合包（约 1.4 GB，看网速，可能要一会儿）...'
     try {
-      # 优先用 BITS（有进度条、可断点续传）
       Start-BitsTransfer -Source $ClientZipUrl -Destination $zip -DisplayName 'mc-anime 整合包'
     } catch {
       Write-Host '  BITS 失败，改用普通下载 ...'
       $ProgressPreference = 'SilentlyContinue'
-      Invoke-WebRequest -Uri $ClientZipUrl -OutFile $zip -TimeoutSec 3600
+      Invoke-WebRequest -Uri $ClientZipUrl -OutFile $zip -TimeoutSec 3600 -UseBasicParsing
     }
   }
   Write-Host '  正在解压（约 16 万个小文件，需要几分钟，别关窗口）...'
@@ -161,6 +172,23 @@ if (!(Test-Path $launcher)) {
     }
   } finally { Pop-Location }
   if (!(Test-Path $launcher)) { throw '解压后没找到 launch-game.ps1，包可能下载不完整，删掉 zip 重新运行本脚本' }
+}
+
+$remoteStamp = Get-RemoteStamp
+$localStamp = ''
+if (Test-Path $stampFile) { $localStamp = (Get-Content $stampFile -Raw).Trim() }
+
+if (!(Test-Path $launcher)) {
+  Install-Client
+  if ($remoteStamp) { Set-Content -Path $stampFile -Value $remoteStamp -Encoding UTF8 }
+} elseif ($remoteStamp -and $localStamp -and ($localStamp -ne $remoteStamp)) {
+  Write-Host '  检测到整合包有更新，正在重新下载 ...'
+  Remove-Item $zip -Force -ErrorAction SilentlyContinue
+  Install-Client
+  Set-Content -Path $stampFile -Value $remoteStamp -Encoding UTF8
+} elseif ($remoteStamp -and !$localStamp) {
+  # 老版本装的、没有记录：先记下当前版本，下次更新时再提醒
+  Set-Content -Path $stampFile -Value $remoteStamp -Encoding UTF8
 }
 
 # 2) 昵称 / 内存 / 服务器地址
