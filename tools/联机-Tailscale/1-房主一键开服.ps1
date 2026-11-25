@@ -13,7 +13,7 @@
 # ================================================================
 param(
   [string]$ShareLink = '',
-  [int]$MemoryGB = 4,
+  [int]$MemoryGB = 6,
   [switch]$SkipServer
 )
 

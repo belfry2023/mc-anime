@@ -211,6 +211,25 @@ $patchedLauncher = Join-Path $PSScriptRoot 'launch-game.ps1'
 if (Test-Path $patchedLauncher) {
   try {
     Copy-Item $patchedLauncher (Join-Path $target 'launch-game.ps1') -Force
+# ---------- 4c. 首次安装时把画面参数调到稳定档（降低登录卡死/超时的概率） ----------
+$optFile = Join-Path $target 'payload\game\.minecraft\options.txt'
+if (!(Test-Path $optFile)) { $optFile = Join-Path $target 'game\.minecraft\options.txt' }
+$perfMark = Join-Path $target '.perf-applied'
+if ((Test-Path $optFile) -and !(Test-Path $perfMark)) {
+    $perfMap = @{
+        'renderDistance' = '8'; 'simulationDistance' = '6'; 'maxFps' = '60';
+        'graphicsMode' = '0'; 'entityShadows' = 'false'; 'particles' = '2'
+    }
+    $perfOut = New-Object System.Collections.Generic.List[string]
+    foreach ($ln in (Get-Content $optFile)) {
+        $key = ($ln -split ':', 2)[0]
+        if ($perfMap.ContainsKey($key)) { $perfOut.Add($key + ':' + $perfMap[$key]) } else { $perfOut.Add($ln) }
+    }
+    [System.IO.File]::WriteAllLines($optFile, $perfOut, (New-Object System.Text.UTF8Encoding($false)))
+    Set-Content -Path $perfMark -Value 'perf' -Encoding ASCII
+    Say '  已把画面参数调到稳定档（渲染距离 8 / 模拟距离 6 / 60 帧）。'
+}
+
     Say '  已更新启动器（支持自动进服）'
   } catch { Say ('  更新启动器失败：' + $_.Exception.Message) }
 }
