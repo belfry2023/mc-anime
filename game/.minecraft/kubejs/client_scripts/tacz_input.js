@@ -111,11 +111,23 @@
     // ── 2) 蹲 / 跳 / 冲刺 → 取消趴下 ───────────────────────────────
     try {
       if (op && op.isCrawl()) {
-        var o = MC.getInstance().options
         var cancel = false
-        if (o.keyShift && o.keyShift.isDown) cancel = true
-        if (o.keyJump && o.keyJump.isDown) cancel = true
-        if (o.keySprint && o.keySprint.isDown) cancel = true
+        // 优先用 KeyMapping（按住状态），拿不到就退回玩家状态判断
+        var opts = MC.getInstance().options
+        if (opts) {
+          if (opts.keyShift && opts.keyShift.isDown) cancel = true
+          if (opts.keyJump && opts.keyJump.isDown) cancel = true
+          if (opts.keySprint && opts.keySprint.isDown) cancel = true
+        }
+        if (!cancel) {
+          if (player.isShiftKeyDown() || player.isSprinting()) cancel = true
+        }
+        if (!cancel) {
+          try {
+            var input = player.input
+            if (input && input.jumping) cancel = true
+          } catch (errInput) {}
+        }
         if (cancel) op.crawl(false)
       }
     } catch (err) {}
