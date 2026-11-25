@@ -1,4 +1,4 @@
-# 把 dist\release 里的安装包发布到 GitHub Release
+﻿# 把 dist\release 里的安装包发布到 GitHub Release
 #
 # 用法：powershell -NoProfile -ExecutionPolicy Bypass -File tools\publish-release.ps1 -Tag v1.0.0
 # 依赖：git 已保存 GitHub 凭据（git credential fill 能取到 token）
