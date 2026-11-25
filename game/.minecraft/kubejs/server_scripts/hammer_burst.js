@@ -150,7 +150,6 @@ function hbStart(player, level, pos) {
     failed: 0,
     ticks: 0
   }
-  player.tell('§a助手锤连击：已排队 §e' + queue.length + ' §a块，每秒 1 块开始施工……')
   return true
 }
 
@@ -167,7 +166,6 @@ function hbTick(server) {
     player.getCooldowns().removeCooldown(s.hammer)
   } catch (errCd) {}
   if (s.index >= s.queue.length) {
-    player.tell('§a助手锤连击完成：成功 §e' + s.placed + ' §a块' + (s.failed > 0 ? '，失败 ' + s.failed : '') + '。')
     MK_HB.session = null
     return
   }
@@ -180,11 +178,6 @@ function hbTick(server) {
   } catch (errPlace) {
     s.failed++
     if (s.failed <= 3) console.info('[MKHB] placeBlock 失败 @ ' + pos + ' : ' + errPlace)
-  }
-  if (s.ticks % 10 === 0 && s.index < s.queue.length) {
-    try {
-      player.displayClientMessage(Component.literal('§7助手锤连击 §e' + s.placed + '§7/' + s.queue.length), true)
-    } catch (errBar) {}
   }
 }
 
