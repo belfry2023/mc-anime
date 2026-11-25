@@ -70,7 +70,7 @@ global.mkSnipePost = function (event) {
 
     mkSnipeForceVulnerable(target)
     target.invulnerableTime = 0
-    target.hurt(src, dmg)
+    mkSnipeHurt(target, src, dmg)
 
     var after = target.getHealth()
     if (after >= before) {
@@ -79,7 +79,7 @@ global.mkSnipePost = function (event) {
       var next = hp - dmg
       if (next <= 0) {
         // 让它按正常死亡流程走（掉落、死亡动画、boss 血条清理）
-        try { target.hurt(level.damageSources().genericKill(), Math.max(1000, hp * 4)) } catch (errKill) {}
+        mkSnipeHurt(target, level.damageSources().genericKill(), Math.max(1000, hp * 4))
         after = target.getHealth()
         if (after >= before) {
           try { target.kill() } catch (errK) {}
@@ -89,37 +89,51 @@ global.mkSnipePost = function (event) {
         try { target.setHealth(next); after = target.getHealth() } catch (errSet) {}
       }
       if (after < before) {
-        console.info('[MKSNIPE] 强制扣血 ' + String(target.type) + ' -' + (before - after).toFixed(1))
+        mksLog('强制扣血 ' + String(target.type) + ' -' + (before - after).toFixed(1))
       }
     }
 
     if (after < before) {
-      console.info('[MKSNIPE] ' + String(target.type) + ' -' + (before - after).toFixed(1) + ' (' + before.toFixed(1) + ' -> ' + after.toFixed(1) + ')')
+      mksLog(String(target.type) + ' -' + (before - after).toFixed(1) + ' (' + before.toFixed(1) + ' -> ' + after.toFixed(1) + ')')
       if (attacker && attacker.isPlayer && attacker.isPlayer()) {
         attacker.displayClientMessage(Component.literal('§b远程命中 §f' + (before - after).toFixed(1)), true)
       }
     } else {
-      console.info('[MKSNIPE] 仍然免疫 ' + String(target.type) + '（可能处于无敌/未唤醒阶段）')
+      mksLog('仍然免疫 ' + String(target.type) + '（可能处于无敌/未唤醒阶段）')
       if (attacker && attacker.isPlayer && attacker.isPlayer()) {
         attacker.displayClientMessage(Component.literal('§c这一枪被免疫了（无敌/未唤醒）'), true)
       }
     }
   } catch (err) {
-    console.info('[MKSNIPE] error ' + err)
+    mksLog('error ' + err)
   }
+}
+
+// 连发武器一秒能打十几发，日志按「每秒最多一条」节流
+var MKSnipeLogAt = 0
+function mksLog (msg) {
+  var now = Date.now()
+  if (now - MKSnipeLogAt < 1000) return
+  MKSnipeLogAt = now
+  console.info('[MKSNIPE] ' + msg)
 }
 
 // 把 Boss 强行拉成「可被伤害」状态：
 //   - 清掉实体无敌标记（invulnerable）
-//   - 唤醒睡眠/出生动画（Cataclysm 用 attackState 23/24 表示睡/醒）
 //   - 清无敌帧
+// 注意：**不要**去改 attackState（23/24 是她的睡眠/登场动画状态），
+// 强行归零会打乱攻击/阶段状态机，表现为「一进战就脱战、回满血」。
 function mkSnipeForceVulnerable (boss) {
   try { if (boss.isInvulnerable()) boss.setInvulnerable(false) } catch (errInv) {}
-  try {
-    var state = boss.getAttackState()
-    if (state >= 23 && state <= 24) boss.setAttackState(0)
-  } catch (errState) {}
   try { boss.invulnerableTime = 0 } catch (errTime) {}
+}
+
+// KubeJS 对模组实体不一定把 hurt 映射到 m_6469_，这里两条都试一遍。
+// 返回 true 表示调用成功（不代表一定掉血，看 Scylla 的招架/伤害上限）。
+function mkSnipeHurt (target, src, amount) {
+  try { target.m_6469_(src, amount); return true } catch (errSrg) {}
+  try { target.hurt(src, amount); return true } catch (errHurt) {}
+  return false
 }
 
 function mkSnipeAggro (boss, player) {
@@ -161,21 +175,15 @@ ServerEvents.tick(event => {
 
 // ── Boss「永久可伤害」守卫 ────────────────────────────────────────────
 // 用户要求：Cataclysm 的 Boss 不要有无敌 / 未唤醒 状态，任何距离、任何时机都能打。
-// 每 tick 检查灾变实体，发现无敌就清掉；每 20 tick 额外把「睡眠/出生」动作状态（23/24）归零。
+// 这里只清「实体无敌标记」，不再碰 attackState（见 mkSnipeForceVulnerable 的注释）。
 global.mkSnipeLivingTick = function (event) {
   try {
     var e = event.getEntity()
     if (!e || !e.isAlive()) return
     if (!(e instanceof MKAnimMonster)) return
-
     if (e.isInvulnerable()) {
       e.setInvulnerable(false)
       try { e.invulnerableTime = 0 } catch (errT) {}
-    }
-
-    if (e.tickCount % 20 === 0) {
-      var st = e.getAttackState()
-      if (st >= 23 && st <= 24) e.setAttackState(0)
     }
   } catch (err) {}
 }
