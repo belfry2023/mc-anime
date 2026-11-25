@@ -154,3 +154,24 @@ ServerEvents.tick(event => {
     }
   }
 })
+
+// ── Boss「永久可伤害」守卫 ────────────────────────────────────────────
+// 用户要求：Cataclysm 的 Boss 不要有无敌 / 未唤醒 状态，任何距离、任何时机都能打。
+// 每 tick 检查灾变实体，发现无敌就清掉；每 20 tick 额外把「睡眠/出生」动作状态（23/24）归零。
+ForgeEvents.onEvent('net.minecraftforge.event.entity.living.LivingEvent$LivingTickEvent', event => {
+  try {
+    var e = event.getEntity()
+    if (!e || !e.isAlive()) return
+    if (String(e.type).indexOf('cataclysm:') !== 0) return
+
+    if (e.isInvulnerable()) {
+      e.setInvulnerable(false)
+      try { e.invulnerableTime = 0 } catch (errT) {}
+    }
+
+    if (e.tickCount % 20 === 0) {
+      var st = e.getAttackState()
+      if (st >= 23 && st <= 24) e.setAttackState(0)
+    }
+  } catch (err) {}
+})
