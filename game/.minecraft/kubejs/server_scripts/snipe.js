@@ -23,6 +23,7 @@
 var MKSnipeBefore = {}
 var MKSnipeAggro = {}
 var MKSnipeAggroTicks = 400 // 仇恨保持 400 tick ≈ 20 秒
+var MKAnimMonster = Java.loadClass('com.github.L_Ender.cataclysm.entity.InternalAnimationMonster.Internal_Animation_Monster')
 
 function mksKey (entity) {
   return String(entity.id)
@@ -162,7 +163,7 @@ ForgeEvents.onEvent('net.minecraftforge.event.entity.living.LivingEvent$LivingTi
   try {
     var e = event.getEntity()
     if (!e || !e.isAlive()) return
-    if (String(e.type).indexOf('cataclysm:') !== 0) return
+    if (!(e instanceof MKAnimMonster)) return
 
     if (e.isInvulnerable()) {
       e.setInvulnerable(false)
