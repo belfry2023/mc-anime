@@ -49,7 +49,10 @@ if (-not $SkipForge -and (Test-Path $forgeInstaller)) {
     if (-not $hasRun) {
         Write-Host ''
         Write-Host '正在安装 Forge 服务端（第一次需要联网下载库文件，请耐心等待）...' -ForegroundColor Green
-        $proc = Start-Process -FilePath $java -ArgumentList @('-jar', $forgeInstaller, '--installServer', $here) -Wait -PassThru -NoNewWindow -WorkingDirectory $here
+        # 用独立 tmpdir：某些系统的 %TEMP% 权限异常会让安装器在 PostProcessors 阶段 AccessDenied
+    $tmp = Join-Path $here '.install-tmp'
+    if (!(Test-Path $tmp)) { New-Item -ItemType Directory -Force -Path $tmp | Out-Null }
+    $proc = Start-Process -FilePath $java -ArgumentList @(('-Djava.io.tmpdir=' + $tmp), '-jar', $forgeInstaller, '--installServer', $here) -Wait -PassThru -NoNewWindow -WorkingDirectory $here
         Write-Host "Forge 安装器退出码：$($proc.ExitCode)" -ForegroundColor Gray
     } else {
         Write-Host 'Forge 服务端已安装过，跳过。' -ForegroundColor Gray
@@ -93,8 +96,13 @@ if (-not (Test-Path $sp)) {
 $startBat = Join-Path $here 'server-start.bat'
 $bat = @"
 @echo off
+chcp 65001 >nul
 cd /d "%~dp0"
 set PATH=$javaHome\bin;%PATH%
+REM 把临时目录放到服务端目录里：避免某些系统 %TEMP% 权限异常导致模组启动失败
+set TMP=%~dp0.tmp
+set TEMP=%~dp0.tmp
+if not exist "%TMP%" mkdir "%TMP%"
 title mc-anime server
 if exist memory.txt set /p MEM=<memory.txt
 if "%MEM%"=="" set MEM=$Memory

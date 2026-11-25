@@ -107,3 +107,6 @@ game/.minecraft/millenaire-custom/
 
 # ---------- åˆ†å‘äº§ç‰©ï¼ˆtools\build-dist.ps1 ç”Ÿæˆï¼Œä½“ç§¯å¤§ï¼Œä¸å…¥åº“ï¼‰ ----------
 /dist/
+
+# playit ÄÚÍø´©Í¸¿Í»§¶Ë£¨±¾»ú×¨ÓÃ£¬²»Èë¿â£©
+tools/playit/*.exe

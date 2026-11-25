@@ -112,6 +112,18 @@ foreach ($x in $gameArgs) { $cmdArgs.Add($x) }
 $cmdArgs.Add('--width'); $cmdArgs.Add('1280')
 $cmdArgs.Add('--height'); $cmdArgs.Add('720')
 
+# 一键联机：同目录若有 connect.txt（"服务器地址:端口"），启动后自动连进去
+$connectFile = Join-Path $root 'connect.txt'
+if (Test-Path $connectFile) {
+    $connectAddr = ''
+    try { $connectAddr = ((Get-Content $connectFile -Raw -Encoding UTF8) -replace '\s', '') } catch { }
+    if ($connectAddr) {
+        $cmdArgs.Add('--quickPlayMultiplayer')
+        $cmdArgs.Add($connectAddr)
+        Write-Host "auto connect -> $connectAddr"
+    }
+}
+
 Get-CimInstance Win32_Process -Filter "Name='java.exe'" | ForEach-Object {
     $cl = $_.CommandLine
     if ($cl -and ($cl -match 'BootstrapLauncher|1\.20\.1-forge|forge.*win_args')) {
