@@ -192,6 +192,17 @@ $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 [System.IO.File]::WriteAllText((Join-Path $friendDir '一键加入.bat'), $bat, $utf8NoBom)
 [System.IO.File]::WriteAllText((Join-Path $friendDir 'README.txt'), $readme, $utf8Bom)
 
+# 把"支持 connect.txt 自动进服 + 出错时打印日志"的启动器一起放进包里，
+# join.ps1 解压整合包后会用这个覆盖旧版启动器。
+$patchedLauncher = Join-Path $here '..\..\dist\patch\launch-game.ps1'
+if (-not (Test-Path $patchedLauncher)) { $patchedLauncher = Join-Path $here 'launch-game-patch.ps1' }
+if (Test-Path $patchedLauncher) {
+    Copy-Item $patchedLauncher (Join-Path $friendDir 'launch-game.ps1') -Force
+    Say '  已附带新版启动器（支持自动进服）'
+} else {
+    Say '  [提示] 没找到新启动器补丁（dist\patch\launch-game.ps1），朋友包里仍用整合包自带启动器'
+}
+
 if (Test-Path $zipOut) { Remove-Item $zipOut -Force }
 Push-Location $friendDir
 try {

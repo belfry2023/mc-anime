@@ -38,7 +38,7 @@ $local  = (git rev-parse HEAD).Trim()
 Write-Host "local  head : $local"
 if ($remote -eq $local) { Write-Host '已经同步，无需推送'; return }
 
-$commits = @(git rev-list --reverse "$remote..$local")
+if ($BaseLocal) { $commits = @() } else { $commits = @(git rev-list --reverse "$remote..$local") }
 Write-Host ("待推送提交 : " + $commits.Count + " 个")
 
 function New-BlobSha([string]$gitSha) {
@@ -63,7 +63,8 @@ function Get-Entry([string]$Sha, [string]$Path, [string]$Mode) {
 if ($Squash) {
     Write-Host '模式: squash（把全部改动压成一个提交）'
     $entries = New-Object System.Collections.Generic.List[object]
-    $diff = git -c core.quotepath=false diff --name-status $remote $local
+    $diffBase = if ($BaseLocal) { $BaseLocal } else { $remote };
+    $diff = git -c core.quotepath=false diff --name-status $diffBase $local
     foreach ($line in $diff) {
         if (-not $line.Trim()) { continue }
         $parts = $line -split "`t"
@@ -77,7 +78,7 @@ if ($Squash) {
         }
     }
     $rc = Api 'GET' "$base/git/commits/$remote"
-    $msg = "同步本地改动（squash）：脚本/文档/发布工具更新`n`n来源提交数: $($commits.Count)"
+    $msg = if ($Msg) { $Msg } else { "同步本地改动（squash）：脚本/文档/发布工具更新" }
     $tree = Api 'POST' "$base/git/trees" @{ base_tree = $rc.tree.sha; tree = $entries.ToArray() }
     $newCommit = Api 'POST' "$base/git/commits" @{ message = $msg; tree = $tree.sha; parents = @($remote) }
     $newSha = $newCommit.sha

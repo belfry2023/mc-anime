@@ -206,6 +206,15 @@ if (!(Test-Path (Join-Path $target 'launch-game.ps1'))) {
 }
 if (!(Test-Path (Join-Path $target 'launch-game.ps1'))) { Say '  整合包结构不对，找不到 launch-game.ps1'; Pause2 '按回车退出'; exit 1 }
 
+# ---------- 4b. 用本包里自带的启动器覆盖（支持 connect.txt 自动进服 + 出错时打印日志） ----------
+$patchedLauncher = Join-Path $PSScriptRoot 'launch-game.ps1'
+if (Test-Path $patchedLauncher) {
+  try {
+    Copy-Item $patchedLauncher (Join-Path $target 'launch-game.ps1') -Force
+    Say '  已更新启动器（支持自动进服）'
+  } catch { Say ('  更新启动器失败：' + $_.Exception.Message) }
+}
+
 # ---------- 5. 昵称 / 内存 / 服务器地址 ----------
 Say ''
 Say '第 5 步：个性化设置'
