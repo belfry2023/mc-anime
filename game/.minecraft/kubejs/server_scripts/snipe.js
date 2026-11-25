@@ -29,16 +29,19 @@ function mksKey (entity) {
   return String(entity.id)
 }
 
-ForgeEvents.onEvent('com.tacz.guns.api.event.common.EntityHurtByGunEvent$Pre', event => {
+// 注意：Forge 事件只能在 startup_scripts 里注册（见 startup_scripts/snipe_events.js），
+// 这里把处理函数挂到 global，由转发器调用。
+
+global.mkSnipePre = function (event) {
   try {
     if (String(event.getLogicalSide()) !== 'SERVER') return
     var target = event.getHurtEntity()
     if (!target || !target.isAlive()) return
     MKSnipeBefore[mksKey(target)] = target.getHealth()
   } catch (err) {}
-})
+}
 
-ForgeEvents.onEvent('com.tacz.guns.api.event.common.EntityHurtByGunEvent$Post', event => {
+global.mkSnipePost = function (event) {
   try {
     if (String(event.getLogicalSide()) !== 'SERVER') return
     var target = event.getHurtEntity()
@@ -104,7 +107,7 @@ ForgeEvents.onEvent('com.tacz.guns.api.event.common.EntityHurtByGunEvent$Post', 
   } catch (err) {
     console.info('[MKSNIPE] error ' + err)
   }
-})
+}
 
 // 把 Boss 强行拉成「可被伤害」状态：
 //   - 清掉实体无敌标记（invulnerable）
@@ -159,7 +162,7 @@ ServerEvents.tick(event => {
 // ── Boss「永久可伤害」守卫 ────────────────────────────────────────────
 // 用户要求：Cataclysm 的 Boss 不要有无敌 / 未唤醒 状态，任何距离、任何时机都能打。
 // 每 tick 检查灾变实体，发现无敌就清掉；每 20 tick 额外把「睡眠/出生」动作状态（23/24）归零。
-ForgeEvents.onEvent('net.minecraftforge.event.entity.living.LivingEvent$LivingTickEvent', event => {
+global.mkSnipeLivingTick = function (event) {
   try {
     var e = event.getEntity()
     if (!e || !e.isAlive()) return
@@ -175,4 +178,4 @@ ForgeEvents.onEvent('net.minecraftforge.event.entity.living.LivingEvent$LivingTi
       if (st >= 23 && st <= 24) e.setAttackState(0)
     }
   } catch (err) {}
-})
+}

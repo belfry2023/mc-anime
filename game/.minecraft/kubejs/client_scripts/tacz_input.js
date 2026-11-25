@@ -43,7 +43,8 @@
   }
 
   // ── 1) 右键：开镜 / 换倍率 / 回腰射 ─────────────────────────────
-  ForgeEvents.onEvent('net.minecraftforge.client.event.InputEvent$MouseButton$Pre', event => {
+  // Forge 事件在 startup_scripts/snipe_events.js 注册后转发到这里
+  global.mkTaczMouse = function (event) {
     if (event.button !== 1 || event.action !== 1) return
     var player = localPlayer()
     if (!player) return
@@ -70,10 +71,10 @@
     st.wait = 0
     ZoomKey.onZoomPress() // 和手动按倍率键同一条通道（内部会判断 isAim 并发包）
     st.pending = true
-  })
+  }
 
   // 换档结果需要等服务端同步回客户端，用 tick 轮询判断是否绕回第一档
-  ForgeEvents.onEvent('net.minecraftforge.event.TickEvent$ClientTickEvent', event => {
+  global.mkTaczClientTick = function (event) {
     if (String(event.phase) !== 'END') return
     var player = localPlayer()
     if (!player) return
@@ -131,5 +132,5 @@
         if (cancel) op.crawl(false)
       }
     } catch (err) {}
-  })
+  }
 })()
