@@ -46,40 +46,71 @@ if (-not $SkipServer) {
   Say '（已跳过服务端启动）'
 }
 
-# ── 2. playit.gg 内网穿透 ─────────────────────────────────
+# ── 2. playit.gg 内网穿透（用 CLI + playitd，不用 GUI） ──────
+# GUI 版需要后台服务 + 命名管道，容易被安全软件/系统策略挡住；
+# 这里直接用官方 CLI：claim 授权拿 secret → 直接跑 playitd 守护进程。
 if ([string]::IsNullOrWhiteSpace($Address)) {
   if (!(Test-Path $playitDir)) { New-Item -ItemType Directory -Force -Path $playitDir | Out-Null }
-  $agent = Join-Path $playitDir 'playit-gui.exe'
+  $cli = Join-Path $playitDir 'playit.exe'
+  $daemon = Join-Path $playitDir 'playitd.exe'
+  $secretFile = Join-Path $playitDir 'secret.txt'
 
-  if (!(Test-Path $agent)) {
-    Say '下载 playit.gg 客户端 ...'
+  function Get-PlayitAsset($name) {
     $cred = ("protocol=https`nhost=github.com`n`n" | git credential fill) -split "`n"
     $token = ($cred | Where-Object { $_ -like 'password=*' }) -replace '^password=', ''
     $h = @{ 'User-Agent' = 'mc-anime' }
     if ($token) { $h['Authorization'] = "token $token" }
     $rel = Invoke-RestMethod -Uri 'https://api.github.com/repos/playit-cloud/playit-agent/releases/latest' -Headers $h -TimeoutSec 60
-    $asset = $rel.assets | Where-Object { $_.name -eq 'playit-gui-windows-x86_64-signed.exe' } | Select-Object -First 1
-    if (-not $asset) { $asset = $rel.assets | Where-Object { $_.name -eq 'playit-gui-windows-x86_64.exe' } | Select-Object -First 1 }
-    if (-not $asset) { throw '在 GitHub 上没找到 playit 的 Windows 客户端' }
-    Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $agent -Headers @{ 'User-Agent' = 'mc-anime' } -TimeoutSec 600
+    $asset = $rel.assets | Where-Object { $_.name -eq $name } | Select-Object -First 1
+    if (-not $asset) { throw ('GitHub 上找不到 ' + $name) }
+    return $asset.browser_download_url
   }
 
-  Say ''
-  Say '接下来在 playit 窗口里：'
-  Say '  1) 浏览器会弹出登录页 → 注册/登录（Google 账号即可）'
-  Say '  2) 在 playit 里点「Create Tunnel」→ 类型选 Minecraft Java'
-  Say '     Local Address: 127.0.0.1      Local Port: 25565'
-  Say '  3) 创建后会给你一个地址，形如  something.playit.gg'
-  Say ''
-  Start-Process -FilePath $agent -WorkingDirectory $playitDir
+  if (!(Test-Path $cli)) {
+    Say '下载 playit CLI ...'
+    Invoke-WebRequest -Uri (Get-PlayitAsset 'playit-windows-x86_64-signed.exe') -OutFile $cli -Headers @{ 'User-Agent' = 'mc-anime' } -TimeoutSec 600
+  }
+  if (!(Test-Path $daemon)) {
+    Say '下载 playit 后台守护进程 ...'
+    Invoke-WebRequest -Uri (Get-PlayitAsset 'playitd-windows-x86_64-signed.exe') -OutFile $daemon -Headers @{ 'User-Agent' = 'mc-anime' } -TimeoutSec 600
+  }
 
-  $Address = Read-Host '把 playit 给你的地址粘到这里（如 something.playit.gg:25565）'
+  # 2.1 首次使用：授权这台电脑（一次就够，secret 会存在 tools\playit\secret.txt）
+  if (!(Test-Path $secretFile)) {
+    Say ''
+    Say '第一次使用 playit，需要你在浏览器里点一下「Authorize」把本机授权给 playit。'
+    $code = (& $cli claim generate) | Select-Object -First 1
+    $code = $code.Trim()
+    $url = (& $cli claim url $code --name ('mc-anime-' + $env:COMPUTERNAME)) | Select-Object -First 1
+    $url = $url.Trim()
+    Say ''
+    Say ('  授权链接：' + $url)
+    Say '  （已经在浏览器里打开了，登录后点 Authorize 即可）'
+    try { Start-Process $url } catch { }
+    Read-Host '  授权完成后按回车继续'
+    Say '  正在领取密钥 ...'
+    $secret = (& $cli claim exchange $code --wait 180) | Select-Object -Last 1
+    if ([string]::IsNullOrWhiteSpace($secret)) { throw '领取 playit 密钥失败（是不是没点 Authorize？）重新运行本脚本再试一次' }
+    Set-Content -Path $secretFile -Value $secret.Trim() -Encoding UTF8
+  }
+
+  # 2.2 启动守护进程（后台，隧道由 playit 网页账号里配置）
+  $secret = (Get-Content $secretFile -Raw).Trim()
+  Get-Process playitd -ErrorAction SilentlyContinue | Stop-Process -Force
+  Start-Process -FilePath $daemon -ArgumentList @('--secret', $secret, '--log-path', (Join-Path $playitDir 'daemon.log')) -WindowStyle Hidden | Out-Null
+  Start-Sleep -Seconds 5
+
+  Say ''
+  Say '现在去 playit 网页建隧道（每次只用建一次，之后一直有效）：'
+  Say '  1) 打开 https://playit.gg/account/tunnels'
+  Say '  2) 点 Create Tunnel → 类型选 Minecraft Java'
+  Say '     Local Address: 127.0.0.1     Local Port: 25565 → 创建'
+  Say '  3) 列表里会显示形如  something.playit.gg  的地址'
+  Say ''
+  Start-Process 'https://playit.gg/account/tunnels'
+
+  $Address = Read-Host '把那个地址粘到这里（如 something.playit.gg 或 x.playit.gg:25565）'
 }
-
-$Address = ($Address -replace '\s', '')
-if ([string]::IsNullOrWhiteSpace($Address)) { throw '没有拿到服务器地址，已退出' }
-if ($Address -notmatch ':') { $Address = $Address + ':25565' }
-
 # ── 3. 生成朋友联机包 ─────────────────────────────────────
 Say ''
 Say ('服务器地址：' + $Address)
