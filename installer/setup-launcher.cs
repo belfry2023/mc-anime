@@ -16,13 +16,16 @@ namespace McAnimeSetup
                 string script = Path.Combine(dir, "setup.ps1");
                 if (!File.Exists(script))
                 {
-                    Console.WriteLine("找不到 setup.ps1，安装包不完整。");
-                    Console.WriteLine("请确认 setup.exe 与 setup.ps1 在同一个文件夹里。");
-                    Console.ReadKey();
+                    Console.WriteLine("[mc-anime] setup.ps1 not found next to setup.exe.");
+                    Console.WriteLine("[mc-anime] Please keep setup.exe and setup.ps1 in the same folder.");
+                    Pause();
                     return 1;
                 }
 
-                Console.Title = "mc-anime 整合包 安装程序";
+                Console.Title = "mc-anime setup";
+                Console.WriteLine("[mc-anime] starting installer...");
+                Console.WriteLine();
+
                 var psi = new ProcessStartInfo
                 {
                     FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "WindowsPowerShell", "v1.0", "powershell.exe"),
@@ -35,16 +38,17 @@ namespace McAnimeSetup
                 {
                     if (p == null)
                     {
-                        Console.WriteLine("无法启动 PowerShell。");
-                        Console.ReadKey();
+                        Console.WriteLine("[mc-anime] cannot start powershell.exe.");
+                        Pause();
                         return 1;
                     }
                     p.WaitForExit();
                     if (p.ExitCode != 0)
                     {
                         Console.WriteLine();
-                        Console.WriteLine("安装过程返回错误码 " + p.ExitCode + "。");
-                        Console.ReadKey();
+                        Console.WriteLine("[mc-anime] installer exited with code " + p.ExitCode + ".");
+                        Console.WriteLine("[mc-anime] If the game still does not start, run the launcher .bat in the install folder and send the window text back.");
+                        Pause();
                         return p.ExitCode;
                     }
                 }
@@ -52,10 +56,17 @@ namespace McAnimeSetup
             }
             catch (Exception ex)
             {
-                Console.WriteLine("安装程序出错：" + ex.Message);
-                Console.ReadKey();
+                Console.WriteLine("[mc-anime] setup error: " + ex.Message);
+                Pause();
                 return 1;
             }
+        }
+
+        private static void Pause()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Press any key to close...");
+            try { Console.ReadKey(true); } catch { }
         }
     }
 }
