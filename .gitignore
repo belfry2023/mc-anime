@@ -116,3 +116,7 @@ game/.minecraft/servers.dat_old
 game/.minecraft/sexmod/custom_models/
 # ---------- 下载的安装器（体积大，不入库） ----------
 tools/联机-Tailscale/tailscale-setup*.exe
+
+# ---------- 本地联机工具残留（playit 客户端，不入库） ----------
+tools/playit/
+
