@@ -1,27 +1,33 @@
 # mc-anime 整合包 v1.0.0
 
-Minecraft **1.20.1 / Forge 47.4.29** 整合包，41 个模组，主打「二次元女仆 + 咒术战斗 + 殖民地文明 + 城防战 + 枪械」。
+Minecraft **1.20.1 / Forge 47.4.29** 整合包，43 个模组，主打「二次元女仆 + 咒术战斗 + 殖民地文明 + 城防战 + 枪械」。
 
-## 下载
+## 文件
 
 | 文件 | 说明 |
 |---|---|
-| `mc-anime-client.zip` | 客户端整包（约 1.6GB），解压即玩，自带完整 Java 17 运行时 |
+| **`mc-anime-patch-2026-11-26.zip`** | **修复补丁（约 0.5MB）**：解压后覆盖到 mc-anime 文件夹的同名位置即可 |
+| `mc-anime-client.zip` | 客户端整包（约 1.6GB）——**正文见下方「关于主包」** |
 | `setup.ps1` / `setup.exe` | 可选安装器：双击后选目录、填昵称和内存，自动解压并建桌面快捷方式 |
 
-## 客户端怎么装
+> **关于主包**：2026-11-26 重建的新版主包因上传带宽问题暂时撤下重新上传中。已经拿到过旧主包的朋友，**只需要打上 `mc-anime-patch-2026-11-26.zip` 这个补丁**就能正常启动。
 
-**方式一（推荐，安装器）**
+## 安装 / 修复步骤
 
-1. 把 `mc-anime-client.zip`、`setup.exe`、`setup.ps1` 放到同一个文件夹
-2. 双击 `setup.exe` → 选安装目录 → 填昵称 / 内存
-3. 桌面上出现「玩 mc-anime」，双击开玩
+1. 解压 `mc-anime-client.zip` 到任意目录（建议 `D:\Games\mc-anime`，路径别带奇怪字符）
+2. 解压 `mc-anime-patch-2026-11-26.zip`，把里面的内容**覆盖**到该目录（替换 `launch-game.ps1`、`启动游戏.bat` 和 `game` 里几个文件）
+3. 需要的话新建 `username.txt` 写昵称、`memory.txt` 写 `4` 或 `6`（不写默认 4G）
+4. 双击 **`启动游戏.bat`**；启动失败时窗口会停住并打印错误
 
-**方式二（手动）**
+## 2026-11-26 修复了什么
 
-1. 把 `mc-anime-client.zip` 解压到任意目录（路径别带中文以外的怪字符，建议 `D:\Games\mc-anime`）
-2. 新建 `username.txt` 写你的昵称（可选，默认「玩家」）、`memory.txt` 写 `4G` / `6G`（可选）
-3. 双击 `启动.bat`
+- **启动器不再写死路径**：旧版把 `-Djava.io.tmpdir=C:\Users\belfry\...` 打进 `versions/*.json`，别人机器上该目录不存在 → `NoSuchFileException` / `Unable to extract the nested MaidSpell mod`。现在启动器自己在包内建 `tmp`。
+- **`memory.txt` 随便写**：`4` / `4G` / `6GB` 都能识别，并自动限制在本机内存 60% 以内，修 `Initial heap size ... larger than maximum heap size`。
+- **启动失败看得见**：`启动游戏.bat` 改为前台运行，报错留在窗口里（之前是隐藏窗口启动，失败毫无提示）。
+- **战斗模式闪退**：新增 EpicYSM 兼容模组并关闭 `armor_on_models`，修复 YSM × Epic Fight 渲染玩家时的 `ClassCastException` / `searchJointById` NPE。
+- **联机**：内置 mcwifipnp（Esc → 对局域网开放，可关正版验证）。
+
+> 如果还报 `ClassNotFoundException: jdk.nio.zipfs.ZipPath`（解压模组需要 `jdk.zipfs`），说明旧包用的是 jlink 精简运行时：装一个完整的 **Java 17（Temurin 17）** 即可；新版主包已自带完整 JDK 17，不会再有这个问题。
 
 ## 内置指令速查
 

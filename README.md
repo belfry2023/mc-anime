@@ -56,7 +56,7 @@ TLM 1.5.x 自带 AI 聊天，不需要额外 AI mod：
 
 - Forge 1.20.1-47.4.29 服务端试跑通过：TLM、Spell、Personality、契约之刃、EpicFight、Avalon 全部载入，日志里出现 `Done (3.587s)!`，没有缺依赖。
 - 顺手修了两个环境坑：
-  - 系统 Temp 目录不让建临时文件夹（Forge 安装器和 TLM: Spell 都撞上过），已把 `-Djava.io.tmpdir=C:\Users\belfry\workspaceRE\mc-anime\tmp` 写进 `versions\1.20.1-forge-47.4.29\1.20.1-forge-47.4.29.json` 的 JVM 参数。
+  - 系统 Temp 目录不让建临时文件夹（Forge 安装器和 TLM: Spell 都撞上过）。**注意不要往版本 JSON 里写死绝对路径**：早先那样做过，导致别人解压后 `levels\*.json` 指向我的机器路径，报 `NoSuchFileException` 和 `Unable to extract the nested MaidSpell mod`，游戏根本起不来。现在改成 `launch-game.ps1` 启动时把 `TMP`/`TEMP` 和 `-Djava.io.tmpdir` 都设到整合包自己的 `tmp\` 下（`$PSScriptRoot` 相对路径），换机器、换盘符、换中文路径都能跑。
   - `eula.txt` 去掉了 BOM（只影响 server-test，客户端用不到）。
 - 1.20.1 原版库文件已补齐；游戏资源（assets，约 624MB）已预下载。
 - 02:51 又跑了一次服务端冒烟测试，加入 TaCZ + LesRaisins 枪包、Artifacts + Curios + Architectury + Cloth Config、Mekanism、Patchouli 之后仍然载入成功、无缺依赖（未知属性 `irons_spellbooks:*`、`caelus:fall_flying` 是可选模组没装的正常警告）。

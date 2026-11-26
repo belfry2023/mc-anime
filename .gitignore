@@ -120,3 +120,5 @@ tools/联机-Tailscale/tailscale-setup*.exe
 # ---------- 本地联机工具残留（playit 客户端，不入库） ----------
 tools/playit/
 
+
+game/.minecraft/ops.json

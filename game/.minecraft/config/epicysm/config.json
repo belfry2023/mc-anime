@@ -6,8 +6,9 @@
   "hide_model_weapons_encrypted": true,
   "hold": "all",
   "bow_by_ysm": true,
-  "armor_on_models": true,
+  "armor_on_models": false,
   "physics": true,
   "own_animations": true,
   "diagnostics": false
 }
+
