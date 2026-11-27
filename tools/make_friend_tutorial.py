@@ -67,7 +67,7 @@ bullet("第 2 步：双击 setup.exe")
 bullet("第 3 步：如果弹出蓝色的「Windows 已保护你的电脑」，点「更多信息」→ 再点「仍要运行」")
 bullet("第 4 步：黑窗口会问你三个问题 ——")
 bullet("　① 安装到哪个目录？直接按回车 = 我的文档\\mc-anime；想装 D 盘就输入 D:\\Games\\mc-anime 再回车")
-bullet("　② 游戏内昵称？输入你想用的名字（中文也可以），回车")
+bullet("　② 游戏内昵称？只能填 英文字母/数字/下划线（例如 ming_xm），不能有中文和空格；每个人必须不一样，填好回车")
 bullet("　③ 分配内存？直接按回车（脚本会按你电脑内存自动给建议值，一般是 4 或 6）")
 bullet("第 5 步：等它解压。固态硬盘 1~3 分钟，机械硬盘 3~8 分钟。窗口会显示进度文字，别关窗口")
 bullet("第 6 步：看到「安装完成！」就成功了。桌面上会多出一个「玩 mc-anime」")
@@ -92,6 +92,10 @@ table([
     ("你看到的情况", "怎么处理"),
     ("双击没反应，或者一闪就没了",
      "去安装目录双击 启动游戏.bat（不是桌面快捷方式），窗口会停住显示真正的报错"),
+    ("此名称已被占用（进朋友服务器时）",
+     "你的昵称和别人重名了（最常见：默认都是 Player）。把 username.txt 改成一个别人没用的英文名再启动；名字定了就别改，改名等于换新角色、物品不会跟过来"),
+    ("Invalid characters in username",
+     "昵称里有中文/空格/符号。只留英文字母、数字、下划线"),
     ("Unable to extract the nested MaidSpell mod / NoSuchFileException ... tmp",
      "你的包是旧版。装新版主包，或把 mc-anime-patch-2026-11-26.zip 解压覆盖到安装目录"),
     ("ClassNotFoundException: jdk.nio.zipfs.ZipPath",

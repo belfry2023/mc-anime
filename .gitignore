@@ -1,9 +1,8 @@
 # ============================================================
-# Minecraft 整合包 .gitignore
-# 本仓库只保留「核心配置 / 脚本 / 文档」，不传运行时与大体积文件。
-# ============================================================
+# Minecraft 鏁村悎鍖?.gitignore
+# 鏈粨搴撳彧淇濈暀銆屾牳蹇冮厤缃?/ 鑴氭湰 / 鏂囨。銆嶏紝涓嶄紶杩愯鏃朵笌澶т綋绉枃浠躲€?# ============================================================
 
-# ---------- 通用垃圾（任意目录） ----------
+# ---------- 閫氱敤鍨冨溇锛堜换鎰忕洰褰曪級 ----------
 __pycache__/
 *.py[cod]
 *.class
@@ -17,7 +16,7 @@ hs_err_pid*
 Thumbs.db
 desktop.ini
 
-# ---------- .minecraft 运行时与大体积目录 ----------
+# ---------- .minecraft 杩愯鏃朵笌澶т綋绉洰褰?----------
 game/.minecraft/mods/
 game/.minecraft/mods-disabled/
 game/.minecraft/saves/
@@ -41,7 +40,7 @@ game/.minecraft/blueprints/
 game/.minecraft/schematics/
 game/.minecraft/config/touhou_little_maid/file/
 
-# ---------- config 内的缓存 / 内置模型 / 资源包（可整目录重建） ----------
+# ---------- config 鍐呯殑缂撳瓨 / 鍐呯疆妯″瀷 / 璧勬簮鍖咃紙鍙暣鐩綍閲嶅缓锛?----------
 game/.minecraft/config/yes_steve_model/builtin/
 game/.minecraft/config/yes_steve_model/cache/
 game/.minecraft/config/ysm_geo_compat/resourcepack/
@@ -49,15 +48,15 @@ game/.minecraft/config/**/cache/
 game/.minecraft/config/**/builtin/
 game/.minecraft/config/**/resourcepack/
 
-# ---------- PCL2 启动器与 native 二进制（不传） ----------
+# ---------- PCL2 鍚姩鍣ㄤ笌 native 浜岃繘鍒讹紙涓嶄紶锛?----------
 /game/JavaWrapper.jar
-/game/PCL2启动器.exe
+/game/PCL2鍚姩鍣?exe
 /game/Setup.ini
 /game/libjlw-x86_64-1.4.4.dll
 /game/libwebp.dll
 game/.minecraft/config/epicfight/native/
 
-# ---------- 敏感身份文件（不传） ----------
+# ---------- 鏁忔劅韬唤鏂囦欢锛堜笉浼狅級 ----------
 game/.minecraft/identity.json
 game/.minecraft/usernamecache.json
 game/.minecraft/usercache.json
@@ -73,22 +72,22 @@ game/.minecraft/forge-1.20.1-47.4.29-installer.jar.log
 game/.minecraft/rimulib.log
 game/.minecraft/shooting_star.log
 
-# ---------- 房子导出数据（游戏里 /savehome go 生成，体积大且经常变，不进仓库） ----------
+# ---------- 鎴垮瓙瀵煎嚭鏁版嵁锛堟父鎴忛噷 /savehome go 鐢熸垚锛屼綋绉ぇ涓旂粡甯稿彉锛屼笉杩涗粨搴擄級 ----------
 game/.minecraft/kubejs/home_saved.json
 game/.minecraft/kubejs/server_scripts/home_saved_data.js
 
-# ---------- 备份文件（*.bak 一律忽略，但保留 kubejs 归档脚本） ----------
+# ---------- 澶囦唤鏂囦欢锛?.bak 涓€寰嬪拷鐣ワ紝浣嗕繚鐣?kubejs 褰掓。鑴氭湰锛?----------
 *.bak
 !game/.minecraft/kubejs/_archived_scripts/*.bak
 
-# ---------- 测试服务器 / JDK / 临时目录 ----------
+# ---------- 娴嬭瘯鏈嶅姟鍣?/ JDK / 涓存椂鐩綍 ----------
 jdk/
 server-test*/
 tmp/
 tmp_is/
 tmp_maidspell/
 
-# ---------- 根目录截图 / 安装包 / 日志 / 临时调试残留 ----------
+# ---------- 鏍圭洰褰曟埅鍥?/ 瀹夎鍖?/ 鏃ュ織 / 涓存椂璋冭瘯娈嬬暀 ----------
 /screenshot*.png
 /shot-*.png
 /forge-1.20.1-47.4.29-installer.jar
@@ -100,25 +99,26 @@ tmp_maidspell/
 /tmp_*.dat
 /scan_blocks.py
 
-# ---------- �浵������ mod ����ʱ���ݣ�����󣬲����ֿ⣩ ----------
+# ---------- 锟芥档锟斤拷锟斤拷锟斤拷 mod 锟斤拷锟斤拷时锟斤拷锟捷ｏ拷锟斤拷锟斤拷螅锟斤拷锟斤拷挚猓?----------
 backups/
 game/.minecraft/millenaire/
 game/.minecraft/millenaire-custom/
 
-# ---------- 分发产物（tools\build-dist.ps1 生成，体积大，不入库） ----------
+# ---------- 鍒嗗彂浜х墿锛坱ools\build-dist.ps1 鐢熸垚锛屼綋绉ぇ锛屼笉鍏ュ簱锛?----------
 /dist/
 
-# playit ������͸�ͻ��ˣ�����ר�ã�����⣩
+# playit 锟斤拷锟斤拷锟斤拷透锟酵伙拷锟剿ｏ拷锟斤拷锟斤拷专锟矫ｏ拷锟斤拷锟斤拷猓?
 tools/playit/*.exe
-# ---------- 运行时状态（服务器列表 / 模型白名单） ----------
+# ---------- 杩愯鏃剁姸鎬侊紙鏈嶅姟鍣ㄥ垪琛?/ 妯″瀷鐧藉悕鍗曪級 ----------
 game/.minecraft/servers.dat
 game/.minecraft/servers.dat_old
 game/.minecraft/sexmod/custom_models/
-# ---------- 下载的安装器（体积大，不入库） ----------
-tools/联机-Tailscale/tailscale-setup*.exe
+# ---------- 涓嬭浇鐨勫畨瑁呭櫒锛堜綋绉ぇ锛屼笉鍏ュ簱锛?----------
+tools/鑱旀満-Tailscale/tailscale-setup*.exe
 
-# ---------- 本地联机工具残留（playit 客户端，不入库） ----------
+# ---------- 鏈湴鑱旀満宸ュ叿娈嬬暀锛坧layit 瀹㈡埛绔紝涓嶅叆搴擄級 ----------
 tools/playit/
 
 
 game/.minecraft/ops.json
+/username.txt

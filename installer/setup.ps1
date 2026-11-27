@@ -43,9 +43,21 @@ $dir = $dir.Trim().Trim('"')
 if (!(Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
 $dir = (Resolve-Path $dir).Path
 
-$name = Read-Host '游戏内昵称（直接回车 = 玩家）'
-if ([string]::IsNullOrWhiteSpace($name)) { $name = '玩家' }
-$name = $name.Trim()
+$defaultName = $env:USERNAME
+if ([string]::IsNullOrWhiteSpace($defaultName)) { $defaultName = 'player' }
+$defaultName = ($defaultName -replace '[^A-Za-z0-9_]', '')
+if ([string]::IsNullOrWhiteSpace($defaultName)) { $defaultName = 'player' }
+while ($true) {
+  $name = Read-Host ('游戏内昵称（只能是英文字母/数字/下划线，每人必须不一样；直接回车 = ' + $defaultName + '）')
+  if ([string]::IsNullOrWhiteSpace($name)) { $name = $defaultName }
+  $name = $name.Trim()
+  $clean = ($name -replace '[^A-Za-z0-9_]', '')
+  if ([string]::IsNullOrWhiteSpace($clean)) { Write-Host '  昵称不能用中文/空格/符号，请重新输入（例如 ming_xiaoming）'; continue }
+  if ($clean.Length -gt 16) { $clean = $clean.Substring(0, 16) }
+  if ($clean -ne $name) { Write-Host ('  已去掉非法字符：「' + $name + '」→「' + $clean + '」') }
+  $name = $clean
+  break
+}
 
 $ramGB = 0
 try { $ramGB = [int][math]::Floor((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB) } catch { $ramGB = 0 }

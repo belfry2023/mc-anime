@@ -46,9 +46,28 @@ function Expand-Args($list, $map) {
 }
 
 
-# 安装版：昵称 / 内存从同目录的 username.txt、memory.txt 读取
-$name = 'Player'
-if (Test-Path (Join-Path $root 'username.txt')) { $name = (Get-Content (Join-Path $root 'username.txt') -Raw).Trim() }
+# 安装版：昵称从同目录 username.txt 读取
+# 注意：Minecraft 昵称只能是 英文字母/数字/下划线（1~16 个），且每个人必须不同，
+#       否则进别人服务器会报「此名称已被占用」（两个人同名）或「Invalid characters」。
+$nameFile = Join-Path $root 'username.txt'
+$name = ''
+if (Test-Path $nameFile) { $name = (Get-Content $nameFile -Raw).Trim() }
+
+if ([string]::IsNullOrWhiteSpace($name)) {
+    $guess = $env:USERNAME
+    if ([string]::IsNullOrWhiteSpace($guess)) { $guess = 'Player' + (Get-Random -Minimum 1000 -Maximum 9999) }
+    $name = $guess
+    try { Set-Content -Path $nameFile -Value $name -Encoding UTF8 } catch { }
+    Write-Host ('[提示] 没有 username.txt，已用电脑账户名「' + $name + '」作为昵称并写入 username.txt；想改名就编辑它（要和其他人不一样）。') -ForegroundColor Yellow
+}
+
+$clean = ($name -replace '[^A-Za-z0-9_]', '')
+if ([string]::IsNullOrWhiteSpace($clean)) { $clean = 'Player' + (Get-Random -Minimum 1000 -Maximum 9999) }
+if ($clean.Length -gt 16) { $clean = $clean.Substring(0, 16) }
+if ($clean -ne $name) {
+    Write-Host ('[提示] 昵称「' + $name + '」含非法字符（只能是英文字母/数字/下划线），已改按「' + $clean + '」启动。') -ForegroundColor Yellow
+    $name = $clean
+}
 $mem = '6G'
 if (Test-Path (Join-Path $root 'memory.txt')) { $mem = (Get-Content (Join-Path $root 'memory.txt') -Raw).Trim() }
 
