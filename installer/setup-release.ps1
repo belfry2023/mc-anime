@@ -3,7 +3,19 @@
 # 可选：mc-anime-patch-*.zip（存在就会自动叠加到安装目录，修掉旧包的启动问题）
 $ErrorActionPreference = 'Stop'
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$zip = Join-Path $here 'mc-anime-client.zip'
+# 主包 zip 名字可能被浏览器/QQ 改成 "mc-anime-client (1).zip" 之类，所以按通配找
+$zip = $null
+foreach ($pat in @('mc-anime-client*.zip', '*.zip')) {
+  if ($zip) { break }
+  $cand = Get-ChildItem -Path $here -Filter $pat -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -notlike 'mc-anime-patch*' } | Sort-Object Length -Descending | Select-Object -First 1
+  if ($cand) { $zip = $cand.FullName; break }
+}
+if (-not $zip) {
+  $cand = Get-ChildItem -Path $here -Filter '*.zip' -File -Recurse -Depth 1 -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -notlike 'mc-anime-patch*' } | Sort-Object Length -Descending | Select-Object -First 1
+  if ($cand) { $zip = $cand.FullName }
+}
 $payload = Join-Path $here 'payload'
 $patches = @(Get-ChildItem -Path $here -Filter 'mc-anime-patch-*.zip' -File -ErrorAction SilentlyContinue | Sort-Object Name)
 
@@ -13,13 +25,13 @@ Write-Host '            mc-anime 整合包 安装程序'
 Write-Host '  ============================================'
 Write-Host ''
 
-if (!(Test-Path $zip) -and !(Test-Path $payload)) {
+if ((-not $zip) -and !(Test-Path $payload)) {
   Write-Host '找不到安装源：请把 mc-anime-client.zip（或 payload 文件夹）和 setup.exe、setup.ps1 放在同一个文件夹里。'
   Read-Host '按回车退出'
   exit 1
 }
 
-$src = if (Test-Path $zip) { $zip } else { $payload }
+$src = if ($zip) { $zip } else { $payload }
 Write-Host ('  安装源：' + (Split-Path -Leaf $src))
 if ($patches.Count -gt 0) { Write-Host ('  已发现补丁：' + (($patches | ForEach-Object { $_.Name }) -join ', ') + '（安装后自动叠加）') }
 Write-Host ''
@@ -56,7 +68,7 @@ Write-Host '  （约 1.6GB，机械硬盘大概 3~8 分钟，请勿关闭窗口�
 Write-Host ''
 
 $tar = Join-Path $env:SystemRoot 'System32\tar.exe'
-if (Test-Path $zip) {
+if ($zip) {
   Push-Location $dir
   try { & $tar -x -f $zip } finally { Pop-Location }
   if ($LASTEXITCODE -ne 0) {
